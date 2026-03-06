@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./api-gateway/.env
+    networks:
+      - vesti-network
+    depends_on:
+      - auth-service
+      - wardrobe-service
+      - ai-service
+      - weather-service
+      - marketplace-service
+      - messaging-service
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./auth-service/.env
+    networks:
+      - vesti-network
+
+  wardrobe-service:
+    build:
+      context: ./wardrobe-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./wardrobe-service/.env
+    networks:
+      - vesti-network
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./ai-service/.env
+    networks:
+      - vesti-network
+
+  weather-service:
+    build:
+      context: ./weather-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./weather-service/.env
+    networks:
+      - vesti-network
+
+  marketplace-service:
+    build:
+      context: ./marketplace-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./marketplace-service/.env
+    networks:
+      - vesti-network
+
+  messaging-service:
+    build:
+      context: ./messaging-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./messaging-service/.env
+    networks:
+      - vesti-network
+
+networks:
+  vesti-network:
+    driver: bridge
