@@ -24,30 +24,132 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.vesti.app.data.local.TokenManager
+import com.vesti.app.data.network.RetrofitClient
+import com.vesti.app.data.repository.AuthRepository
+import com.vesti.app.ui.auth.AuthViewModel
+import com.vesti.app.ui.auth.LoginScreen
+import com.vesti.app.ui.auth.RegisterScreen
 import com.vesti.app.ui.theme.VestiColors
 import com.vesti.app.ui.theme.VestiTheme
+import com.vesti.app.ui.wardrobe.WardrobeScreen
+import com.vesti.app.ui.wardrobe.WardrobeViewModel
+import com.vesti.app.ui.outfit.OutfitScreen
+import com.vesti.app.ui.outfit.OutfitViewModel
+import com.vesti.app.ui.marketplace.MarketplaceScreen
+import com.vesti.app.ui.marketplace.MarketplaceViewModel
+import com.vesti.app.ui.checkout.CheckoutScreen
+import com.vesti.app.ui.checkout.CheckoutViewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Manual Dependency Injection for simplicity
+        val tokenManager = TokenManager(applicationContext)
+        val authApi = RetrofitClient.getAuthApi(tokenManager)
+        val authRepository = AuthRepository(authApi, tokenManager)
+        // Note: Using a standard ViewModel instantiation here for simplicity. 
+        // In a real app, use a ViewModelProvider.Factory or Hilt/Dagger.
+        val authViewModel = AuthViewModel(authRepository)
+        
+        val wardrobeApi = RetrofitClient.getWardrobeApi(tokenManager)
+        val wardrobeViewModel = WardrobeViewModel(wardrobeApi)
+
+        val aiApi = RetrofitClient.getAiApi(tokenManager)
+        val weatherApi = RetrofitClient.getWeatherApi()
+        val outfitViewModel = OutfitViewModel(aiApi, weatherApi)
+
+        val marketplaceApi = RetrofitClient.getMarketplaceApi(tokenManager)
+        val marketplaceViewModel = MarketplaceViewModel(marketplaceApi)
+
+        val paymentApi = RetrofitClient.getPaymentApi(tokenManager)
+        val checkoutViewModel = CheckoutViewModel(paymentApi)
+
         setContent {
             VestiTheme {
-                val navController = rememberNavController()
-                Scaffold(
-                    bottomBar = { VestiBottomNavigationBar(navController = navController) }
-                ) { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = "home",
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
-                        composable("home") { PlaceholderScreen("Ana Sayfa (Dashboard)") }
-                        composable("wardrobe") { PlaceholderScreen("Gardırop") }
-                        composable("outfit") { PlaceholderScreen("Kombin (AI)") }
-                        composable("marketplace") { PlaceholderScreen("Market / 2. El") }
-                        composable("profile") { PlaceholderScreen("Profil") }
+                val topLevelNavController = rememberNavController()
+                
+                NavHost(
+                    navController = topLevelNavController,
+                    startDestination = "login"
+                ) {
+                    composable("login") {
+                        LoginScreen(
+                            viewModel = authViewModel,
+                            onNavigateToRegister = { topLevelNavController.navigate("register") },
+                            onLoginSuccess = { 
+                                topLevelNavController.navigate("main") {
+                                    popUpTo("login") { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+                    composable("register") {
+                        RegisterScreen(
+                            viewModel = authViewModel,
+                            onNavigateBack = { topLevelNavController.popBackStack() },
+                            onRegisterSuccess = { 
+                                topLevelNavController.navigate("main") {
+                                    popUpTo("login") { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+                    composable("main") {
+                        MainAppScreen(wardrobeViewModel, outfitViewModel, marketplaceViewModel, checkoutViewModel)
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun MainAppScreen(
+    wardrobeViewModel: WardrobeViewModel,
+    outfitViewModel: OutfitViewModel,
+    marketplaceViewModel: MarketplaceViewModel,
+    checkoutViewModel: CheckoutViewModel
+) {
+    val navController = rememberNavController()
+    Scaffold(
+        bottomBar = { VestiBottomNavigationBar(navController = navController) }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = "home",
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable("home") { PlaceholderScreen("Ana Sayfa (Dashboard)") }
+            composable("wardrobe") { WardrobeScreen(viewModel = wardrobeViewModel) }
+            composable("outfit") { OutfitScreen(viewModel = outfitViewModel) }
+            composable("marketplace") { 
+                MarketplaceScreen(
+                    viewModel = marketplaceViewModel,
+                    onNavigateToCheckout = { itemId, price ->
+                        navController.navigate("checkout/$itemId/$price")
+                    }
+                ) 
+            }
+            composable("profile") { PlaceholderScreen("Profil") }
+            composable(
+                route = "checkout/{itemId}/{price}",
+                arguments = listOf(
+                    navArgument("itemId") { type = NavType.StringType },
+                    navArgument("price") { type = NavType.FloatType }
+                )
+            ) { backStackEntry ->
+                val itemId = backStackEntry.arguments?.getString("itemId") ?: ""
+                val price = backStackEntry.arguments?.getFloat("price")?.toDouble() ?: 0.0
+                CheckoutScreen(
+                    itemId = itemId,
+                    price = price,
+                    viewModel = checkoutViewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
             }
         }
     }

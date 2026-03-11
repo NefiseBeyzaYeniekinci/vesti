@@ -58,4 +58,25 @@ dependencies {
     
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.7.4")
+    
+    // Retrofit & OkHttp
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    
+    // DataStore Preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    
+    // ViewModel Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    
+    // Coil for Image Loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
+    
+    // Accompanist Permissions (or standard if using modern Compose, but Accompanist is widely adopted)
+    implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
+    
+    // Google Play Services Location for weather feature
+    implementation("com.google.android.gms:play-services-location:21.1.0")
 }
