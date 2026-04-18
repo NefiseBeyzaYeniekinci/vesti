@@ -1,0 +1,30 @@
+﻿commit c85f7becfe00717f53d4fcaab016a1d3dc4cd90f
+Author: Nefise Beyza Yeniekinci <nefisebeyzay221@gmail.com>
+Date:   Wed Mar 11 17:03:22 2026 +0300
+
+    Step 4, 5, 6: AI Skeleton, Weather/Marketplace, Secure Checkout
+
+commit 2cf190a7342ae748640635526713973901bb99f7
+Merge: 981cae1 11f92be
+Author: Nefise Beyza Yeniekinci <nefisebeyzay221@gmail.com>
+Date:   Fri Mar 6 09:20:28 2026 +0300
+
+    Merge branch 'main' of https://github.com/NefiseBeyzaYeniekinci/vesti
+
+commit 981cae1f6a491528523c06620303d41d7c81c9cb
+Author: Nefise Beyza Yeniekinci <nefisebeyzay221@gmail.com>
+Date:   Fri Mar 6 09:19:23 2026 +0300
+
+    feat: Initial setup for Ad─▒m 1 (Android & microservices skeleton)
+
+commit 11f92beb4ce8bf9ad7de616e88c6d3d439e791ec
+Author: Nefise Beyza <147252043+NefiseBeyzaYeniekinci@users.noreply.github.com>
+Date:   Thu Mar 5 15:19:01 2026 +0300
+
+    Rename project from 'outfitly' to 'vesti'
+
+commit bb325274beda740d6be0b042bae7b47db110fcfd
+Author: Nefise Beyza <147252043+NefiseBeyzaYeniekinci@users.noreply.github.com>
+Date:   Fri Feb 27 19:48:26 2026 +0300
+
+    Initial commit

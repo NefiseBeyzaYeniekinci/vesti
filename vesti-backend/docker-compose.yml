@@ -25,6 +25,12 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./auth-service/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/vesti_auth?schema=public
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
     networks:
       - vesti-network
 
@@ -72,6 +78,30 @@ services:
       - ./messaging-service/.env
     networks:
       - vesti-network
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: vesti_auth
+    ports:
+      - "5432:5432"
+    volumes:
+      - vesti_pg_data:/var/lib/postgresql/data
+    networks:
+      - vesti-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - vesti-network
+
+volumes:
+  vesti_pg_data:
+
 
 networks:
   vesti-network:

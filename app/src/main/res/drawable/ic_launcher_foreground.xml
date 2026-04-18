@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- V letter for Vesti, centered with padding for adaptive icon safe zone -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M27,30 L45,78 L54,54 L63,78 L81,30 L72,30 L63,57 L54,33 L45,57 L36,30 Z" />
+</vector>

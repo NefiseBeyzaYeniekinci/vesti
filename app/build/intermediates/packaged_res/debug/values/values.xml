@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#1A1A2E</color>
+    <string name="app_name">Vesti</string>
+    <string name="nav_home">Ana Sayfa</string>
+    <string name="nav_market">Market</string>
+    <string name="nav_outfit">Kombin</string>
+    <string name="nav_profile">Profil</string>
+    <string name="nav_wardrobe">Gardırop</string>
+    <style name="Theme.Vesti" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

@@ -1,0 +1,72 @@
+﻿On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   local.properties
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	deleted:    vesti-android/.gradle/9.2.0/checksums/checksums.lock
+	deleted:    vesti-android/.gradle/9.2.0/fileChanges/last-build.bin
+	deleted:    vesti-android/.gradle/9.2.0/fileHashes/fileHashes.bin
+	deleted:    vesti-android/.gradle/9.2.0/fileHashes/fileHashes.lock
+	deleted:    vesti-android/.gradle/9.2.0/gc.properties
+	deleted:    vesti-android/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+	deleted:    vesti-android/.gradle/buildOutputCleanup/cache.properties
+	deleted:    vesti-android/.gradle/vcs-1/gc.properties
+	deleted:    vesti-android/app/build.gradle.kts
+	deleted:    vesti-android/app/src/main/AndroidManifest.xml
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/MainActivity.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/AiApi.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/AiModels.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/AuthApi.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/AuthModels.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/MarketplaceApi.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/MarketplaceModels.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/NetworkModule.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/PaymentApi.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/PaymentModels.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/RetrofitClient.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/WardrobeApi.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/WardrobeModels.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/WeatherApi.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/data/network/WeatherModels.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/ui/checkout/CheckoutScreen.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/ui/checkout/CheckoutViewModel.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/ui/marketplace/MarketplaceScreen.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/ui/marketplace/MarketplaceViewModel.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/ui/outfit/OutfitScreen.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/ui/outfit/OutfitViewModel.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/ui/theme/Color.kt
+	deleted:    vesti-android/app/src/main/java/com/vesti/app/ui/theme/Theme.kt
+	deleted:    vesti-android/app/src/main/res/values/strings.xml
+	deleted:    vesti-android/build.gradle.kts
+	deleted:    vesti-android/settings.gradle.kts
+	modified:   vesti-backend/api-gateway/index.js
+	modified:   vesti-backend/api-gateway/package.json
+	modified:   vesti-backend/auth-service/index.js
+	modified:   vesti-backend/docker-compose.yml
+	modified:   vesti-backend/wardrobe-service/index.js
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.gradle/
+	.idea/
+	app/
+	build.gradle.kts
+	build/
+	gradle.properties
+	gradle/
+	log.txt
+	settings.gradle.kts
+	status.txt
+	status_utf8.txt
+	vesti-backend/api-gateway/package-lock.json
+	vesti-backend/auth-service/package-lock.json
+	vesti-backend/auth-service/package.json
+	vesti-backend/auth-service/prisma/
+	vesti-backend/wardrobe-service/package-lock.json
+	vesti-backend/wardrobe-service/package.json
+

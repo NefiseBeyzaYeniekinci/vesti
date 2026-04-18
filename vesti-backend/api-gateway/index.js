@@ -12,13 +12,26 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'API Gateway is running' });
 });
 
-// Middleware for JWT verification (placeholder)
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_vesti_key_123';
+
+// Middleware for JWT verification
 const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization'];
-    if (!token) return res.status(401).json({ error: 'Access denied' });
-    // In a real scenario, we verify with jsonwebtoken
-    // For now, allow through
-    next();
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) return res.status(401).json({ error: 'Access denied. No token provided.' });
+
+    // Expecting 'Bearer <token>'
+    const token = authHeader.split(' ')[1];
+
+    if (!token) return res.status(401).json({ error: 'Access denied. Invalid token format.' });
+
+    try {
+        const verified = jwt.verify(token, JWT_SECRET);
+        req.user = verified;
+        next();
+    } catch (error) {
+        res.status(401).json({ error: 'Invalid token.' });
+    }
 };
 
 // Routing rules mapping to other services

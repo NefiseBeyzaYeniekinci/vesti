@@ -1,0 +1,466 @@
+-- Merging decision tree log ---
+provider#androidx.core.content.FileProvider
+INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:27:9-35:20
+	android:grantUriPermissions
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:31:13-47
+	android:authorities
+		INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:29:13-64
+	android:exported
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:30:13-37
+	android:name
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:28:13-62
+manifest
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:2:1-37:12
+INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:2:1-37:12
+INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:2:1-37:12
+INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:2:1-37:12
+MERGED from [io.coil-kt:coil-compose:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c04eef9dcfa64c9a7361e9eeac1ee493\transformed\coil-compose-2.5.0\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.accompanist:accompanist-permissions:0.33.2-alpha] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\e2ab42735931a9d837eadab7dc7a06c2\transformed\accompanist-permissions-0.33.2-alpha\AndroidManifest.xml:17:1-23:12
+MERGED from [io.coil-kt:coil-compose-base:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c986013f430602651baf24f720687090\transformed\coil-compose-base-2.5.0\AndroidManifest.xml:2:1-7:12
+MERGED from [io.coil-kt:coil:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\e325b8f3a2a8be6efee307750ed43404\transformed\coil-2.5.0\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.accompanist:accompanist-drawablepainter:0.32.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a1cd52c5f0d87ee5bd40bc036a406155\transformed\accompanist-drawablepainter-0.32.0\AndroidManifest.xml:17:1-23:12
+MERGED from [androidx.navigation:navigation-common:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\d57378839f31c585320ae5ad28271d22\transformed\navigation-common-2.7.4\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-runtime:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\58dbce2a0cb03c94dbbda4b224933ca2\transformed\navigation-runtime-2.7.4\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-common-ktx:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\93659aba076380c79a269513e343bcf8\transformed\navigation-common-ktx-2.7.4\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\b8bf6d693c27dfe0f20d94207d237f5d\transformed\navigation-runtime-ktx-2.7.4\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-compose:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a502b012215cdaba988d5102c13dc4ae\transformed\navigation-compose-2.7.4\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material3:material3:1.1.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\31918923853b885f01d53eec1a770255\transformed\material3-1.1.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.activity:activity:1.8.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\abb102d79c7b50d72c1513064832a28b\transformed\activity-1.8.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.activity:activity-compose:1.8.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\49b497ce3069eb3c48f49b66fe27f827\transformed\activity-compose-1.8.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-icons-extended:1.4.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\f69f91eefbff18b4749049f984c89c6d\transformed\material-icons-extended-1.4.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.material:material-ripple:1.4.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\8a50427871adbdde6ebd64b6e640cd3b\transformed\material-ripple-1.4.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.material:material-icons-core:1.4.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\1d1194e7c5990fb2fd811f932fe20c9c\transformed\material-icons-core-1.4.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.animation:animation-core-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4ff0eebb911202b8bc3fad35e1e1a49c\transformed\animation-core-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\5af647bb724700d6efa33009dcbdd4d5\transformed\animation-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9299a59a4f98c3115342cdc8eb4e7c56\transformed\foundation-layout-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\402293813707a7c171a5085104727ba1\transformed\foundation-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-unit-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9c37ceb73f0735f5b97f9413951d56d0\transformed\ui-unit-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\f6a96597ccf20b5fde255f70ac524ad1\transformed\ui-tooling-preview-release\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.ui:ui-graphics-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a79b22205e869a132614ae4d0f474925\transformed\ui-graphics-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-geometry-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\579a6f832b71267c5070d2d4bcfbd809\transformed\ui-geometry-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-util-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\cf94623533c1a3efb36bed4a9808e30e\transformed\ui-util-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-text-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\693a34ec234cce663db33d460fb042dd\transformed\ui-text-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\27c4266cf6ea6d2fd9dd99ae3e47cf05\transformed\ui-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.activity:activity-ktx:1.8.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\77f427a134ca8058afd2bf161a7ac74d\transformed\activity-ktx-1.8.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c9bef4c319cc450bd51feaac64328ca9\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\2024fae462bdffc70e93bb84efea2d61\transformed\savedstate-1.2.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:17:1-35:12
+MERGED from [com.google.android.gms:play-services-location:21.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\d0179d3c3bea41bb775872f7ad73450f\transformed\play-services-location-21.1.0\AndroidManifest.xml:2:1-9:12
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3ac0328de6462f26f7d8babecb84fd5c\transformed\play-services-base-18.1.0\AndroidManifest.xml:16:1-24:12
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ce187a323219a12597b3cae68da470d4\transformed\play-services-tasks-18.0.2\AndroidManifest.xml:2:1-6:12
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6690ced03ee1650c2d01c350f21a78a9\transformed\play-services-basement-18.1.0\AndroidManifest.xml:16:1-26:12
+MERGED from [androidx.fragment:fragment:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9af20087369adcaf6f56cdec648a1fb3\transformed\fragment-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\47281733367612feb8c9f241a3d5111d\transformed\legacy-support-core-ui-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0cbcdbdaa5a70b2e05de40a52a5ab2f5\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\009968953804f2c16e21fac8de4df542\transformed\loader-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\90ec541bff9fa9e8901faf56a8c48778\transformed\lifecycle-livedata-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a0cf942b964dd087f74c8b5325ae3fc0\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\b610ea413286e6df135a8275fea1eced\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6b38bbd272fbda45a2e4a7aefaad0fef\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\13fe0448384acdf24fe645ab835dac00\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\19da227f3496f223722caf3141130647\transformed\lifecycle-viewmodel-savedstate-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [io.coil-kt:coil-base:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\df1aab2a0f9d95d60c40e92cf8ad0ac7\transformed\coil-base-2.5.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\27037f5101462415145cc98c42fd8063\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:17:1-23:12
+MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ef4da2084c94c577ec3cada2a4f40533\transformed\core-ktx-1.12.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\b6f10188cd88ed4bdf3c19b65195a926\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ec9a12173bf973537443c220cbd11cc9\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\42591f5086bf2c1a6dd8d7b37a7df447\transformed\vectordrawable-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\dda3efb9dc579c543a8762f6810ce70b\transformed\viewpager-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a017dfa41aab6a202b25a268b9aabbcd\transformed\coordinatorlayout-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\8096d4fba986e833e63a1c7f9b301b43\transformed\drawerlayout-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\13b2e96882f4bbab6524d62da9e8ede1\transformed\slidingpanelayout-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4d2e15bb463ab42fd25000f5dfa3bba0\transformed\customview-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\7a17f77a7f81c7c281adcb7f47235984\transformed\swiperefreshlayout-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\adf6c34e26aed18441b6110ec47c4f02\transformed\asynclayoutinflater-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\1398640b866177ce44d245a1ce3b0003\transformed\autofill-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\aadec9386d4630c5ad43bcbb50dcf5f9\transformed\lifecycle-runtime-2.6.2\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9f975d94309031e70387558fccc13065\transformed\lifecycle-runtime-compose-2.6.2\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c50fa162d11eed390e662c77c632f86\transformed\lifecycle-viewmodel-compose-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\85562530a2477024ab778ee3d8787384\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.datastore:datastore-preferences:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\7e46130dcfb0d1a3d53d52ff5793eac8\transformed\datastore-preferences-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.datastore:datastore:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\2b665f217e869954a059cd416c31531c\transformed\datastore-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9bfb98072f09399f2372ebf8c72f2fc1\transformed\runtime-saveable-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.runtime:runtime-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4984f7824d699ef42bb2663a530c5187\transformed\runtime-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3adcc0092c1efd032109bb384213ee15\transformed\annotation-experimental-1.3.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\e641bce3e91ad92c63b1d1529b3c10b3\transformed\interpolator-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c925bb799dbfaf6ec40d3f039dd64bff\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\dd51408ed640850fd2315615b2644d7c\transformed\core-runtime-2.2.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:17:1-55:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6b2d2e566dfa80b53c73cf5addac155e\transformed\startup-runtime-1.1.1\AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\61bf7390c788033003ead0df667a187a\transformed\tracing-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.exifinterface:exifinterface:1.3.6] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\69ba8ed029e508e8855d1ed7b5c41bd0\transformed\exifinterface-1.3.6\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a82ab5793202af0c9b549c6e81bfeeca\transformed\cursoradapter-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\53f430af4db6e595cbbab9e48d411495\transformed\documentfile-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4987af1e95ed1c377b1aa0adfb82cfa2\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.print:print:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\7b008521a8da3e60f5f921534ffbccc7\transformed\print-1.0.0\AndroidManifest.xml:17:1-22:12
+	package
+		INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml
+	android:versionCode
+		INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:3:5-67
+	android:name
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:3:22-64
+uses-permission#android.permission.CAMERA
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:4:5-65
+	android:name
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:4:22-62
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:5:5-81
+	android:name
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:5:22-78
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:6:5-79
+	android:name
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:6:22-76
+uses-feature#android.hardware.camera
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:7:5-85
+	android:required
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:7:58-82
+	android:name
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:7:19-57
+application
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:8:5-36:19
+INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:8:5-36:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
+MERGED from [com.google.android.gms:play-services-location:21.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\d0179d3c3bea41bb775872f7ad73450f\transformed\play-services-location-21.1.0\AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.gms:play-services-location:21.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\d0179d3c3bea41bb775872f7ad73450f\transformed\play-services-location-21.1.0\AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3ac0328de6462f26f7d8babecb84fd5c\transformed\play-services-base-18.1.0\AndroidManifest.xml:19:5-23:19
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3ac0328de6462f26f7d8babecb84fd5c\transformed\play-services-base-18.1.0\AndroidManifest.xml:19:5-23:19
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ce187a323219a12597b3cae68da470d4\transformed\play-services-tasks-18.0.2\AndroidManifest.xml:5:5-20
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ce187a323219a12597b3cae68da470d4\transformed\play-services-tasks-18.0.2\AndroidManifest.xml:5:5-20
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6690ced03ee1650c2d01c350f21a78a9\transformed\play-services-basement-18.1.0\AndroidManifest.xml:20:5-24:19
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6690ced03ee1650c2d01c350f21a78a9\transformed\play-services-basement-18.1.0\AndroidManifest.xml:20:5-24:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a0cf942b964dd087f74c8b5325ae3fc0\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a0cf942b964dd087f74c8b5325ae3fc0\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:28:5-89
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c925bb799dbfaf6ec40d3f039dd64bff\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c925bb799dbfaf6ec40d3f039dd64bff\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6b2d2e566dfa80b53c73cf5addac155e\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6b2d2e566dfa80b53c73cf5addac155e\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+	android:extractNativeLibs
+		INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
+	android:supportsRtl
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:15:9-35
+	android:label
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:13:9-41
+	android:fullBackupContent
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:11:9-54
+	android:roundIcon
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:14:9-54
+	android:icon
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:12:9-43
+	android:allowBackup
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:9:9-35
+	android:theme
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:16:9-43
+	android:dataExtractionRules
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:10:9-65
+activity#com.vesti.app.MainActivity
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:17:9-25:20
+	android:exported
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:19:13-36
+	android:theme
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:20:13-47
+	android:name
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:18:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:21:13-24:29
+action#android.intent.action.MAIN
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:22:17-69
+	android:name
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:22:25-66
+category#android.intent.category.LAUNCHER
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:23:17-77
+	android:name
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:23:27-74
+meta-data#android.support.FILE_PROVIDER_PATHS
+ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:32:13-34:54
+	android:resource
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:34:17-51
+	android:name
+		ADDED from C:\Android\Vesti\app\src\main\AndroidManifest.xml:33:17-67
+uses-sdk
+INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml
+INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml
+MERGED from [io.coil-kt:coil-compose:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c04eef9dcfa64c9a7361e9eeac1ee493\transformed\coil-compose-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil-compose:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c04eef9dcfa64c9a7361e9eeac1ee493\transformed\coil-compose-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.accompanist:accompanist-permissions:0.33.2-alpha] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\e2ab42735931a9d837eadab7dc7a06c2\transformed\accompanist-permissions-0.33.2-alpha\AndroidManifest.xml:21:5-44
+MERGED from [com.google.accompanist:accompanist-permissions:0.33.2-alpha] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\e2ab42735931a9d837eadab7dc7a06c2\transformed\accompanist-permissions-0.33.2-alpha\AndroidManifest.xml:21:5-44
+MERGED from [io.coil-kt:coil-compose-base:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c986013f430602651baf24f720687090\transformed\coil-compose-base-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil-compose-base:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c986013f430602651baf24f720687090\transformed\coil-compose-base-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\e325b8f3a2a8be6efee307750ed43404\transformed\coil-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\e325b8f3a2a8be6efee307750ed43404\transformed\coil-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.accompanist:accompanist-drawablepainter:0.32.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a1cd52c5f0d87ee5bd40bc036a406155\transformed\accompanist-drawablepainter-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.accompanist:accompanist-drawablepainter:0.32.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a1cd52c5f0d87ee5bd40bc036a406155\transformed\accompanist-drawablepainter-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.navigation:navigation-common:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\d57378839f31c585320ae5ad28271d22\transformed\navigation-common-2.7.4\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-common:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\d57378839f31c585320ae5ad28271d22\transformed\navigation-common-2.7.4\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\58dbce2a0cb03c94dbbda4b224933ca2\transformed\navigation-runtime-2.7.4\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\58dbce2a0cb03c94dbbda4b224933ca2\transformed\navigation-runtime-2.7.4\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-common-ktx:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\93659aba076380c79a269513e343bcf8\transformed\navigation-common-ktx-2.7.4\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-common-ktx:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\93659aba076380c79a269513e343bcf8\transformed\navigation-common-ktx-2.7.4\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\b8bf6d693c27dfe0f20d94207d237f5d\transformed\navigation-runtime-ktx-2.7.4\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\b8bf6d693c27dfe0f20d94207d237f5d\transformed\navigation-runtime-ktx-2.7.4\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-compose:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a502b012215cdaba988d5102c13dc4ae\transformed\navigation-compose-2.7.4\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-compose:2.7.4] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a502b012215cdaba988d5102c13dc4ae\transformed\navigation-compose-2.7.4\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material3:material3:1.1.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\31918923853b885f01d53eec1a770255\transformed\material3-1.1.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material3:material3:1.1.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\31918923853b885f01d53eec1a770255\transformed\material3-1.1.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.8.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\abb102d79c7b50d72c1513064832a28b\transformed\activity-1.8.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.8.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\abb102d79c7b50d72c1513064832a28b\transformed\activity-1.8.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity-compose:1.8.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\49b497ce3069eb3c48f49b66fe27f827\transformed\activity-compose-1.8.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-compose:1.8.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\49b497ce3069eb3c48f49b66fe27f827\transformed\activity-compose-1.8.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-extended:1.4.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\f69f91eefbff18b4749049f984c89c6d\transformed\material-icons-extended-1.4.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material:material-icons-extended:1.4.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\f69f91eefbff18b4749049f984c89c6d\transformed\material-icons-extended-1.4.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material:material-ripple:1.4.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\8a50427871adbdde6ebd64b6e640cd3b\transformed\material-ripple-1.4.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material:material-ripple:1.4.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\8a50427871adbdde6ebd64b6e640cd3b\transformed\material-ripple-1.4.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material:material-icons-core:1.4.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\1d1194e7c5990fb2fd811f932fe20c9c\transformed\material-icons-core-1.4.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material:material-icons-core:1.4.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\1d1194e7c5990fb2fd811f932fe20c9c\transformed\material-icons-core-1.4.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4ff0eebb911202b8bc3fad35e1e1a49c\transformed\animation-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4ff0eebb911202b8bc3fad35e1e1a49c\transformed\animation-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\5af647bb724700d6efa33009dcbdd4d5\transformed\animation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\5af647bb724700d6efa33009dcbdd4d5\transformed\animation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9299a59a4f98c3115342cdc8eb4e7c56\transformed\foundation-layout-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9299a59a4f98c3115342cdc8eb4e7c56\transformed\foundation-layout-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\402293813707a7c171a5085104727ba1\transformed\foundation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\402293813707a7c171a5085104727ba1\transformed\foundation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9c37ceb73f0735f5b97f9413951d56d0\transformed\ui-unit-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9c37ceb73f0735f5b97f9413951d56d0\transformed\ui-unit-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\f6a96597ccf20b5fde255f70ac524ad1\transformed\ui-tooling-preview-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\f6a96597ccf20b5fde255f70ac524ad1\transformed\ui-tooling-preview-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a79b22205e869a132614ae4d0f474925\transformed\ui-graphics-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a79b22205e869a132614ae4d0f474925\transformed\ui-graphics-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\579a6f832b71267c5070d2d4bcfbd809\transformed\ui-geometry-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\579a6f832b71267c5070d2d4bcfbd809\transformed\ui-geometry-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\cf94623533c1a3efb36bed4a9808e30e\transformed\ui-util-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\cf94623533c1a3efb36bed4a9808e30e\transformed\ui-util-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\693a34ec234cce663db33d460fb042dd\transformed\ui-text-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\693a34ec234cce663db33d460fb042dd\transformed\ui-text-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\27c4266cf6ea6d2fd9dd99ae3e47cf05\transformed\ui-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\27c4266cf6ea6d2fd9dd99ae3e47cf05\transformed\ui-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.8.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\77f427a134ca8058afd2bf161a7ac74d\transformed\activity-ktx-1.8.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.8.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\77f427a134ca8058afd2bf161a7ac74d\transformed\activity-ktx-1.8.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c9bef4c319cc450bd51feaac64328ca9\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c9bef4c319cc450bd51feaac64328ca9\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\2024fae462bdffc70e93bb84efea2d61\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\2024fae462bdffc70e93bb84efea2d61\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.android.gms:play-services-location:21.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\d0179d3c3bea41bb775872f7ad73450f\transformed\play-services-location-21.1.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-location:21.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\d0179d3c3bea41bb775872f7ad73450f\transformed\play-services-location-21.1.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3ac0328de6462f26f7d8babecb84fd5c\transformed\play-services-base-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3ac0328de6462f26f7d8babecb84fd5c\transformed\play-services-base-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ce187a323219a12597b3cae68da470d4\transformed\play-services-tasks-18.0.2\AndroidManifest.xml:4:5-43
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ce187a323219a12597b3cae68da470d4\transformed\play-services-tasks-18.0.2\AndroidManifest.xml:4:5-43
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6690ced03ee1650c2d01c350f21a78a9\transformed\play-services-basement-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6690ced03ee1650c2d01c350f21a78a9\transformed\play-services-basement-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [androidx.fragment:fragment:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9af20087369adcaf6f56cdec648a1fb3\transformed\fragment-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.fragment:fragment:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9af20087369adcaf6f56cdec648a1fb3\transformed\fragment-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\47281733367612feb8c9f241a3d5111d\transformed\legacy-support-core-ui-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\47281733367612feb8c9f241a3d5111d\transformed\legacy-support-core-ui-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0cbcdbdaa5a70b2e05de40a52a5ab2f5\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0cbcdbdaa5a70b2e05de40a52a5ab2f5\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\009968953804f2c16e21fac8de4df542\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\009968953804f2c16e21fac8de4df542\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\90ec541bff9fa9e8901faf56a8c48778\transformed\lifecycle-livedata-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\90ec541bff9fa9e8901faf56a8c48778\transformed\lifecycle-livedata-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a0cf942b964dd087f74c8b5325ae3fc0\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a0cf942b964dd087f74c8b5325ae3fc0\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\b610ea413286e6df135a8275fea1eced\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\b610ea413286e6df135a8275fea1eced\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6b38bbd272fbda45a2e4a7aefaad0fef\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6b38bbd272fbda45a2e4a7aefaad0fef\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\13fe0448384acdf24fe645ab835dac00\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\13fe0448384acdf24fe645ab835dac00\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\19da227f3496f223722caf3141130647\transformed\lifecycle-viewmodel-savedstate-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\19da227f3496f223722caf3141130647\transformed\lifecycle-viewmodel-savedstate-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [io.coil-kt:coil-base:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\df1aab2a0f9d95d60c40e92cf8ad0ac7\transformed\coil-base-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil-base:2.5.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\df1aab2a0f9d95d60c40e92cf8ad0ac7\transformed\coil-base-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\27037f5101462415145cc98c42fd8063\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\27037f5101462415145cc98c42fd8063\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ef4da2084c94c577ec3cada2a4f40533\transformed\core-ktx-1.12.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ef4da2084c94c577ec3cada2a4f40533\transformed\core-ktx-1.12.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\b6f10188cd88ed4bdf3c19b65195a926\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\b6f10188cd88ed4bdf3c19b65195a926\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ec9a12173bf973537443c220cbd11cc9\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\ec9a12173bf973537443c220cbd11cc9\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\42591f5086bf2c1a6dd8d7b37a7df447\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\42591f5086bf2c1a6dd8d7b37a7df447\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\dda3efb9dc579c543a8762f6810ce70b\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\dda3efb9dc579c543a8762f6810ce70b\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a017dfa41aab6a202b25a268b9aabbcd\transformed\coordinatorlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a017dfa41aab6a202b25a268b9aabbcd\transformed\coordinatorlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\8096d4fba986e833e63a1c7f9b301b43\transformed\drawerlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\8096d4fba986e833e63a1c7f9b301b43\transformed\drawerlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\13b2e96882f4bbab6524d62da9e8ede1\transformed\slidingpanelayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\13b2e96882f4bbab6524d62da9e8ede1\transformed\slidingpanelayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4d2e15bb463ab42fd25000f5dfa3bba0\transformed\customview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4d2e15bb463ab42fd25000f5dfa3bba0\transformed\customview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\7a17f77a7f81c7c281adcb7f47235984\transformed\swiperefreshlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\7a17f77a7f81c7c281adcb7f47235984\transformed\swiperefreshlayout-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\adf6c34e26aed18441b6110ec47c4f02\transformed\asynclayoutinflater-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.asynclayoutinflater:asynclayoutinflater:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\adf6c34e26aed18441b6110ec47c4f02\transformed\asynclayoutinflater-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\1398640b866177ce44d245a1ce3b0003\transformed\autofill-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\1398640b866177ce44d245a1ce3b0003\transformed\autofill-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\aadec9386d4630c5ad43bcbb50dcf5f9\transformed\lifecycle-runtime-2.6.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\aadec9386d4630c5ad43bcbb50dcf5f9\transformed\lifecycle-runtime-2.6.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9f975d94309031e70387558fccc13065\transformed\lifecycle-runtime-compose-2.6.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9f975d94309031e70387558fccc13065\transformed\lifecycle-runtime-compose-2.6.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c50fa162d11eed390e662c77c632f86\transformed\lifecycle-viewmodel-compose-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c50fa162d11eed390e662c77c632f86\transformed\lifecycle-viewmodel-compose-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\85562530a2477024ab778ee3d8787384\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\85562530a2477024ab778ee3d8787384\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.datastore:datastore-preferences:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\7e46130dcfb0d1a3d53d52ff5793eac8\transformed\datastore-preferences-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.datastore:datastore-preferences:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\7e46130dcfb0d1a3d53d52ff5793eac8\transformed\datastore-preferences-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.datastore:datastore:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\2b665f217e869954a059cd416c31531c\transformed\datastore-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.datastore:datastore:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\2b665f217e869954a059cd416c31531c\transformed\datastore-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9bfb98072f09399f2372ebf8c72f2fc1\transformed\runtime-saveable-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\9bfb98072f09399f2372ebf8c72f2fc1\transformed\runtime-saveable-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4984f7824d699ef42bb2663a530c5187\transformed\runtime-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.6.0-alpha06] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4984f7824d699ef42bb2663a530c5187\transformed\runtime-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3adcc0092c1efd032109bb384213ee15\transformed\annotation-experimental-1.3.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3adcc0092c1efd032109bb384213ee15\transformed\annotation-experimental-1.3.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\e641bce3e91ad92c63b1d1529b3c10b3\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\e641bce3e91ad92c63b1d1529b3c10b3\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c925bb799dbfaf6ec40d3f039dd64bff\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\c925bb799dbfaf6ec40d3f039dd64bff\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\dd51408ed640850fd2315615b2644d7c\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\dd51408ed640850fd2315615b2644d7c\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6b2d2e566dfa80b53c73cf5addac155e\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6b2d2e566dfa80b53c73cf5addac155e\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\61bf7390c788033003ead0df667a187a\transformed\tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\61bf7390c788033003ead0df667a187a\transformed\tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.6] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\69ba8ed029e508e8855d1ed7b5c41bd0\transformed\exifinterface-1.3.6\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.6] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\69ba8ed029e508e8855d1ed7b5c41bd0\transformed\exifinterface-1.3.6\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a82ab5793202af0c9b549c6e81bfeeca\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a82ab5793202af0c9b549c6e81bfeeca\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\53f430af4db6e595cbbab9e48d411495\transformed\documentfile-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\53f430af4db6e595cbbab9e48d411495\transformed\documentfile-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4987af1e95ed1c377b1aa0adfb82cfa2\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\4987af1e95ed1c377b1aa0adfb82cfa2\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\7b008521a8da3e60f5f921534ffbccc7\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\7b008521a8da3e60f5f921534ffbccc7\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
+	android:targetSdkVersion
+		INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Android\Vesti\app\src\main\AndroidManifest.xml
+provider#androidx.startup.InitializationProvider
+ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a0cf942b964dd087f74c8b5325ae3fc0\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a0cf942b964dd087f74c8b5325ae3fc0\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6b2d2e566dfa80b53c73cf5addac155e\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6b2d2e566dfa80b53c73cf5addac155e\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
+	tools:node
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:28:13-31
+	android:authorities
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+	android:exported
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+meta-data#androidx.emoji2.text.EmojiCompatInitializer
+ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\28d8778a8058971107383abb318324a8\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+activity#com.google.android.gms.common.api.GoogleApiActivity
+ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3ac0328de6462f26f7d8babecb84fd5c\transformed\play-services-base-18.1.0\AndroidManifest.xml:20:9-22:45
+	android:exported
+		ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3ac0328de6462f26f7d8babecb84fd5c\transformed\play-services-base-18.1.0\AndroidManifest.xml:22:19-43
+	android:theme
+		ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3ac0328de6462f26f7d8babecb84fd5c\transformed\play-services-base-18.1.0\AndroidManifest.xml:21:19-78
+	android:name
+		ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\3ac0328de6462f26f7d8babecb84fd5c\transformed\play-services-base-18.1.0\AndroidManifest.xml:20:19-85
+meta-data#com.google.android.gms.version
+ADDED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6690ced03ee1650c2d01c350f21a78a9\transformed\play-services-basement-18.1.0\AndroidManifest.xml:21:9-23:69
+	android:value
+		ADDED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6690ced03ee1650c2d01c350f21a78a9\transformed\play-services-basement-18.1.0\AndroidManifest.xml:23:13-66
+	android:name
+		ADDED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\6690ced03ee1650c2d01c350f21a78a9\transformed\play-services-basement-18.1.0\AndroidManifest.xml:22:13-58
+meta-data#androidx.lifecycle.ProcessLifecycleInitializer
+ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a0cf942b964dd087f74c8b5325ae3fc0\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a0cf942b964dd087f74c8b5325ae3fc0\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\a0cf942b964dd087f74c8b5325ae3fc0\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
+permission#com.vesti.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
+uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
+uses-permission#com.vesti.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.12.0] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\0c6164a133766282671969823211e484\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
+meta-data#androidx.profileinstaller.ProfileInstallerInitializer
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+receiver#androidx.profileinstaller.ProfileInstallReceiver
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+	android:enabled
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+	android:permission
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+	android:directBootAware
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+intent-filter#action:name:androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+action#androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+intent-filter#action:name:androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+action#androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+intent-filter#action:name:androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+action#androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+intent-filter#action:name:androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+action#androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\NEFİSE BEYZA\.gradle\caches\transforms-3\29722b6aa39a8b1a63fd39bed835c80e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
