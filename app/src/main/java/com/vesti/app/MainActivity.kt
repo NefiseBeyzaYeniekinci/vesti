@@ -165,6 +165,7 @@ fun MainAppScreen(
             composable("marketplace") { 
                 com.vesti.app.ui.marketplace.MarketplaceScreen(
                     viewModel = marketplaceViewModel,
+                    wardrobeViewModel = wardrobeViewModel,
                     onNavigateToCheckout = { itemId, _ ->
                         navController.navigate("product/$itemId")
                     },

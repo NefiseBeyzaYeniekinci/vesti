@@ -20,6 +20,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -28,6 +32,10 @@ import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.graphics.Brush
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vesti.app.ui.wardrobe.WardrobeState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -165,14 +173,19 @@ val mockProducts = listOf(
 @Composable
 fun MarketplaceScreen(
     viewModel: MarketplaceViewModel,
+    wardrobeViewModel: com.vesti.app.ui.wardrobe.WardrobeViewModel,
     onNavigateToCheckout: (String, Float) -> Unit,
     onNavigateToMessages: () -> Unit
 ) {
     val context = LocalContext.current
     var currentPhotoUri by remember { mutableStateOf<Uri?>(null) }
+    var selectedImageUri by remember { mutableStateOf<String?>(null) }
+    var selectedWardrobeItem by remember { mutableStateOf<com.vesti.app.data.network.WardrobeItemDto?>(null) }
     var showSellDialog by remember { mutableStateOf(false) }
     var inputTitle by remember { mutableStateOf("") }
     var inputPrice by remember { mutableStateOf("") }
+    var inputBrand by remember { mutableStateOf("") }
+    var inputSize by remember { mutableStateOf("M") }
     var inputCondition by remember { mutableStateOf("Yeni Gibi") }
 
     val cameraLauncher = rememberLauncherForActivityResult(
@@ -180,6 +193,8 @@ fun MarketplaceScreen(
     ) { success ->
         if (success && currentPhotoUri != null) {
             showSellDialog = true
+            selectedWardrobeItem = null
+            selectedImageUri = null
         }
     }
 
@@ -204,16 +219,19 @@ fun MarketplaceScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    if (cameraPermissionState.status.isGranted) {
-                        val (file, uri) = CameraHelper.createTempImageFile(context)
-                        currentPhotoUri = uri
-                        cameraLauncher.launch(uri)
-                    } else {
-                        cameraPermissionState.launchPermissionRequest()
-                    }
+                    showSellDialog = true
+                    selectedWardrobeItem = null
+                    currentPhotoUri = null
+                    selectedImageUri = null
+                    inputTitle = ""
+                    inputPrice = ""
+                    inputBrand = ""
+                    inputSize = "M"
+                    inputCondition = "Yeni Gibi"
                 },
                 containerColor = VestiColors.Primary,
-                contentColor = Color.White
+                contentColor = Color.White,
+                shape = CircleShape
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "İlan Ver")
             }
@@ -295,53 +313,286 @@ fun MarketplaceScreen(
     }
 
     if (showSellDialog) {
-        AlertDialog(
-            onDismissRequest = { showSellDialog = false },
-            title = { Text("Yeni İlan Ekle") },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = inputTitle,
-                        onValueChange = { inputTitle = it },
-                        label = { Text("Ürün Başlığı (örn. Mavi Ceket)") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                    )
-                    OutlinedTextField(
-                        value = inputPrice,
-                        onValueChange = { inputPrice = it },
-                        label = { Text("Fiyat (₺)") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                    )
-                    OutlinedTextField(
-                        value = inputCondition,
-                        onValueChange = { inputCondition = it },
-                        label = { Text("Durum (örn. Yeni Gibi)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+        ModalBottomSheet(
+            onDismissRequest = { 
+                showSellDialog = false 
+                selectedWardrobeItem = null
+                currentPhotoUri = null
+                selectedImageUri = null
             },
-            confirmButton = {
-                Button(onClick = {
-                    showSellDialog = false
-                    val title = if (inputTitle.isBlank()) "Yeni İlan" else inputTitle
-                    val price = if (inputPrice.isBlank()) "0" else inputPrice
-                    val cond = if (inputCondition.isBlank()) "Bilinmiyor" else inputCondition
-                    viewModel.createListing(title, price, cond, currentPhotoUri)
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            containerColor = Color.White,
+            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.85f)
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // Header Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Yeni İlan Oluştur",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = VestiColors.TextMain
+                    )
+                    IconButton(onClick = {
+                        showSellDialog = false
+                        selectedWardrobeItem = null
+                        currentPhotoUri = null
+                        selectedImageUri = null
+                    }) {
+                        Icon(Icons.Default.Close, contentDescription = "Kapat", tint = Color.Gray)
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Option 1: Choose from Digital Wardrobe
+                Text("1. Gardırobumdan Hızlı Seç", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(10.dp))
+                
+                val wardrobeState by wardrobeViewModel.state.collectAsStateWithLifecycle()
+                if (wardrobeState is WardrobeState.Success) {
+                    val wItems = (wardrobeState as WardrobeState.Success).items
+                    if (wItems.isEmpty()) {
+                        Text("Gardırobunuzda henüz kıyafet yok.", color = Color.Gray, fontSize = 12.sp, modifier = Modifier.padding(vertical = 8.dp))
+                    } else {
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items(wItems) { wItem ->
+                                val isSelected = selectedWardrobeItem?.id == wItem.id
+                                Card(
+                                    modifier = Modifier
+                                        .width(90.dp)
+                                        .height(120.dp)
+                                        .clickable {
+                                            selectedWardrobeItem = wItem
+                                            selectedImageUri = wItem.imageUrl
+                                            currentPhotoUri = null
+                                            inputTitle = "${wItem.color} ${wItem.category}"
+                                            inputBrand = wItem.brand ?: ""
+                                            inputSize = wItem.size ?: ""
+                                        },
+                                    shape = RoundedCornerShape(14.dp),
+                                    border = if (isSelected) androidx.compose.foundation.BorderStroke(3.dp, VestiColors.Primary) else null,
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                                ) {
+                                    Box(modifier = Modifier.fillMaxSize()) {
+                                        val fullUrl = if (wItem.imageUrl.startsWith("http")) wItem.imageUrl else "http://192.168.1.103:8080${wItem.imageUrl}"
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(fullUrl)
+                                                .crossfade(true)
+                                                .build(),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .align(Alignment.BottomCenter)
+                                                .background(Color.Black.copy(alpha = 0.6f))
+                                                .padding(4.dp)
+                                        ) {
+                                            Text(wItem.category, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(20.dp))
+                
+                // Option 2: Upload or Capture Custom Photo
+                Text("2. Veya Fotoğraf Çek / Yükle", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(10.dp))
+                
+                val galleryLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.GetContent()
+                ) { uri ->
+                    if (uri != null) {
+                        currentPhotoUri = uri
+                        selectedWardrobeItem = null
+                        selectedImageUri = null
+                    }
+                }
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            if (cameraPermissionState.status.isGranted) {
+                                val (file, uri) = CameraHelper.createTempImageFile(context)
+                                currentPhotoUri = uri
+                                cameraLauncher.launch(uri)
+                            } else {
+                                cameraPermissionState.launchPermissionRequest()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier.weight(1f).height(48.dp)
+                    ) {
+                        Text("Kamera İle Çek", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
                     
-                    // Reset
-                    inputTitle = ""
-                    inputPrice = ""
-                    inputCondition = "Yeni Gibi"
-                }) {
-                    Text("İlanı Ver")
+                    OutlinedButton(
+                        onClick = { galleryLauncher.launch("image/*") },
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = VestiColors.Primary),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, VestiColors.Primary),
+                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier.weight(1f).height(48.dp)
+                    ) {
+                        Text("Galeriden Seç", fontWeight = FontWeight.Bold)
+                    }
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { showSellDialog = false }) {
-                    Text("İptal")
+                
+                Spacer(modifier = Modifier.height(20.dp))
+                
+                // Image Preview if selected
+                val previewData = selectedImageUri ?: currentPhotoUri
+                if (previewData != null) {
+                    Text("Seçilen Ürün Görseli", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 13.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(130.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFF3F4F6))
+                    ) {
+                        val finalUrl = if (previewData is String && !previewData.startsWith("http")) "http://192.168.1.103:8080$previewData" else previewData
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(finalUrl)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "Önizleme",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
+                
+                // Form Fields
+                Text("3. İlan Bilgileri", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(10.dp))
+                
+                OutlinedTextField(
+                    value = inputTitle,
+                    onValueChange = { inputTitle = it },
+                    label = { Text("Ürün Başlığı") },
+                    placeholder = { Text("Örn: Vintage Deri Ceket") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = VestiColors.Primary)
+                )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                OutlinedTextField(
+                    value = inputPrice,
+                    onValueChange = { inputPrice = it },
+                    label = { Text("Fiyat (₺)") },
+                    placeholder = { Text("Örn: 1250") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = VestiColors.Primary)
+                )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                OutlinedTextField(
+                    value = inputBrand,
+                    onValueChange = { inputBrand = it },
+                    label = { Text("Marka") },
+                    placeholder = { Text("Örn: Zara, Vintage") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = VestiColors.Primary)
+                )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                // Condition chip choices
+                Text("Durum Seçimi", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 13.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                val conditionOptions = listOf("Yeni Gibi", "Sıfır", "Az Kullanılmış", "Kullanılmış")
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(conditionOptions) { cond ->
+                        val isSelected = inputCondition == cond
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(if (isSelected) VestiColors.Primary else Color(0xFFF3F4F6))
+                                .clickable { inputCondition = cond }
+                                .padding(horizontal = 14.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = cond,
+                                color = if (isSelected) Color.White else VestiColors.TextMain,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                // Submit Button
+                Button(
+                    onClick = {
+                        showSellDialog = false
+                        val title = if (inputTitle.isBlank()) "Yeni İlan" else inputTitle
+                        val price = if (inputPrice.isBlank()) "0" else inputPrice
+                        val cond = if (inputCondition.isBlank()) "Bilinmiyor" else inputCondition
+                        
+                        viewModel.createListing(
+                            title = title,
+                            price = price,
+                            condition = cond,
+                            imageUri = currentPhotoUri,
+                            existingImageUrl = selectedImageUri
+                        )
+                        
+                        // Reset
+                        inputTitle = ""
+                        inputPrice = ""
+                        inputBrand = ""
+                        inputCondition = "Yeni Gibi"
+                        selectedWardrobeItem = null
+                        currentPhotoUri = null
+                        selectedImageUri = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                ) {
+                    Text("İlanı Yayınla", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
             }
-        )
+        }
     }
 }
 
@@ -368,18 +619,19 @@ fun FilterChipItem(label: String, selected: Boolean) {
 @Composable
 fun ProductCard(product: MockProduct, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(295.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = onClick
     ) {
-        Column {
-            // Image Placeholder
+        Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(140.dp)
+                    .height(150.dp)
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -396,7 +648,7 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.padding(8.dp).align(Alignment.TopStart)
                     ) {
-                        Text("⇄ TAKAS", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
+                        Text("⇄ TAKAS", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
                     }
                 }
                 Surface(
@@ -404,45 +656,82 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.padding(8.dp).align(Alignment.BottomStart)
                 ) {
-                    Text(product.condition, color = VestiColors.TextMain, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
+                    Text(product.condition, color = VestiColors.TextMain, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
                 }
             }
-
-            Column(modifier = Modifier.padding(12.dp)) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(product.brand, color = Color.Gray, fontSize = 12.sp)
-                    Text(product.size, color = Color.Gray, fontSize = 12.sp)
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(product.title, color = VestiColors.TextMain, fontSize = 14.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(product.price, color = VestiColors.DarkIndigo, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
-                
-                Spacer(modifier = Modifier.height(12.dp))
-                Divider(color = Color(0xFFF3F4F6))
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFE5E7EB)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(product.sellerInitials, fontSize = 10.sp, color = Color.DarkGray)
-                        }
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(product.sellerName, fontSize = 11.sp, color = VestiColors.TextMain, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.width(60.dp))
+            
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(product.brand, color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                        Text(product.size, color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
                     }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Star, contentDescription = "Star", tint = Color(0xFFFFB300), modifier = Modifier.size(12.dp))
-                        Text(product.rating, fontSize = 11.sp, color = VestiColors.TextMain, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = product.title,
+                        color = VestiColors.TextMain,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                
+                Column {
+                    Text(
+                        text = product.price,
+                        color = VestiColors.Primary,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Divider(color = Color(0xFFF3F4F6), modifier = Modifier.padding(vertical = 2.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFE5E7EB)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(product.sellerInitials, fontSize = 9.sp, color = Color.DarkGray, fontWeight = FontWeight.Bold)
+                            }
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = product.sellerName,
+                                fontSize = 11.sp,
+                                color = VestiColors.TextMain,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Star, contentDescription = "Star", tint = Color(0xFFFFB300), modifier = Modifier.size(11.dp))
+                            Spacer(modifier = Modifier.width(2.dp))
+                            Text(product.rating, fontSize = 11.sp, color = VestiColors.TextMain, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }
