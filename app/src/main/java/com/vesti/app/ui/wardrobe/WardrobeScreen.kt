@@ -273,7 +273,41 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                         } else {
                             if (selectedCategoryFilter == "Hepsi") {
                                 // 1. LANDING COLLECTION GRID (Boutique Grid of curated categories)
-                                val uniqueCategories = currentState.items.map { it.category }.distinctBy { it.lowercase() }
+                                val mainCategories = listOf(
+                                    "Tişört",
+                                    "Gömlek",
+                                    "Kazak",
+                                    "Ceket",
+                                    "Pantolon",
+                                    "Takım",
+                                    "Aksesuar",
+                                    "Ayakkabı",
+                                    "Elbise",
+                                    "Etek"
+                                )
+                                
+                                val activeMainCategories = mainCategories.filter { mainCat ->
+                                    getItemsForMainCategory(currentState.items, mainCat).isNotEmpty()
+                                }
+                                
+                                val unmatchedCategories = currentState.items.map { it.category }
+                                    .distinctBy { it.lowercase() }
+                                    .filter { cat ->
+                                        mainCategories.none { mainCat -> 
+                                            val itemMatches = when (mainCat.lowercase()) {
+                                                "tişört" -> cat.lowercase().contains("tişört") || cat.lowercase().contains("tshirt") || cat.lowercase().contains("t-shirt")
+                                                "pantolon" -> cat.lowercase().contains("pantolon") || cat.lowercase().contains("jean")
+                                                "ceket" -> cat.lowercase().contains("ceket") || cat.lowercase().contains("mont") || cat.lowercase().contains("kaban")
+                                                "ayakkabı" -> cat.lowercase().contains("ayakkabı") || cat.lowercase().contains("sneaker") || cat.lowercase().contains("bot")
+                                                "takım" -> cat.lowercase().contains("takım")
+                                                "aksesuar" -> cat.lowercase().contains("aksesuar") || cat.lowercase().contains("gözlük") || cat.lowercase().contains("şapka") || cat.lowercase().contains("bere") || cat.lowercase().contains("saat") || cat.lowercase().contains("kemer")
+                                                else -> cat.lowercase().contains(mainCat.lowercase())
+                                            }
+                                            itemMatches
+                                        }
+                                    }
+                                
+                                val activeCategoriesForGrid = activeMainCategories + unmatchedCategories
                                 
                                 LazyVerticalGrid(
                                     columns = GridCells.Fixed(2),
@@ -282,34 +316,56 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                     verticalArrangement = Arrangement.spacedBy(16.dp),
                                     modifier = Modifier.fillMaxSize()
                                 ) {
-                                    items(uniqueCategories) { cat ->
+                                    items(activeCategoriesForGrid) { cat ->
                                         val img = getStockImageForCategory(cat)
-                                        val count = currentState.items.count { it.category.equals(cat, ignoreCase = true) }
+                                        val count = if (mainCategories.contains(cat)) {
+                                            getItemsForMainCategory(currentState.items, cat).size
+                                        } else {
+                                            currentState.items.count { it.category.equals(cat, ignoreCase = true) }
+                                        }
                                         CategoryCollectionCard(
                                             categoryName = cat,
                                             imageUrl = img,
                                             itemCount = count,
-                                            onClick = { selectedCategoryFilter = cat }
+                                            onClick = { 
+                                                selectedCategoryFilter = cat
+                                                selectedSubCategoryFilter = "Hepsi"
+                                            }
                                         )
                                     }
                                 }
                             } else {
                                 // 2. FILTERED INDIVIDUAL CLOTHING ITEMS VIEW
-                                val subCategories = when {
-                                    selectedCategoryFilter.lowercase().contains("pantolon") -> listOf("Hepsi", "Kot", "Kumaş", "Keten", "Deri")
-                                    selectedCategoryFilter.lowercase().contains("ceket") -> listOf("Hepsi", "Deri", "Kot", "Kumaş")
-                                    selectedCategoryFilter.lowercase().contains("gömlek") -> listOf("Hepsi", "Keten", "Kot", "Klasik")
-                                    selectedCategoryFilter.lowercase().contains("tişört") -> listOf("Hepsi", "Basic", "Oversize", "Polo")
+                                val mainCategories = listOf(
+                                    "Tişört",
+                                    "Gömlek",
+                                    "Kazak",
+                                    "Ceket",
+                                    "Pantolon",
+                                    "Takım",
+                                    "Aksesuar",
+                                    "Ayakkabı",
+                                    "Elbise",
+                                    "Etek"
+                                )
+                                
+                                val subCategories = when (selectedCategoryFilter) {
+                                    "Pantolon" -> listOf("Hepsi", "Kot", "Kumaş", "Keten", "Deri")
+                                    "Ceket" -> listOf("Hepsi", "Deri", "Kot", "Kumaş", "Kaban")
+                                    "Gömlek" -> listOf("Hepsi", "Keten", "Kot", "Klasik")
+                                    "Tişört" -> listOf("Hepsi", "Basic", "Oversize", "Polo")
+                                    "Takım" -> listOf("Hepsi", "Eşofman", "Blazer", "Takım Elbise")
+                                    "Aksesuar" -> listOf("Hepsi", "Gözlük", "Şapka", "Bere", "Saat", "Kemer")
+                                    "Ayakkabı" -> listOf("Hepsi", "Sneaker", "Klasik", "Bot")
                                     else -> emptyList()
                                 }
                                 
-                                val filteredItems = currentState.items
-                                    .filter { it.category.equals(selectedCategoryFilter, ignoreCase = true) || 
-                                              (selectedCategoryFilter == "Pantolon" && it.category.lowercase().contains("pantolon")) ||
-                                              (selectedCategoryFilter == "Ceket" && it.category.lowercase().contains("ceket")) ||
-                                              (selectedCategoryFilter == "Gömlek" && it.category.lowercase().contains("gömlek")) ||
-                                              (selectedCategoryFilter == "Tişört" && it.category.lowercase().contains("tişört")) }
-                                    .filter { isItemInSubCategory(it, selectedCategoryFilter, selectedSubCategoryFilter) }
+                                val baseItems = if (mainCategories.contains(selectedCategoryFilter)) {
+                                    getItemsForMainCategory(currentState.items, selectedCategoryFilter)
+                                } else {
+                                    currentState.items.filter { it.category.equals(selectedCategoryFilter, ignoreCase = true) }
+                                }
+                                val filteredItems = baseItems.filter { isItemInSubCategory(it, selectedCategoryFilter, selectedSubCategoryFilter) }
                                 
                                 Column(modifier = Modifier.fillMaxSize()) {
                                     // Gorgeous Back Navigation Button Row
@@ -340,7 +396,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                             }
                                         }
                                     }
-
+ 
                                     // Sub-category / Material selection horizontal chips
                                     if (subCategories.isNotEmpty()) {
                                         LazyRow(
@@ -388,7 +444,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                             verticalArrangement = Arrangement.spacedBy(16.dp),
                                             modifier = Modifier.fillMaxSize()
                                         ) {
-                                            items(filteredItems, key = { it.id }) { item ->
+                                            items(filteredItems) { item ->
                                                 WardrobeItemCard(
                                                     item = item,
                                                     onDeleteClick = { itemToDelete = item }
@@ -675,7 +731,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                         Column {
                             Text("Kategori", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                             Spacer(modifier = Modifier.height(12.dp))
-                            val categoryOptions = listOf("Tişört", "Gömlek", "Pantolon", "Ceket", "Ayakkabı", "Elbise", "Aksesuar", "Etek")
+                            val categoryOptions = listOf("Tişört", "Gömlek", "Pantolon", "Ceket", "Takım", "Aksesuar", "Ayakkabı", "Elbise", "Etek")
                             val allOptions = categoryOptions + "Özel"
                             
                             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -739,9 +795,12 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                             // Sub-category / Material Type selection row inside the editor modal
                             val availableSubTypes = when (inputCategory) {
                                 "Pantolon" -> listOf("Standart", "Kot", "Kumaş", "Keten", "Deri")
-                                "Ceket" -> listOf("Standart", "Deri", "Kot", "Kumaş")
+                                "Ceket" -> listOf("Standart", "Deri", "Kot", "Kumaş", "Kaban")
                                 "Gömlek" -> listOf("Standart", "Keten", "Kot", "Klasik")
                                 "Tişört" -> listOf("Standart", "Basic", "Oversize", "Polo")
+                                "Takım" -> listOf("Standart", "Eşofman", "Blazer", "Takım Elbise")
+                                "Aksesuar" -> listOf("Standart", "Gözlük", "Şapka", "Bere", "Saat", "Kemer")
+                                "Ayakkabı" -> listOf("Standart", "Sneaker", "Klasik", "Bot")
                                 else -> emptyList()
                             }
                             
@@ -968,20 +1027,39 @@ fun getStockImageForCategory(cat: String): String {
             "https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=600&auto=format&fit=crop"
         lower.contains("gömlek") -> 
             "https://images.unsplash.com/photo-1603252109303-2751441dd157?q=80&w=600&auto=format&fit=crop"
-        lower.contains("pantolon") -> 
+        lower.contains("pantolon") || lower.contains("jean") -> 
             "https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=600&auto=format&fit=crop"
-        lower.contains("ceket") || lower.contains("mont") -> 
+        lower.contains("ceket") || lower.contains("mont") || lower.contains("kaban") -> 
             "https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=600&auto=format&fit=crop"
-        lower.contains("ayakkabı") -> 
+        lower.contains("ayakkabı") || lower.contains("sneaker") || lower.contains("bot") -> 
             "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop"
+        lower.contains("takım") -> 
+            "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=600&auto=format&fit=crop"
+        lower.contains("aksesuar") || lower.contains("gözlük") || lower.contains("şapka") || lower.contains("bere") || lower.contains("saat") || lower.contains("kemer") -> 
+            "https://images.unsplash.com/photo-1509319117193-57bab727e09d?q=80&w=600&auto=format&fit=crop"
         lower.contains("elbise") -> 
             "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop"
         lower.contains("etek") -> 
             "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?q=80&w=600&auto=format&fit=crop"
-        lower.contains("aksesuar") -> 
-            "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600&auto=format&fit=crop"
         else -> 
             "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=600&auto=format&fit=crop"
+    }
+}
+
+// Map user wardrobe items to our static premium main categories safely
+fun getItemsForMainCategory(items: List<WardrobeItemDto>, mainCat: String): List<WardrobeItemDto> {
+    val lowerMain = mainCat.lowercase()
+    return items.filter { item ->
+        val itemCat = item.category.lowercase()
+        when (lowerMain) {
+            "tişört" -> itemCat.contains("tişört") || itemCat.contains("tshirt") || itemCat.contains("t-shirt")
+            "pantolon" -> itemCat.contains("pantolon") || itemCat.contains("jean")
+            "ceket" -> itemCat.contains("ceket") || itemCat.contains("mont") || itemCat.contains("kaban")
+            "ayakkabı" -> itemCat.contains("ayakkabı") || itemCat.contains("sneaker") || itemCat.contains("bot")
+            "takım" -> itemCat.contains("takım")
+            "aksesuar" -> itemCat.contains("aksesuar") || itemCat.contains("gözlük") || itemCat.contains("şapka") || itemCat.contains("bere") || itemCat.contains("saat") || itemCat.contains("kemer")
+            else -> itemCat.contains(lowerMain)
+        }
     }
 }
 
