@@ -2,8 +2,11 @@ package com.vesti.app.ui.marketplace
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -13,25 +16,31 @@ import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vesti.app.ui.theme.VestiColors
+import com.vesti.app.ui.wardrobe.WardrobeState
+import android.widget.Toast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailScreen(
     productId: String,
+    wardrobeViewModel: com.vesti.app.ui.wardrobe.WardrobeViewModel,
     onNavigateBack: () -> Unit,
     onNavigateToCheckout: (String, Float) -> Unit,
     onNavigateToChat: (String) -> Unit
@@ -39,6 +48,11 @@ fun ProductDetailScreen(
     val product = mockProducts.find { it.id == productId } ?: mockProducts.first()
     val mockPrice = product.price.replace(".", "").replace(" ₺", "").toFloatOrNull() ?: 0f
     val sellerId = "user_${product.sellerInitials.lowercase()}"
+
+    var showSwapSheet by remember { mutableStateOf(false) }
+    var selectedWardrobeItem by remember { mutableStateOf<com.vesti.app.data.network.WardrobeItemDto?>(null) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    var selectedWardrobeCategory by remember { mutableStateOf("Hepsi") }
 
     Scaffold(
         topBar = {
@@ -72,6 +86,7 @@ fun ProductDetailScreen(
                     ) {
                         Text("Sipariş Ver", fontWeight = FontWeight.Bold)
                     }
+                    
                     OutlinedButton(
                         onClick = { onNavigateToChat(sellerId) },
                         shape = RoundedCornerShape(12.dp),
@@ -83,16 +98,37 @@ fun ProductDetailScreen(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text("Mesaj At", color = VestiColors.TextMain, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
+
+                    // Highly interactive active/inactive Swap Button!
+                    val context = LocalContext.current
                     Button(
-                        onClick = { /* Takas Teklifi logic */ },
-                        colors = ButtonDefaults.buttonColors(containerColor = VestiColors.LightPurple),
+                        onClick = {
+                            if (product.isSwap) {
+                                showSwapSheet = true
+                            } else {
+                                Toast.makeText(context, "Bu ürün takasa uygun değil!", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (product.isSwap) VestiColors.Primary else Color(0xFFE5E7EB)
+                        ),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(1f).height(50.dp),
                         contentPadding = PaddingValues(0.dp)
                     ) {
-                        Icon(Icons.Default.SwapHoriz, contentDescription = "Takas", tint = VestiColors.Primary, modifier = Modifier.size(16.dp))
+                        Icon(
+                            imageVector = Icons.Default.SwapHoriz,
+                            contentDescription = "Takas",
+                            tint = if (product.isSwap) Color.White else Color.Gray,
+                            modifier = Modifier.size(16.dp)
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Takas", color = VestiColors.Primary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = "Takas",
+                            color = if (product.isSwap) Color.White else Color.Gray,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -242,5 +278,222 @@ fun ProductDetailScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
+    }
+
+    if (showSwapSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { 
+                showSwapSheet = false 
+                selectedWardrobeItem = null
+            },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            containerColor = Color.White,
+            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.7f)
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+            ) {
+                // Header Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Takas Teklifi Yap",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = VestiColors.TextMain
+                    )
+                    IconButton(onClick = {
+                        showSwapSheet = false
+                        selectedWardrobeItem = null
+                    }) {
+                        Icon(Icons.Default.Close, contentDescription = "Kapat", tint = Color.Gray)
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Takas etmek istediğin kıyafetini gardırobundan hızlıca seç:",
+                    color = Color.Gray,
+                    fontSize = 13.sp
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                val wardrobeState by wardrobeViewModel.state.collectAsStateWithLifecycle()
+                if (wardrobeState is WardrobeState.Success) {
+                    val wItems = (wardrobeState as WardrobeState.Success).items
+                    if (wItems.isEmpty()) {
+                        Text(
+                            text = "Gardırobunuzda henüz kıyafet yok. Takas yapmak için önce gardırobunuza kıyafet eklemelisiniz.",
+                            color = Color.Gray,
+                            fontSize = 13.sp,
+                            modifier = Modifier.padding(vertical = 16.dp)
+                        )
+                    } else {
+                        // Category Filters Row for wardrobe select inside swap
+                        val wardrobeCats = listOf("Hepsi", "Tişört", "Gömlek", "Kazak", "Ceket", "Pantolon", "Takım", "Aksesuar", "Ayakkabı")
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                        ) {
+                            items(wardrobeCats) { cat ->
+                                val isSelected = selectedWardrobeCategory == cat
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(if (isSelected) VestiColors.Primary.copy(alpha = 0.15f) else Color(0xFFF3F4F6))
+                                        .clickable { selectedWardrobeCategory = cat }
+                                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                                ) {
+                                    Text(
+                                        text = cat,
+                                        color = if (isSelected) VestiColors.Primary else Color.Gray,
+                                        fontSize = 11.sp,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+                        
+                        val filteredWItems = remember(wItems, selectedWardrobeCategory) {
+                            if (selectedWardrobeCategory == "Hepsi") wItems
+                            else wItems.filter { it.category.contains(selectedWardrobeCategory, ignoreCase = true) }
+                        }
+                        
+                        if (filteredWItems.isEmpty()) {
+                            Text(
+                                text = "Bu kategoride kıyafetiniz bulunmuyor.",
+                                color = Color.Gray,
+                                fontSize = 13.sp,
+                                modifier = Modifier.padding(vertical = 24.dp).align(Alignment.CenterHorizontally)
+                            )
+                        } else {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                modifier = Modifier.fillMaxWidth().weight(1f)
+                            ) {
+                                items(filteredWItems) { wItem ->
+                                    val isSelected = selectedWardrobeItem?.id == wItem.id
+                                    Card(
+                                        modifier = Modifier
+                                            .width(110.dp)
+                                            .height(150.dp)
+                                            .clickable { selectedWardrobeItem = wItem },
+                                        shape = RoundedCornerShape(16.dp),
+                                        border = if (isSelected) androidx.compose.foundation.BorderStroke(3.dp, VestiColors.Primary) else null,
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                                    ) {
+                                        Box(modifier = Modifier.fillMaxSize()) {
+                                            val fullUrl = if (wItem.imageUrl.startsWith("http")) wItem.imageUrl else "http://192.168.1.103:8080${wItem.imageUrl}"
+                                            AsyncImage(
+                                                model = ImageRequest.Builder(LocalContext.current)
+                                                    .data(fullUrl)
+                                                    .crossfade(true)
+                                                    .build(),
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier.fillMaxSize()
+                                            )
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .align(Alignment.BottomCenter)
+                                                    .background(Color.Black.copy(alpha = 0.6f))
+                                                    .padding(6.dp)
+                                            ) {
+                                                Text(
+                                                    text = wItem.category,
+                                                    color = Color.White,
+                                                    fontSize = 10.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                Button(
+                    onClick = {
+                        showSwapSheet = false
+                        showSuccessDialog = true
+                    },
+                    enabled = selectedWardrobeItem != null,
+                    colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                ) {
+                    Text(
+                        text = if (selectedWardrobeItem != null) "Takas Teklifini Gönder" else "Önce Kıyafet Seçin",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+        }
+    }
+
+    if (showSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = { 
+                showSuccessDialog = false 
+                selectedWardrobeItem = null
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = "Başarılı",
+                    tint = Color(0xFF10B981),
+                    modifier = Modifier.size(48.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Teklifin İletildi!",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = VestiColors.TextMain
+                )
+            },
+            text = {
+                Text(
+                    text = "${product.sellerName} teklifini inceleyip kısa süre içerisinde sana mesaj kutusu üzerinden dönüş yapacak.",
+                    color = Color.Gray,
+                    fontSize = 14.sp
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = { 
+                        showSuccessDialog = false 
+                        selectedWardrobeItem = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Tamam", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(20.dp)
+        )
     }
 }
