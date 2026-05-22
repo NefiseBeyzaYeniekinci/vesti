@@ -188,6 +188,25 @@ fun MarketplaceScreen(
     var inputSize by remember { mutableStateOf("M") }
     var inputCondition by remember { mutableStateOf("Yeni Gibi") }
 
+    var searchQuery by remember { mutableStateOf("") }
+    var activeChip by remember { mutableStateOf("Tümü") }
+    var selectedWardrobeCategory by remember { mutableStateOf("Hepsi") }
+
+    val filteredProducts = remember(searchQuery, activeChip) {
+        mockProducts.filter { product ->
+            val matchesSearch = product.title.contains(searchQuery, ignoreCase = true) ||
+                                product.brand.contains(searchQuery, ignoreCase = true)
+            val matchesFilter = when (activeChip) {
+                "Takas Edilebilir" -> product.isSwap
+                "Yeni Gibi" -> product.condition == "Yeni Gibi"
+                "Sıfır" -> product.condition == "Sıfır"
+                "Beden: M" -> product.size.contains("M")
+                else -> true
+            }
+            matchesSearch && matchesFilter
+        }
+    }
+
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
@@ -252,58 +271,63 @@ fun MarketplaceScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Search Bar
+            // Search Bar (Ultra-Modern Borderless Search Pill)
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
-                placeholder = { Text("Kıyafet, marka veya kategori ara...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Ara") },
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = { Text("Kıyafet, marka veya kategori ara...", color = Color.Gray, fontSize = 13.sp) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Ara", tint = Color.Gray, modifier = Modifier.size(20.dp)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(24.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.White,
-                    focusedContainerColor = Color.White
+                    focusedContainerColor = Color(0xFFF3F4F6),
+                    unfocusedContainerColor = Color(0xFFF3F4F6),
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent
                 ),
                 singleLine = true
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Filter Chips
+            // Filter Chips (Elegant Active-State Pills)
+            val filtersList = listOf("Tümü", "Takas Edilebilir", "Yeni Gibi", "Sıfır", "Beden: M")
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                item {
-                    AssistChip(
-                        onClick = { },
-                        label = { Text("Filtreler") },
-                        leadingIcon = { Icon(Icons.Default.FilterList, contentDescription = "Filtreler", modifier = Modifier.size(16.dp)) },
-                        colors = AssistChipDefaults.assistChipColors(containerColor = Color.White)
-                    )
+                items(filtersList) { filterOpt ->
+                    val isSelected = activeChip == filterOpt
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(if (isSelected) VestiColors.Primary.copy(alpha = 0.15f) else Color(0xFFF3F4F6))
+                            .clickable { activeChip = filterOpt }
+                            .padding(horizontal = 14.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = filterOpt,
+                            color = if (isSelected) VestiColors.Primary else Color.DarkGray,
+                            fontSize = 12.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                        )
+                    }
                 }
-                item { FilterChipItem("Cinsiyet", true) }
-                item { FilterChipItem("Ürün Tipi", false) }
-                item { FilterChipItem("Beden", false) }
-                item { FilterChipItem("Ücret", false) }
-                item { FilterChipItem("Konum", false) }
-                item { FilterChipItem("Satıcı Puanı", false) }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Grid of products
+            // Grid of products (Guaranteed 16.dp Right Margin!)
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp, bottom=100.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 100.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(mockProducts) { product ->
+                items(filteredProducts) { product ->
                     ProductCard(product) {
-                        // Dummy price conversion 1.250 -> 1250f
                         val p = product.price.replace(".", "").replace(" ₺", "").toFloatOrNull() ?: 0f
                         onNavigateToCheckout(product.id, p)
                     }
@@ -365,47 +389,81 @@ fun MarketplaceScreen(
                     if (wItems.isEmpty()) {
                         Text("Gardırobunuzda henüz kıyafet yok.", color = Color.Gray, fontSize = 12.sp, modifier = Modifier.padding(vertical = 8.dp))
                     } else {
+                        // Category Filters Row for wardrobe select
+                        val wardrobeCats = listOf("Hepsi", "Tişört", "Gömlek", "Kazak", "Ceket", "Pantolon", "Takım", "Aksesuar", "Ayakkabı")
                         LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            modifier = Modifier.fillMaxWidth()
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
                         ) {
-                            items(wItems) { wItem ->
-                                val isSelected = selectedWardrobeItem?.id == wItem.id
-                                Card(
+                            items(wardrobeCats) { cat ->
+                                val isSelected = selectedWardrobeCategory == cat
+                                Box(
                                     modifier = Modifier
-                                        .width(90.dp)
-                                        .height(120.dp)
-                                        .clickable {
-                                            selectedWardrobeItem = wItem
-                                            selectedImageUri = wItem.imageUrl
-                                            currentPhotoUri = null
-                                            inputTitle = "${wItem.color} ${wItem.category}"
-                                            inputBrand = wItem.brand ?: ""
-                                            inputSize = wItem.size ?: ""
-                                        },
-                                    shape = RoundedCornerShape(14.dp),
-                                    border = if (isSelected) androidx.compose.foundation.BorderStroke(3.dp, VestiColors.Primary) else null,
-                                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(if (isSelected) VestiColors.Primary.copy(alpha = 0.15f) else Color(0xFFF3F4F6))
+                                        .clickable { selectedWardrobeCategory = cat }
+                                        .padding(horizontal = 12.dp, vertical = 6.dp)
                                 ) {
-                                    Box(modifier = Modifier.fillMaxSize()) {
-                                        val fullUrl = if (wItem.imageUrl.startsWith("http")) wItem.imageUrl else "http://192.168.1.103:8080${wItem.imageUrl}"
-                                        AsyncImage(
-                                            model = ImageRequest.Builder(LocalContext.current)
-                                                .data(fullUrl)
-                                                .crossfade(true)
-                                                .build(),
-                                            contentDescription = null,
-                                            contentScale = ContentScale.Crop,
-                                            modifier = Modifier.fillMaxSize()
-                                        )
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .align(Alignment.BottomCenter)
-                                                .background(Color.Black.copy(alpha = 0.6f))
-                                                .padding(4.dp)
-                                        ) {
-                                            Text(wItem.category, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(
+                                        text = cat,
+                                        color = if (isSelected) VestiColors.Primary else Color.Gray,
+                                        fontSize = 11.sp,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    )
+                                }
+                            }
+                        }
+                        
+                        val filteredWItems = remember(wItems, selectedWardrobeCategory) {
+                            if (selectedWardrobeCategory == "Hepsi") wItems
+                            else wItems.filter { it.category.contains(selectedWardrobeCategory, ignoreCase = true) }
+                        }
+                        
+                        if (filteredWItems.isEmpty()) {
+                            Text("Bu kategoride kıyafetiniz bulunmuyor.", color = Color.Gray, fontSize = 12.sp, modifier = Modifier.padding(vertical = 12.dp))
+                        } else {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                items(filteredWItems) { wItem ->
+                                    val isSelected = selectedWardrobeItem?.id == wItem.id
+                                    Card(
+                                        modifier = Modifier
+                                            .width(90.dp)
+                                            .height(120.dp)
+                                            .clickable {
+                                                selectedWardrobeItem = wItem
+                                                selectedImageUri = wItem.imageUrl
+                                                currentPhotoUri = null
+                                                inputTitle = "${wItem.color} ${wItem.category}"
+                                                inputBrand = wItem.brand ?: ""
+                                                inputSize = wItem.size ?: ""
+                                            },
+                                        shape = RoundedCornerShape(14.dp),
+                                        border = if (isSelected) androidx.compose.foundation.BorderStroke(3.dp, VestiColors.Primary) else null,
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                                    ) {
+                                        Box(modifier = Modifier.fillMaxSize()) {
+                                            val fullUrl = if (wItem.imageUrl.startsWith("http")) wItem.imageUrl else "http://192.168.1.103:8080${wItem.imageUrl}"
+                                            AsyncImage(
+                                                model = ImageRequest.Builder(LocalContext.current)
+                                                    .data(fullUrl)
+                                                    .crossfade(true)
+                                                    .build(),
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier.fillMaxSize()
+                                            )
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .align(Alignment.BottomCenter)
+                                                    .background(Color.Black.copy(alpha = 0.6f))
+                                                    .padding(4.dp)
+                                            ) {
+                                                Text(wItem.category, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                            }
                                         }
                                     }
                                 }
