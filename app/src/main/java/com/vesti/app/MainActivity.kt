@@ -154,6 +154,7 @@ fun MainAppScreen(
         ) {
             composable("home") { 
                 com.vesti.app.ui.home.HomeScreen(
+                    wardrobeViewModel = wardrobeViewModel,
                     onNavigateToOutfit = { navController.navigate("outfit") },
                     onNavigateToWardrobe = { navController.navigate("wardrobe") },
                     onNavigateToMarket = { navController.navigate("marketplace") }

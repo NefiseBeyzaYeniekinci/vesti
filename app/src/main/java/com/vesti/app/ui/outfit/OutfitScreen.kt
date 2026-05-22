@@ -29,10 +29,23 @@ import android.annotation.SuppressLint
 fun OutfitScreen(viewModel: OutfitViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+    val locationPermissionState = rememberPermissionState(permission = Manifest.permission.ACCESS_COARSE_LOCATION)
+
     // Otomatik olarak ekran açıldığında bir öneri iste
-    LaunchedEffect(Unit) {
+    LaunchedEffect(locationPermissionState.status.isGranted) {
         if (state is OutfitState.Idle) {
-            viewModel.getRecommendation()
+            if (locationPermissionState.status.isGranted) {
+                fetchLocationAndRecommend(context, viewModel)
+            } else {
+                viewModel.getRecommendation()
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (!locationPermissionState.status.isGranted) {
+            locationPermissionState.launchPermissionRequest()
         }
     }
 
@@ -110,8 +123,8 @@ fun RecommendationItemCard(item: WardrobeItemDto) {
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Şimdilik wardrobe service ayağa kalkmadığı için fallback placeholder gösteriyoruz (mock data)
-            val fullImageUrl = "http://10.0.2.2:8081${item.imageUrl}"
+            // If it's a mock url from Unsplash, use it directly.
+            val fullImageUrl = if (item.imageUrl.startsWith("http")) item.imageUrl else "http://192.168.1.103:8080${item.imageUrl}"
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(fullImageUrl)

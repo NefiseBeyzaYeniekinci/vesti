@@ -13,12 +13,12 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
 
     // Kendi makinenizdeki backend'e ulaşmak için emulator üzerinden 10.0.2.2 kullanılır.
-    // Auth-service port is 8080, Wardrobe-service port is 8081, AI-service port is 8082, Marketplace-service port is 8083, Payment-service port is 8084
-    private const val AUTH_BASE_URL = "http://10.0.2.2:8080/"
-    private const val WARDROBE_BASE_URL = "http://10.0.2.2:8081/"
-    private const val AI_BASE_URL = "http://10.0.2.2:8082/"
-    private const val MARKETPLACE_BASE_URL = "http://10.0.2.2:8083/"
-    private const val PAYMENT_BASE_URL = "http://10.0.2.2:8084/"
+    // Ancak fiziksel cihazlar için bilgisayarınızın yerel Wi-Fi IP'si olan 192.168.1.103 kullanılır.
+    private const val AUTH_BASE_URL = "http://192.168.1.103:8080/"
+    private const val WARDROBE_BASE_URL = "http://192.168.1.103:8081/"
+    private const val AI_BASE_URL = "http://192.168.1.103:8082/"
+    private const val MARKETPLACE_BASE_URL = "http://192.168.1.103:8083/"
+    private const val PAYMENT_BASE_URL = "http://192.168.1.103:8084/"
     // OpenWeather API Base URL
     private const val WEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/"
     

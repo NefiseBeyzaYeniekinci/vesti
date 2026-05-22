@@ -1,5 +1,19 @@
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+
 package com.vesti.app.ui.marketplace
 
+import android.Manifest
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.vesti.app.ui.wardrobe.CameraHelper
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -37,7 +51,7 @@ data class MockProduct(
     val sellerInitials: String,
     val sellerName: String,
     val rating: String,
-    val imageColor: Color
+    val imageUrl: String
 )
 
 val mockProducts = listOf(
@@ -52,7 +66,7 @@ val mockProducts = listOf(
         sellerInitials = "AY",
         sellerName = "Ahmet Yılmaz",
         rating = "4.8",
-        imageColor = Color(0xFFD1D5DB)
+        imageUrl = "https://images.unsplash.com/photo-1551028719-00167b16eac5"
     ),
     MockProduct(
         id = "2",
@@ -65,7 +79,7 @@ val mockProducts = listOf(
         sellerInitials = "AK",
         sellerName = "Ayşe Kaya",
         rating = "5.0",
-        imageColor = Color(0xFFFBCFE8)
+        imageUrl = "https://images.unsplash.com/photo-1543163521-1bf539c55dd2"
     ),
     MockProduct(
         id = "3",
@@ -78,7 +92,72 @@ val mockProducts = listOf(
         sellerInitials = "MD",
         sellerName = "Mehmet Demir",
         rating = "4.5",
-        imageColor = Color(0xFFE5E7EB)
+        imageUrl = "https://images.unsplash.com/photo-1591047139829-d91aecb6caea"
+    ),
+    MockProduct(
+        id = "4",
+        title = "Levi's 501 Jean",
+        brand = "Levi's",
+        size = "Beden: 32",
+        price = "1.100 ₺",
+        condition = "Az Kullanılmış",
+        isSwap = true,
+        sellerInitials = "BK",
+        sellerName = "Burak Koç",
+        rating = "4.9",
+        imageUrl = "https://images.unsplash.com/photo-1542272604-787c3835535d"
+    ),
+    MockProduct(
+        id = "5",
+        title = "Polo Yaka Tişört",
+        brand = "Lacoste",
+        size = "Beden: L",
+        price = "650 ₺",
+        condition = "Yeni Gibi",
+        isSwap = false,
+        sellerInitials = "ED",
+        sellerName = "Elif Doğan",
+        rating = "4.7",
+        imageUrl = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"
+    ),
+    MockProduct(
+        id = "6",
+        title = "Siyah Mini Elbise",
+        brand = "Mango",
+        size = "Beden: S",
+        price = "900 ₺",
+        condition = "Kullanılmış",
+        isSwap = true,
+        sellerInitials = "ZA",
+        sellerName = "Zeynep Aslan",
+        rating = "4.6",
+        imageUrl = "https://images.unsplash.com/photo-1539008835657-9e8e9680c956"
+    ),
+    MockProduct(
+        id = "7",
+        title = "Güneş Gözlüğü",
+        brand = "Ray-Ban",
+        size = "Standart",
+        price = "2.100 ₺",
+        condition = "Sıfır",
+        isSwap = false,
+        sellerInitials = "CT",
+        sellerName = "Can Tekin",
+        rating = "5.0",
+        imageUrl = "https://images.unsplash.com/photo-1511499767150-a48a237f0083"
+    ),
+    MockProduct(
+        id = "8",
+        title = "Kışlık Şişme Mont",
+        brand = "The North Face",
+        size = "Beden: XL",
+        price = "4.500 ₺",
+        condition = "Yeni Gibi",
+        isSwap = false,
+        sellerInitials = "SO",
+        sellerName = "Selin Öz",
+        rating = "4.9",
+        imageUrl = "https://images.unsplash.com/photo-1559551409-dadc959f76b8"
     )
 )
 
@@ -89,6 +168,23 @@ fun MarketplaceScreen(
     onNavigateToCheckout: (String, Float) -> Unit,
     onNavigateToMessages: () -> Unit
 ) {
+    val context = LocalContext.current
+    var currentPhotoUri by remember { mutableStateOf<Uri?>(null) }
+    var showSellDialog by remember { mutableStateOf(false) }
+    var inputTitle by remember { mutableStateOf("") }
+    var inputPrice by remember { mutableStateOf("") }
+    var inputCondition by remember { mutableStateOf("Yeni Gibi") }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success && currentPhotoUri != null) {
+            showSellDialog = true
+        }
+    }
+
+    val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -107,7 +203,15 @@ fun MarketplaceScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* İlan Ver */ },
+                onClick = {
+                    if (cameraPermissionState.status.isGranted) {
+                        val (file, uri) = CameraHelper.createTempImageFile(context)
+                        currentPhotoUri = uri
+                        cameraLauncher.launch(uri)
+                    } else {
+                        cameraPermissionState.launchPermissionRequest()
+                    }
+                },
                 containerColor = VestiColors.Primary,
                 contentColor = Color.White
             ) {
@@ -189,6 +293,56 @@ fun MarketplaceScreen(
             }
         }
     }
+
+    if (showSellDialog) {
+        AlertDialog(
+            onDismissRequest = { showSellDialog = false },
+            title = { Text("Yeni İlan Ekle") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = inputTitle,
+                        onValueChange = { inputTitle = it },
+                        label = { Text("Ürün Başlığı (örn. Mavi Ceket)") },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = inputPrice,
+                        onValueChange = { inputPrice = it },
+                        label = { Text("Fiyat (₺)") },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = inputCondition,
+                        onValueChange = { inputCondition = it },
+                        label = { Text("Durum (örn. Yeni Gibi)") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    showSellDialog = false
+                    val title = if (inputTitle.isBlank()) "Yeni İlan" else inputTitle
+                    val price = if (inputPrice.isBlank()) "0" else inputPrice
+                    val cond = if (inputCondition.isBlank()) "Bilinmiyor" else inputCondition
+                    viewModel.createListing(title, price, cond, currentPhotoUri)
+                    
+                    // Reset
+                    inputTitle = ""
+                    inputPrice = ""
+                    inputCondition = "Yeni Gibi"
+                }) {
+                    Text("İlanı Ver")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showSellDialog = false }) {
+                    Text("İptal")
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -226,8 +380,16 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
-                    .background(product.imageColor)
             ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(product.imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = product.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
                 if (product.isSwap) {
                     Surface(
                         color = VestiColors.Primary,

@@ -22,6 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import androidx.compose.ui.platform.LocalContext
 import com.vesti.app.ui.theme.VestiColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,9 +36,9 @@ fun ProductDetailScreen(
     onNavigateToCheckout: (String, Float) -> Unit,
     onNavigateToChat: (String) -> Unit
 ) {
-    // Normally we would fetch the product using productId. For now, hardcode mock corresponding to "1"
-    val mockPrice = 1250f
-    val sellerId = "user_ayse_123"
+    val product = mockProducts.find { it.id == productId } ?: mockProducts.first()
+    val mockPrice = product.price.replace(".", "").replace(" ₺", "").toFloatOrNull() ?: 0f
+    val sellerId = "user_${product.sellerInitials.lowercase()}"
 
     Scaffold(
         topBar = {
@@ -107,14 +111,24 @@ fun ProductDetailScreen(
                     .height(300.dp)
                     .padding(16.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFD1D5DB))
             ) {
-                Surface(
-                    color = VestiColors.Primary,
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.padding(12.dp).align(Alignment.TopStart)
-                ) {
-                    Text("⇄ Takasa Uygun", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(product.imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = product.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+                if (product.isSwap) {
+                    Surface(
+                        color = VestiColors.Primary,
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.padding(12.dp).align(Alignment.TopStart)
+                    ) {
+                        Text("⇄ Takasa Uygun", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
+                    }
                 }
             }
 
@@ -124,13 +138,13 @@ fun ProductDetailScreen(
                         Text("DIŞ GİYİM", color = VestiColors.Primary, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
                     }
                     Surface(color = Color(0xFFF3F4F6), shape = RoundedCornerShape(4.dp)) {
-                        Text("Beden: M", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
+                        Text(product.size, color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
                     }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Vintage Deri Ceket", fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.TextMain)
-                Text("1.250 ₺", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.Primary)
+                Text(product.title, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.TextMain)
+                Text(product.price, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.Primary)
 
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -169,7 +183,7 @@ fun ProductDetailScreen(
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text("Marka", color = Color.Gray, fontSize = 12.sp)
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text("Vintage", color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text(product.brand, color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }
                     }
                     Surface(
@@ -180,7 +194,7 @@ fun ProductDetailScreen(
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text("Durumu", color = Color.Gray, fontSize = 12.sp)
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text("Kullanılmış", color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text(product.condition, color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }
                     }
                 }
@@ -201,14 +215,14 @@ fun ProductDetailScreen(
                                 .background(Color(0xFFE5E7EB)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("AY", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
+                            Text(product.sellerInitials, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
-                            Text("Ahmet Yılmaz", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = VestiColors.TextMain)
+                            Text(product.sellerName, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = VestiColors.TextMain)
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Star, contentDescription = "Puan", tint = Color(0xFFFFB300), modifier = Modifier.size(12.dp))
-                                Text("4.8  ·  İstanbul, TR", color = Color.Gray, fontSize = 12.sp)
+                                Text("${product.rating}  ·  İstanbul, TR", color = Color.Gray, fontSize = 12.sp)
                             }
                         }
                     }

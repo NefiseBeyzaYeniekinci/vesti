@@ -39,4 +39,26 @@ class MarketplaceViewModel(private val api: MarketplaceApi) : ViewModel() {
             }
         }
     }
+
+    fun createListing(title: String, price: String, condition: String, imageUri: android.net.Uri?) {
+        viewModelScope.launch {
+            try {
+                val request = com.vesti.app.data.network.CreateMarketplaceItemRequest(
+                    title = title,
+                    description = "Yeni ilan",
+                    price = price.toDoubleOrNull() ?: 0.0,
+                    imageUrl = imageUri?.toString() ?: "/dummy.jpg",
+                    category = "Uncategorized",
+                    size = "M",
+                    condition = condition
+                )
+                val response = api.createItem(request)
+                if (response.isSuccessful) {
+                    loadFeed()
+                }
+            } catch (e: Exception) {
+                // Ignore for now
+            }
+        }
+    }
 }

@@ -5,8 +5,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkModule {
     // For emulator testing, use 10.0.2.2 instead of localhost
-    // Real devices would use your computer's local IP or a deployed URL.
-    private const val BASE_URL = "http://10.0.2.2:8080/"
+    // Real devices use your computer's active local Wi-Fi IP (192.168.1.103)
+    private const val BASE_URL = "http://192.168.1.103:8080/"
 
     val retrofit: Retrofit by lazy {
         Retrofit.Builder()
