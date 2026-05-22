@@ -53,13 +53,14 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
         when (val currentState = state) {
             is OutfitState.Idle -> { }
             is OutfitState.Loading -> {
-                Column(
-                    modifier = Modifier.align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text("AI Gardırobunuzu inceliyor ve kombin hazırlıyor...")
+                    com.vesti.app.ui.wardrobe.HangerLoadingAnimation(
+                        title = "AI Kombin Hazırlıyor",
+                        subtitle = "Dijital gardırobunuz inceleniyor..."
+                    )
                 }
             }
             is OutfitState.Error -> {

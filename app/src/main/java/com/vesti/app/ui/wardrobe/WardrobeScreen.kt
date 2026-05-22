@@ -1221,7 +1221,10 @@ fun WardrobeItemCard(item: WardrobeItemDto, onDeleteClick: () -> Unit) {
 }
 
 @Composable
-fun HangerLoadingAnimation() {
+fun HangerLoadingAnimation(
+    title: String = "Kıyafetiniz Askıya Asılıyor",
+    subtitle: String = "Dijital Gardırop Düzenleniyor..."
+) {
     val infiniteTransition = rememberInfiniteTransition(label = "hanger")
     
     val scale by infiniteTransition.animateFloat(
@@ -1327,7 +1330,7 @@ fun HangerLoadingAnimation() {
         Spacer(modifier = Modifier.height(18.dp))
         
         Text(
-            text = "Kıyafetiniz Askıya Asılıyor",
+            text = title,
             color = VestiColors.TextMain,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -1336,7 +1339,7 @@ fun HangerLoadingAnimation() {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Dijital Gardırop Düzenleniyor...",
+            text = subtitle,
             color = Color.Gray,
             fontSize = 11.sp,
             textAlign = TextAlign.Center
