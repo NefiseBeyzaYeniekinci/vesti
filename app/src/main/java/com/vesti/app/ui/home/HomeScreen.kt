@@ -590,104 +590,102 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsDialog(
     onDismiss: () -> Unit,
     onNavigateToOutfit: () -> Unit,
     onNavigateToMarket: () -> Unit
 ) {
-    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
-        Card(
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = Color.White,
+        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(28.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                .fillMaxHeight(0.6f)
+                .padding(horizontal = 24.dp, vertical = 8.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
+            // Header with Title and Close Button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Header with Title and Close Button
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = null,
-                            tint = VestiColors.Primary,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Text(
-                            text = "Bildirimler",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
-                            color = VestiColors.TextMain
-                        )
-                    }
-                    
-                    // Elegant close button
-                    IconButton(
-                        onClick = onDismiss,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .background(Color(0xFFF3F4F6), CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Kapat",
-                            tint = Color.Gray,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = null,
+                        tint = VestiColors.Primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = "Bildirimler",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = VestiColors.TextMain
+                    )
                 }
                 
-                Spacer(modifier = Modifier.height(20.dp))
-                
-                // Notifications List
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxWidth()
+                // Elegant close button
+                IconButton(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .background(Color(0xFFF3F4F6), CircleShape)
                 ) {
-                    NotificationRow(
-                        title = "🤖 VesVes Güncellemesi",
-                        message = "VesVes stil asistanınız başarıyla güncellendi! Yepyeni stil ipuçlarını hemen denemek için Kombin sekmesine göz atın.",
-                        time = "10 dakika önce",
-                        isNew = true,
-                        onClick = {
-                            onDismiss()
-                            onNavigateToOutfit()
-                        }
-                    )
-                    NotificationRow(
-                        title = "💼 Bugünün Önerisi",
-                        message = "İstanbul'da hava sıcaklığı 24° ve güneşli! Dolabındaki keten gömlek tam bugün giymek için harika bir parça.",
-                        time = "2 saat önce",
-                        isNew = true,
-                        onClick = {
-                            onDismiss()
-                            onNavigateToOutfit()
-                        }
-                    )
-                    NotificationRow(
-                        title = "🛍️ Takas Teklifi",
-                        message = "Siyah Ceket ilanınıza @beyza kullanıcısından yeni bir takas teklifi geldi. Değerlendirmek için ilan detayına gidin.",
-                        time = "5 saat önce",
-                        isNew = false,
-                        onClick = {
-                            onDismiss()
-                            onNavigateToMarket()
-                        }
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Kapat",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(16.dp)
                     )
                 }
+            }
+            
+            Spacer(modifier = Modifier.height(20.dp))
+            
+            // Notifications List
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                NotificationRow(
+                    title = "🤖 VesVes Güncellemesi",
+                    message = "VesVes stil asistanınız başarıyla güncellendi! Yepyeni stil ipuçlarını hemen denemek için Kombin sekmesine göz atın.",
+                    time = "10 dakika önce",
+                    isNew = true,
+                    onClick = {
+                        onDismiss()
+                        onNavigateToOutfit()
+                    }
+                )
+                NotificationRow(
+                    title = "💼 Bugünün Önerisi",
+                    message = "İstanbul'da hava sıcaklığı 24° ve güneşli! Dolabındaki keten gömlek tam bugün giymek için harika bir parça.",
+                    time = "2 saat önce",
+                    isNew = true,
+                    onClick = {
+                        onDismiss()
+                        onNavigateToOutfit()
+                    }
+                )
+                NotificationRow(
+                    title = "🛍️ Takas Teklifi",
+                    message = "Siyah Ceket ilanıza @beyza kullanıcısından yeni bir takas teklifi geldi. Değerlendirmek için ilan detayına gidin.",
+                    time = "5 saat önce",
+                    isNew = false,
+                    onClick = {
+                        onDismiss()
+                        onNavigateToMarket()
+                    }
+                )
             }
         }
     }
