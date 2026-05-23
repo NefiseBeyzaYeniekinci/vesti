@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -579,7 +580,7 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = androidx.compose.material.icons.filled.AutoAwesome ?: Icons.Default.ChevronRight,
+                    imageVector = Icons.Default.Star,
                     contentDescription = null,
                     tint = VestiColors.Primary,
                     modifier = Modifier.size(30.dp)
