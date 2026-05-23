@@ -262,14 +262,7 @@ fun MarketplaceScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            Text(
-                text = "Kullanmadığın kıyafetleri sat veya yenileriyle takasla.",
-                color = Color.Gray,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Search Bar (Ultra-Modern Borderless Search Pill)
             OutlinedTextField(

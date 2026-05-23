@@ -39,10 +39,7 @@ fun ProfileScreen() {
             Column(modifier = Modifier.background(Color.White)) {
                 CenterAlignedTopAppBar(
                     title = {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Profil ve Ayarlar", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = VestiColors.DarkIndigo)
-                            Text("Kişisel bilgilerinizi ve hesap ayarlarınızı yönetin.", fontSize = 12.sp, color = Color.Gray)
-                        }
+                        Text("Profil ve Ayarlar", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = VestiColors.DarkIndigo)
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
                 )

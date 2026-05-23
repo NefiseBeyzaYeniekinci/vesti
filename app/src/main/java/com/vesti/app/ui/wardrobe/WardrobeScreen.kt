@@ -158,19 +158,6 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                val itemCount = when (val currentState = state) {
-                    is WardrobeState.Success -> {
-                        val filtered = if (selectedCategoryFilter == "Hepsi") currentState.items else currentState.items.filter { it.category.equals(selectedCategoryFilter, ignoreCase = true) }
-                        "${filtered.size} parça kıyafet listeleniyor"
-                    }
-                    else -> "Yükleniyor..."
-                }
-                Text(
-                    text = itemCount,
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
             }
             
             // Category Filter Tabs
