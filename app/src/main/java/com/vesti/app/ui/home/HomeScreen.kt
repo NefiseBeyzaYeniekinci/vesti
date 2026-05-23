@@ -409,24 +409,25 @@ fun HomeHeader() {
 
 @Composable
 fun WeatherCard() {
-    val greetingText = when (java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)) {
-        in 6..11 -> "GÜNAYDIN"
-        in 12..17 -> "İYİ GÜNLER"
-        in 18..22 -> "İYİ AKŞAMLAR"
-        else -> "İYİ GECELER"
-    }
-    
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF26264C)
+            containerColor = Color.Transparent
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            VestiColors.Primary,
+                            Color(0xFF9FA8DA)
+                        )
+                    )
+                )
                 .padding(horizontal = 24.dp, vertical = 28.dp)
         ) {
             Row(
@@ -437,8 +438,8 @@ fun WeatherCard() {
                 // Left text block (Sherlock styling)
                 Column(modifier = Modifier.weight(1.3f)) {
                     Text(
-                        text = "$greetingText, NEFİSE BEYZA",
-                        color = Color.White.copy(alpha = 0.5f),
+                        text = "BUGÜNÜN HAVA DURUMU",
+                        color = Color.White.copy(alpha = 0.7f),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.6.sp
@@ -461,8 +462,8 @@ fun WeatherCard() {
                     modifier = Modifier
                         .size(width = 110.dp, height = 80.dp)
                         .clip(RoundedCornerShape(20.dp))
-                        .background(Color.White.copy(alpha = 0.06f))
-                        .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(20.dp)),
+                        .background(Color.White.copy(alpha = 0.12f))
+                        .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(20.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
@@ -490,7 +491,7 @@ fun WeatherCard() {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "📍 İSTANBUL • GÜNEŞLİ",
-                            color = Color.White.copy(alpha = 0.6f),
+                            color = Color.White.copy(alpha = 0.8f),
                             fontSize = 8.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 0.5.sp
@@ -517,7 +518,7 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
             .fillMaxWidth()
             .height(165.dp),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Box(
@@ -526,8 +527,8 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
                 .background(
                     brush = Brush.linearGradient(
                         colors = listOf(
-                            VestiColors.DarkIndigo,
-                            Color(0xFF3F51B5)
+                            Color(0xFF7E57C2),
+                            Color(0xFF9575CD)
                         )
                     )
                 )
@@ -540,7 +541,7 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
             ) {
                 Text(
                     text = "BUGÜNÜN İLHAMI",
-                    color = VestiColors.Accent.copy(alpha = 0.9f),
+                    color = Color.White.copy(alpha = 0.7f),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 1.5.sp
@@ -571,7 +572,7 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
                 ) {
                     Text(
                         text = "Kombini Keşfet",
-                        color = VestiColors.DarkIndigo,
+                        color = Color(0xFF7E57C2),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -579,7 +580,7 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
                     Icon(
                         imageVector = Icons.Default.ChevronRight,
                         contentDescription = null,
-                        tint = VestiColors.DarkIndigo,
+                        tint = Color(0xFF7E57C2),
                         modifier = Modifier.size(14.dp)
                     )
                 }
