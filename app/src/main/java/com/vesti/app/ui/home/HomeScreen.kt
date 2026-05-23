@@ -339,6 +339,7 @@ fun HomeScreen(
 
 @Composable
 fun HomeHeader() {
+    val context = LocalContext.current
     val greeting = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
         in 6..11 -> "Günaydın"
         in 12..17 -> "Tünaydın"
@@ -378,7 +379,9 @@ fun HomeHeader() {
                     .clip(CircleShape)
                     .background(Color.White)
                     .border(1.dp, Color(0xFFF1F1F1), CircleShape)
-                    .clickable { /* Notifications click */ },
+                    .clickable {
+                        android.widget.Toast.makeText(context, "Henüz yeni bildiriminiz bulunmuyor. 🔔", android.widget.Toast.LENGTH_SHORT).show()
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -409,8 +412,15 @@ fun HomeHeader() {
 
 @Composable
 fun WeatherCard() {
+    val context = LocalContext.current
+    
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .clickable {
+                android.widget.Toast.makeText(context, "Güneşli havaya uygun kombin tavsiyeleri VesVes chatbotta hazır! 🌤️", android.widget.Toast.LENGTH_SHORT).show()
+            },
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
@@ -435,68 +445,52 @@ fun WeatherCard() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Left text block (Sherlock styling)
+                // Left text block (Dynamic style tip)
                 Column(modifier = Modifier.weight(1.3f)) {
                     Text(
-                        text = "BUGÜNÜN HAVA DURUMU",
-                        color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.6.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Bugün sana özel önerilerimiz burada.",
+                        text = "Bugün hava sıcak ve güneşli! İnce tişörtler ve keten pantolonlar giymek için harika bir gün. ☀️",
                         color = Color.White,
-                        fontSize = 21.sp,
+                        fontSize = 16.sp,
                         fontFamily = androidx.compose.ui.text.font.FontFamily.Serif,
                         fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                        lineHeight = 28.sp
+                        lineHeight = 22.sp
                     )
                 }
                 
                 Spacer(modifier = Modifier.width(16.dp))
                 
-                // Right weather widget block (Circular translucent overlay with temperature)
-                Box(
-                    modifier = Modifier
-                        .size(width = 110.dp, height = 80.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color.White.copy(alpha = 0.12f))
-                        .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(20.dp)),
-                    contentAlignment = Alignment.Center
+                // Right weather widget block (Clean hovering icons without boundary box)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(start = 4.dp)
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.WbSunny,
-                                contentDescription = null,
-                                tint = Color(0xFFFFF9C4),
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Text(
-                                text = "24°",
-                                color = Color.White,
-                                fontSize = 28.sp,
-                                fontFamily = androidx.compose.ui.text.font.FontFamily.Serif,
-                                fontWeight = FontWeight.Light
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.WbSunny,
+                            contentDescription = null,
+                            tint = Color(0xFFFFF9C4),
+                            modifier = Modifier.size(22.dp)
+                        )
                         Text(
-                            text = "📍 İSTANBUL • GÜNEŞLİ",
-                            color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 8.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.5.sp
+                            text = "24°",
+                            color = Color.White,
+                            fontSize = 30.sp,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Serif,
+                            fontWeight = FontWeight.Light
                         )
                     }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "İSTANBUL • GÜNEŞLİ",
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp
+                    )
                 }
             }
         }
@@ -505,33 +499,17 @@ fun WeatherCard() {
 
 @Composable
 fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
-    Text(
-        text = "Sana Özel",
-        color = VestiColors.TextMain,
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Bold,
-        letterSpacing = (-0.3).sp
-    )
-    Spacer(modifier = Modifier.height(14.dp))
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(165.dp),
+            .height(165.dp)
+            .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(24.dp)),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFF7E57C2),
-                            Color(0xFF9575CD)
-                        )
-                    )
-                )
+            modifier = Modifier.fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
@@ -541,7 +519,7 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
             ) {
                 Text(
                     text = "BUGÜNÜN İLHAMI",
-                    color = Color.White.copy(alpha = 0.7f),
+                    color = VestiColors.Primary,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 1.5.sp
@@ -549,14 +527,14 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "Zamansız Vintage Ruhu",
-                    color = Color.White,
+                    color = VestiColors.TextMain,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "Dolabındaki parçaları Retro esintilerle birleştirerek çaba gerektirmeyen şıklığı yakala.",
-                    color = Color.White.copy(alpha = 0.75f),
+                    color = Color.Gray,
                     fontSize = 12.sp,
                     lineHeight = 16.sp
                 )
@@ -565,14 +543,14 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
+                        .background(VestiColors.LightPurple)
                         .clickable { onNavigateToOutfit() }
                         .padding(horizontal = 14.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "Kombini Keşfet",
-                        color = Color(0xFF7E57C2),
+                        color = VestiColors.Primary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -580,7 +558,7 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
                     Icon(
                         imageVector = Icons.Default.ChevronRight,
                         contentDescription = null,
-                        tint = Color(0xFF7E57C2),
+                        tint = VestiColors.Primary,
                         modifier = Modifier.size(14.dp)
                     )
                 }
