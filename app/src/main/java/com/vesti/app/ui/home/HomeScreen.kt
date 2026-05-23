@@ -657,30 +657,78 @@ fun NotificationsDialog(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 NotificationRow(
-                    title = "🤖 VesVes Güncellemesi",
+                    title = "VesVes Güncellemesi",
                     message = "VesVes stil asistanınız başarıyla güncellendi! Yepyeni stil ipuçlarını hemen denemek için Kombin sekmesine göz atın.",
-                    time = "10 dakika önce",
+                    time = "10d",
                     isNew = true,
+                    avatarContent = {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(VestiColors.Primary.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "VV",
+                                color = VestiColors.Primary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                        }
+                    },
                     onClick = {
                         onDismiss()
                         onNavigateToOutfit()
                     }
                 )
                 NotificationRow(
-                    title = "💼 Bugünün Önerisi",
+                    title = "Bugünün Önerisi",
                     message = "İstanbul'da hava sıcaklığı 24° ve güneşli! Dolabındaki keten gömlek tam bugün giymek için harika bir parça.",
-                    time = "2 saat önce",
+                    time = "2sa",
                     isNew = true,
+                    avatarContent = {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFFFF9C4)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = null,
+                                tint = Color(0xFFFBC02D),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    },
                     onClick = {
                         onDismiss()
                         onNavigateToOutfit()
                     }
                 )
                 NotificationRow(
-                    title = "🛍️ Takas Teklifi",
+                    title = "Takas Teklifi",
                     message = "Siyah Ceket ilanıza @beyza kullanıcısından yeni bir takas teklifi geldi. Değerlendirmek için ilan detayına gidin.",
-                    time = "5 saat önce",
+                    time = "5sa",
                     isNew = false,
+                    avatarContent = {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFE0F2F1)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "BY",
+                                color = Color(0xFF00796B),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                        }
+                    },
                     onClick = {
                         onDismiss()
                         onNavigateToMarket()
@@ -697,17 +745,23 @@ fun NotificationRow(
     message: String,
     time: String,
     isNew: Boolean,
+    avatarContent: @Composable () -> Unit,
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(if (isNew) VestiColors.LightPurple.copy(alpha = 0.5f) else Color(0xFFF9FAFB))
+            .background(if (isNew) VestiColors.LightPurple.copy(alpha = 0.4f) else Color(0xFFF9FAFB))
             .clickable { onClick() }
             .padding(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Avatar on the left
+        avatarContent()
+        
+        // Content on the right
         Column(modifier = Modifier.weight(1f)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -720,13 +774,24 @@ fun NotificationRow(
                     fontSize = 13.sp,
                     color = VestiColors.TextMain
                 )
-                if (isNew) {
-                    Box(
-                        modifier = Modifier
-                            .size(6.dp)
-                            .clip(CircleShape)
-                            .background(VestiColors.Primary)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = time,
+                        color = Color.Gray,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Normal
                     )
+                    if (isNew) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(VestiColors.Primary)
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -734,14 +799,9 @@ fun NotificationRow(
                 text = message,
                 color = Color.Gray,
                 fontSize = 11.sp,
-                lineHeight = 15.sp
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = time,
-                color = Color.LightGray,
-                fontSize = 9.sp,
-                fontWeight = FontWeight.Medium
+                lineHeight = 15.sp,
+                maxLines = 2,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )
         }
     }
