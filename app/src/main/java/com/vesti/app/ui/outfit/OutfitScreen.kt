@@ -64,7 +64,7 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
 
     val chatMessages = remember {
         mutableStateListOf<ChatMessage>(
-            ChatMessage("1", "Merhaba! Ben Vesti AI Stil Asistanın. Bugün sana tarzın, gardırobundaki kıyafetler veya kombin önerileri hakkında nasıl yardımcı olabilirim? 🤖✨", false, "09:00")
+            ChatMessage("1", "Merhaba! Ben VesVes. Bugün sana tarzın, gardırobundaki kıyafetler veya kombin önerileri hakkında nasıl yardımcı olabilirim? 🤖✨", false, "09:00")
         )
     }
     
@@ -137,53 +137,28 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
             .fillMaxSize()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        // Chatbot Header with modern glowing Vesti avatar
-        Card(
+        // Centered high-fashion minimalist title header for VesVes
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                .padding(vertical = 10.dp, horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
+            Text(
+                text = "VesVes",
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 28.sp,
+                color = VestiColors.TextMain,
+                letterSpacing = (-0.8).sp
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            // Minimal glowing online green dot
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(VestiColors.LightPurple),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AutoAwesome,
-                        contentDescription = null,
-                        tint = VestiColors.Primary,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-                
-                Spacer(modifier = Modifier.width(12.dp))
-                
-                Column {
-                    Text(
-                        text = "Vesti AI Stil Asistanı",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        color = VestiColors.TextMain
-                    )
-                    Text(
-                        text = "Çevrimiçi • Kişisel Moda Danışmanı",
-                        fontSize = 10.sp,
-                        color = Color.Gray,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
+                    .size(8.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF4CAF50))
+            )
         }
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -249,7 +224,7 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Vesti AI Asistanı",
+                                text = "VesVes",
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = VestiColors.Primary
@@ -340,7 +315,7 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Vesti AI yazıyor",
+                                    text = "VesVes yazıyor",
                                     color = Color.Gray,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium
@@ -370,7 +345,7 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
             OutlinedTextField(
                 value = chatInputText,
                 onValueChange = { chatInputText = it },
-                placeholder = { Text("Asistana tarzını sor...", fontSize = 13.sp) },
+                placeholder = { Text("VesVes'e tarzını sor...", fontSize = 13.sp) },
                 modifier = Modifier.weight(1f),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = VestiColors.Primary,
