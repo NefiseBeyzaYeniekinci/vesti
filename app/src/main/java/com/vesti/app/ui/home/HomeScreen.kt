@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -340,7 +341,11 @@ fun HomeScreen(
         }
 
         if (showNotificationsDialog) {
-            NotificationsDialog(onDismiss = { showNotificationsDialog = false })
+            NotificationsDialog(
+                onDismiss = { showNotificationsDialog = false },
+                onNavigateToOutfit = onNavigateToOutfit,
+                onNavigateToMarket = onNavigateToMarket
+            )
         }
     }
 }
@@ -507,89 +512,179 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(180.dp),
+            .clickable { onNavigateToOutfit() }
+            .border(1.dp, Color(0xFFF1F1F1), RoundedCornerShape(24.dp)),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Background lifestyle fashion image
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://images.unsplash.com/photo-1540221158011-893b415b7b32?q=80&w=600")
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-            
-            // Rich vertical overlay gradient for maximum text clarity
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Black.copy(alpha = 0.2f),
-                                Color.Black.copy(alpha = 0.85f)
-                            )
-                        )
-                    )
-            )
-            
-            Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.Bottom
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "BUGÜNÜN İLHAMI",
-                    color = Color(0xFFEDE7F6),
-                    fontSize = 10.sp,
+                    color = VestiColors.Primary,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 1.8.sp
+                    letterSpacing = 1.5.sp
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "Zamansız Vintage Ruhu",
-                    color = Color.White,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.5).sp
+                    color = VestiColors.TextMain,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "Dolabındaki parçaları Retro esintilerle birleştirerek çaba gerektirmeyen şıklığı yakala.",
-                    color = Color.White.copy(alpha = 0.8f),
-                    fontSize = 11.sp,
-                    lineHeight = 15.sp
+                    color = Color.Gray,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
-                        .clickable { onNavigateToOutfit() }
-                        .padding(horizontal = 14.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "Kombini Keşfet",
-                        color = Color.Black,
-                        fontSize = 11.sp,
+                        color = VestiColors.Primary,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         imageVector = Icons.Default.ChevronRight,
                         contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(12.dp)
+                        tint = VestiColors.Primary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            // Premium circular fashion icon container on the right
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(VestiColors.LightPurple),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = androidx.compose.material.icons.filled.AutoAwesome ?: Icons.Default.ChevronRight,
+                    contentDescription = null,
+                    tint = VestiColors.Primary,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun NotificationsDialog(
+    onDismiss: () -> Unit,
+    onNavigateToOutfit: () -> Unit,
+    onNavigateToMarket: () -> Unit
+) {
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(28.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+            ) {
+                // Header with Title and Close Button
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = null,
+                            tint = VestiColors.Primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = "Bildirimler",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = VestiColors.TextMain
+                        )
+                    }
+                    
+                    // Elegant close button
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(Color(0xFFF3F4F6), CircleShape)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Kapat",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(20.dp))
+                
+                // Notifications List
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    NotificationRow(
+                        title = "🤖 VesVes Güncellemesi",
+                        message = "VesVes stil asistanınız başarıyla güncellendi! Yepyeni stil ipuçlarını hemen denemek için Kombin sekmesine göz atın.",
+                        time = "10 dakika önce",
+                        isNew = true,
+                        onClick = {
+                            onDismiss()
+                            onNavigateToOutfit()
+                        }
+                    )
+                    NotificationRow(
+                        title = "💼 Bugünün Önerisi",
+                        message = "İstanbul'da hava sıcaklığı 24° ve güneşli! Dolabındaki keten gömlek tam bugün giymek için harika bir parça.",
+                        time = "2 saat önce",
+                        isNew = true,
+                        onClick = {
+                            onDismiss()
+                            onNavigateToOutfit()
+                        }
+                    )
+                    NotificationRow(
+                        title = "🛍️ Takas Teklifi",
+                        message = "Siyah Ceket ilanınıza @beyza kullanıcısından yeni bir takas teklifi geldi. Değerlendirmek için ilan detayına gidin.",
+                        time = "5 saat önce",
+                        isNew = false,
+                        onClick = {
+                            onDismiss()
+                            onNavigateToMarket()
+                        }
                     )
                 }
             }
@@ -598,74 +693,19 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
 }
 
 @Composable
-fun NotificationsDialog(onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            Button(
-                onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text("Kapat", color = Color.White, fontWeight = FontWeight.Bold)
-            }
-        },
-        title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = null,
-                    tint = VestiColors.Primary,
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(
-                    text = "Bildirimler",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = VestiColors.TextMain
-                )
-            }
-        },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-            ) {
-                NotificationRow(
-                    title = "🤖 VesVes Güncellemesi",
-                    message = "VesVes stil asistanınız başarıyla güncellendi! Yepyeni stil ipuçlarını hemen denemek için Kombin sekmesine göz atın.",
-                    time = "10 dakika önce",
-                    isNew = true
-                )
-                NotificationRow(
-                    title = "💼 Bugünün Önerisi",
-                    message = "İstanbul'da hava sıcaklığı 24° ve güneşli! Dolabındaki keten gömlek tam bugün giymek için harika bir parça.",
-                    time = "2 saat önce",
-                    isNew = true
-                )
-                NotificationRow(
-                    title = "🛍️ Takas Teklifi",
-                    message = "Siyah Ceket ilanıza @beyza kullanıcısından yeni bir takas teklifi geldi. Değerlendirmek için ilan detayına gidin.",
-                    time = "5 saat önce",
-                    isNew = false
-                )
-            }
-        },
-        shape = RoundedCornerShape(24.dp),
-        containerColor = Color.White
-    )
-}
-
-@Composable
-fun NotificationRow(title: String, message: String, time: String, isNew: Boolean) {
+fun NotificationRow(
+    title: String,
+    message: String,
+    time: String,
+    isNew: Boolean,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(if (isNew) VestiColors.LightPurple.copy(alpha = 0.5f) else Color(0xFFF9FAFB))
+            .clickable { onClick() }
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
