@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.ui.graphics.Brush
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vesti.app.ui.wardrobe.WardrobeState
@@ -192,18 +193,42 @@ fun MarketplaceScreen(
     var activeChip by remember { mutableStateOf("Tümü") }
     var selectedWardrobeCategory by remember { mutableStateOf("Hepsi") }
 
-    val filteredProducts = remember(searchQuery, activeChip) {
+    var showFilterDialog by remember { mutableStateOf(false) }
+
+    // Advanced Filter states
+    var filterSize by remember { mutableStateOf("Hepsi") }
+    var filterBrand by remember { mutableStateOf("Hepsi") }
+    var filterCondition by remember { mutableStateOf("Hepsi") }
+    var filterTradeable by remember { mutableStateOf<Boolean?>(null) }
+    var filterPriceMin by remember { mutableStateOf("") }
+    var filterPriceMax by remember { mutableStateOf("") }
+
+    val filteredProducts = remember(
+        searchQuery, activeChip, filterSize, filterBrand, filterCondition, filterTradeable, filterPriceMin, filterPriceMax
+    ) {
         mockProducts.filter { product ->
             val matchesSearch = product.title.contains(searchQuery, ignoreCase = true) ||
                                 product.brand.contains(searchQuery, ignoreCase = true)
-            val matchesFilter = when (activeChip) {
+            
+            // Standard quick filter chips (matches activeChip)
+            val matchesQuickChip = when (activeChip) {
                 "Takas Edilebilir" -> product.isSwap
                 "Yeni Gibi" -> product.condition == "Yeni Gibi"
                 "Sıfır" -> product.condition == "Sıfır"
-                "Beden: M" -> product.size.contains("M")
                 else -> true
             }
-            matchesSearch && matchesFilter
+
+            // Advanced Filters
+            val matchesSize = filterSize == "Hepsi" || product.size.contains(filterSize, ignoreCase = true)
+            val matchesBrand = filterBrand == "Hepsi" || product.brand.equals(filterBrand, ignoreCase = true)
+            val matchesCondition = filterCondition == "Hepsi" || product.condition.equals(filterCondition, ignoreCase = true)
+            val matchesTradeable = filterTradeable == null || product.isSwap == filterTradeable
+            
+            val priceVal = product.price.replace(".", "").replace(" ₺", "").toFloatOrNull() ?: 0f
+            val matchesPriceMin = filterPriceMin.isEmpty() || (filterPriceMin.toFloatOrNull() ?: 0f) <= priceVal
+            val matchesPriceMax = filterPriceMax.isEmpty() || (filterPriceMax.toFloatOrNull() ?: Float.MAX_VALUE) >= priceVal
+
+            matchesSearch && matchesQuickChip && matchesSize && matchesBrand && matchesCondition && matchesTradeable && matchesPriceMin && matchesPriceMax
         }
     }
 
@@ -286,26 +311,45 @@ fun MarketplaceScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Filter Chips (Elegant Active-State Pills)
-            val filtersList = listOf("Tümü", "Takas Edilebilir", "Yeni Gibi", "Sıfır", "Beden: M")
+            val filtersList = listOf("Filtrele", "Takas Edilebilir", "Yeni Gibi", "Sıfır")
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(filtersList) { filterOpt ->
-                    val isSelected = activeChip == filterOpt
+                    val isSelected = activeChip == filterOpt || (filterOpt == "Filtrele" && (filterSize != "Hepsi" || filterBrand != "Hepsi" || filterCondition != "Hepsi" || filterTradeable != null || filterPriceMin.isNotEmpty() || filterPriceMax.isNotEmpty()))
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
                             .background(if (isSelected) VestiColors.Primary.copy(alpha = 0.15f) else Color(0xFFF3F4F6))
-                            .clickable { activeChip = filterOpt }
+                            .clickable {
+                                if (filterOpt == "Filtrele") {
+                                    showFilterDialog = true
+                                } else {
+                                    activeChip = filterOpt
+                                }
+                            }
                             .padding(horizontal = 14.dp, vertical = 8.dp)
                     ) {
-                        Text(
-                            text = filterOpt,
-                            color = if (isSelected) VestiColors.Primary else Color.DarkGray,
-                            fontSize = 12.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            if (filterOpt == "Filtrele") {
+                                Icon(
+                                    imageVector = Icons.Default.Tune,
+                                    contentDescription = null,
+                                    tint = if (isSelected) VestiColors.Primary else Color.DarkGray,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                            Text(
+                                text = filterOpt,
+                                color = if (isSelected) VestiColors.Primary else Color.DarkGray,
+                                fontSize = 12.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                            )
+                        }
                     }
                 }
             }
@@ -325,6 +369,216 @@ fun MarketplaceScreen(
                         onNavigateToCheckout(product.id, p)
                     }
                 }
+            }
+        }
+    }
+
+    if (showFilterDialog) {
+        ModalBottomSheet(
+            onDismissRequest = { showFilterDialog = false },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            containerColor = Color.White,
+            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.85f)
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // Header Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Detaylı Filtreleme",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 22.sp,
+                        color = VestiColors.DarkIndigo
+                    )
+                    IconButton(onClick = { showFilterDialog = false }) {
+                        Icon(Icons.Default.Close, contentDescription = "Kapat", tint = Color.Gray)
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 1. Brand (Marka) Filter
+                Text("Marka", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                val brandOptions = listOf("Hepsi", "Vintage", "Nike", "Zara", "Levi's", "Lacoste", "Mango", "Ray-Ban", "The North Face")
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(brandOptions) { opt ->
+                        val isSelected = filterBrand == opt
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(if (isSelected) VestiColors.Primary else Color(0xFFF3F4F6))
+                                .clickable { filterBrand = opt }
+                                .padding(horizontal = 14.dp, vertical = 8.dp)
+                        ) {
+                            Text(opt, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 2. Size (Beden) Filter
+                Text("Beden", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                val sizeOptions = listOf("Hepsi", "S", "M", "L", "XL", "32", "42")
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(sizeOptions) { opt ->
+                        val isSelected = filterSize == opt
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(if (isSelected) VestiColors.Primary else Color(0xFFF3F4F6))
+                                .clickable { filterSize = opt }
+                                .padding(horizontal = 14.dp, vertical = 8.dp)
+                        ) {
+                            Text(opt, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 3. Tradeability (Takas Edilebilirlik) Filter
+                Text("İlan Türü (Takas Edilebilirlik)", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val swapOptions = listOf(
+                        Triple("Tümü", null, "Hepsi"),
+                        Triple("Takas Edilebilir", true, "Takas"),
+                        Triple("Sadece Satılık", false, "Satış")
+                    )
+                    swapOptions.forEach { (label, value, short) ->
+                        val isSelected = filterTradeable == value
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(if (isSelected) VestiColors.Primary else Color(0xFFF3F4F6))
+                                .clickable { filterTradeable = value }
+                                .padding(vertical = 10.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(label, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 4. Condition (Kullanılma Derecesi) Filter
+                Text("Kullanım Derecesi", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                val conditionOptions = listOf("Hepsi", "Sıfır", "Yeni Gibi", "Az Kullanılmış", "Kullanılmış")
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(conditionOptions) { opt ->
+                        val isSelected = filterCondition == opt
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(if (isSelected) VestiColors.Primary else Color(0xFFF3F4F6))
+                                .clickable { filterCondition = opt }
+                                .padding(horizontal = 14.dp, vertical = 8.dp)
+                        ) {
+                            Text(opt, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 5. Price Range (Fiyat Aralığı) Filter
+                Text("Fiyat Aralığı", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = filterPriceMin,
+                        onValueChange = { filterPriceMin = it },
+                        placeholder = { Text("En Az", color = Color.Gray, fontSize = 12.sp) },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = Color(0xFFF9FAFB),
+                            focusedContainerColor = Color.White,
+                            unfocusedBorderColor = Color(0xFFE5E7EB),
+                            focusedBorderColor = VestiColors.Primary
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    
+                    Text("—", color = Color.Gray, fontWeight = FontWeight.Bold)
+                    
+                    OutlinedTextField(
+                        value = filterPriceMax,
+                        onValueChange = { filterPriceMax = it },
+                        placeholder = { Text("En Çok", color = Color.Gray, fontSize = 12.sp) },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = Color(0xFFF9FAFB),
+                            focusedContainerColor = Color.White,
+                            unfocusedBorderColor = Color(0xFFE5E7EB),
+                            focusedBorderColor = VestiColors.Primary
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Action Buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            filterBrand = "Hepsi"
+                            filterSize = "Hepsi"
+                            filterCondition = "Hepsi"
+                            filterTradeable = null
+                            filterPriceMin = ""
+                            filterPriceMax = ""
+                            activeChip = "Tümü"
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.DarkGray)
+                    ) {
+                        Text("Temizle", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    }
+
+                    Button(
+                        onClick = { showFilterDialog = false },
+                        modifier = Modifier
+                            .weight(1.5f)
+                            .height(50.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary)
+                    ) {
+                        Text("Sonuçları Uygula", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(40.dp))
             }
         }
     }
