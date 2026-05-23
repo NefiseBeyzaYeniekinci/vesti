@@ -16,6 +16,9 @@ import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +45,7 @@ fun HomeScreen(
     onNavigateToMarket: () -> Unit
 ) {
     val wardrobeState by wardrobeViewModel.state.collectAsStateWithLifecycle()
-    var showNotificationsDialog by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    var showNotificationsDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
