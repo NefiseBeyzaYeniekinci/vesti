@@ -42,6 +42,7 @@ fun HomeScreen(
     onNavigateToMarket: () -> Unit
 ) {
     val wardrobeState by wardrobeViewModel.state.collectAsStateWithLifecycle()
+    var showNotificationsDialog by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -56,7 +57,7 @@ fun HomeScreen(
             contentPadding = PaddingValues(bottom = 90.dp)
         ) {
             item {
-                HomeHeader()
+                HomeHeader(onNotificationsClick = { showNotificationsDialog = true })
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
@@ -334,12 +335,15 @@ fun HomeScreen(
                 DailyRecommendationCard(onNavigateToOutfit = onNavigateToOutfit)
             }
         }
+
+        if (showNotificationsDialog) {
+            NotificationsDialog(onDismiss = { showNotificationsDialog = false })
+        }
     }
 }
 
 @Composable
-fun HomeHeader() {
-    val context = LocalContext.current
+fun HomeHeader(onNotificationsClick: () -> Unit) {
     val greeting = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
         in 6..11 -> "Günaydın"
         in 12..17 -> "Tünaydın"
@@ -379,9 +383,7 @@ fun HomeHeader() {
                     .clip(CircleShape)
                     .background(Color.White)
                     .border(1.dp, Color(0xFFF1F1F1), CircleShape)
-                    .clickable {
-                        android.widget.Toast.makeText(context, "Henüz yeni bildiriminiz bulunmuyor. 🔔", android.widget.Toast.LENGTH_SHORT).show()
-                    },
+                    .clickable { onNotificationsClick() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -502,67 +504,203 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(165.dp)
-            .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(24.dp)),
+            .height(180.dp),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
+            // Background lifestyle fashion image
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data("https://images.unsplash.com/photo-1540221158011-893b415b7b32?q=80&w=600")
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            
+            // Rich vertical overlay gradient for maximum text clarity
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Black.copy(alpha = 0.2f),
+                                Color.Black.copy(alpha = 0.85f)
+                            )
+                        )
+                    )
+            )
+            
             Column(
                 modifier = Modifier
                     .padding(20.dp)
                     .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = "BUGÜNÜN İLHAMI",
-                    color = VestiColors.Primary,
-                    fontSize = 11.sp,
+                    color = Color(0xFFEDE7F6),
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 1.5.sp
+                    letterSpacing = 1.8.sp
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Zamansız Vintage Ruhu",
-                    color = VestiColors.TextMain,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    color = Color.White,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = (-0.5).sp
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Dolabındaki parçaları Retro esintilerle birleştirerek çaba gerektirmeyen şıklığı yakala.",
-                    color = Color.Gray,
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp
+                    color = Color.White.copy(alpha = 0.8f),
+                    fontSize = 11.sp,
+                    lineHeight = 15.sp
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(VestiColors.LightPurple)
+                        .background(Color.White)
                         .clickable { onNavigateToOutfit() }
                         .padding(horizontal = 14.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "Kombini Keşfet",
-                        color = VestiColors.Primary,
-                        fontSize = 12.sp,
+                        color = Color.Black,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         imageVector = Icons.Default.ChevronRight,
                         contentDescription = null,
-                        tint = VestiColors.Primary,
-                        modifier = Modifier.size(14.dp)
+                        tint = Color.Black,
+                        modifier = Modifier.size(12.dp)
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun NotificationsDialog(onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Kapat", color = Color.White, fontWeight = FontWeight.Bold)
+            }
+        },
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = null,
+                    tint = VestiColors.Primary,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = "Bildirimler",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = VestiColors.TextMain
+                )
+            }
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+            ) {
+                NotificationRow(
+                    title = "🤖 VesVes Güncellemesi",
+                    message = "VesVes stil asistanınız başarıyla güncellendi! Yepyeni stil ipuçlarını hemen denemek için Kombin sekmesine göz atın.",
+                    time = "10 dakika önce",
+                    isNew = true
+                )
+                NotificationRow(
+                    title = "💼 Bugünün Önerisi",
+                    message = "İstanbul'da hava sıcaklığı 24° ve güneşli! Dolabındaki keten gömlek tam bugün giymek için harika bir parça.",
+                    time = "2 saat önce",
+                    isNew = true
+                )
+                NotificationRow(
+                    title = "🛍️ Takas Teklifi",
+                    message = "Siyah Ceket ilanıza @beyza kullanıcısından yeni bir takas teklifi geldi. Değerlendirmek için ilan detayına gidin.",
+                    time = "5 saat önce",
+                    isNew = false
+                )
+            }
+        },
+        shape = RoundedCornerShape(24.dp),
+        containerColor = Color.White
+    )
+}
+
+@Composable
+fun NotificationRow(title: String, message: String, time: String, isNew: Boolean) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(if (isNew) VestiColors.LightPurple.copy(alpha = 0.5f) else Color(0xFFF9FAFB))
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp,
+                    color = VestiColors.TextMain
+                )
+                if (isNew) {
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(VestiColors.Primary)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = message,
+                color = Color.Gray,
+                fontSize = 11.sp,
+                lineHeight = 15.sp
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = time,
+                color = Color.LightGray,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
