@@ -7,6 +7,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -156,15 +158,14 @@ fun LoginScreen(
                 val height = size.height
 
                 // Spotlight coordinates matched to programmatically drawn lamp
-                val startX = width * 0.16f
+                val startX = width * 0.23f
                 val startY = height * 0.24f
 
                 val conePath = Path().apply {
                     moveTo(startX, startY)
-                    // Projects diagonally downwards and right to illuminate the card
-                    lineTo(width * 0.28f, height)
-                    lineTo(width, height * 0.95f)
-                    lineTo(width, height * 0.32f)
+                    // Projects downwards as a gorgeous wide dramatic spotlight beam covering the center
+                    lineTo(width * 0.05f, height)
+                    lineTo(width * 0.95f, height)
                     close()
                 }
 
@@ -179,6 +180,13 @@ fun LoginScreen(
                         center = Offset(startX, startY),
                         radius = width * 0.85f
                     )
+                )
+
+                // Volumetric Floor Light Reflection Splash
+                drawOval(
+                    color = ColorIndigoGlow.copy(alpha = 0.22f * animationAlpha),
+                    topLeft = Offset(width * 0.1f, height * 0.86f),
+                    size = Size(width * 0.8f, height * 0.14f)
                 )
             }
         }
@@ -237,12 +245,12 @@ fun LoginScreen(
                 val width = size.width
                 val height = size.height
 
-                // Ultra-modern minimalist coordinates
-                val baseCenterX = width * 0.32f
+                // Ultra-modern minimalist coordinates (Gorgeously swept to start a bit more left)
+                val baseCenterX = width * 0.25f
                 val baseBottomY = height * 0.95f
                 val middleJointY = height * 0.60f
                 val topJointY = height * 0.22f
-                val shadeCenterX = width * 0.68f
+                val shadeCenterX = width * 0.62f
                 val shadeCenterY = height * 0.25f
 
                 // Ultra-thin high-end brushed steel pole gradient
@@ -322,6 +330,24 @@ fun LoginScreen(
                 )
                 drawPath(path = shadePath, brush = domeGradient)
 
+                // Glossy polished chrome specular horizontal reflection bar on the shade dish
+                val shinePath = Path().apply {
+                    moveTo(shadeCenterX - 14.dp.toPx(), shadeCenterY - 4.dp.toPx())
+                    cubicTo(
+                        shadeCenterX - 10.dp.toPx(), shadeCenterY - 8.dp.toPx(),
+                        shadeCenterX + 10.dp.toPx(), shadeCenterY - 10.dp.toPx(),
+                        shadeCenterX + 24.dp.toPx(), shadeCenterY - 5.dp.toPx()
+                    )
+                    lineTo(shadeCenterX + 22.dp.toPx(), shadeCenterY - 2.dp.toPx())
+                    cubicTo(
+                        shadeCenterX + 8.dp.toPx(), shadeCenterY - 7.dp.toPx(),
+                        shadeCenterX - 8.dp.toPx(), shadeCenterY - 5.dp.toPx(),
+                        shadeCenterX - 12.dp.toPx(), shadeCenterY - 2.dp.toPx()
+                    )
+                    close()
+                }
+                drawPath(path = shinePath, color = Color.White.copy(alpha = 0.22f))
+
                 // Chrome rim highlight
                 drawLine(
                     color = Color(0xFFECEFF1),
@@ -335,9 +361,15 @@ fun LoginScreen(
                 val bulbCenterY = shadeCenterY + 6.dp.toPx()
 
                 if (isLampOn) {
+                    // High-end glowing yellow-orange neon bulb aura
                     drawCircle(
-                        color = ColorIndigoGlow.copy(alpha = 0.30f),
-                        radius = 15.dp.toPx(),
+                        color = Color(0xFFFFD54F).copy(alpha = 0.25f),
+                        radius = 22.dp.toPx(),
+                        center = Offset(bulbCenterX, bulbCenterY)
+                    )
+                    drawCircle(
+                        color = ColorIndigoGlow.copy(alpha = 0.40f),
+                        radius = 14.dp.toPx(),
                         center = Offset(bulbCenterX, bulbCenterY)
                     )
                 }
@@ -356,8 +388,8 @@ fun LoginScreen(
                     }
                     drawPath(
                         path = filament,
-                        color = Color(0xFFFFF59D),
-                        style = Stroke(width = 1.dp.toPx(), cap = StrokeCap.Round)
+                        color = Color(0xFFFFEB3B),
+                        style = Stroke(width = 1.5.dp.toPx(), cap = StrokeCap.Round)
                     )
                 }
 
@@ -421,25 +453,25 @@ fun LoginScreen(
             }
         }
 
-        // ==================== KATMAN 4: BİREBİR FLOATING TÜRKÇE GİRİŞ PANELİ (RIGHT SIDE - NO OVERLAP!) ====================
-        // Positioned perfectly on the right half of the screen (with a compact width of 260.dp)
-        // Leaving the left half completely clear for the lamp to be fully visible and interactive!
+        // ==================== KATMAN 4: BİREBİR FLOATING TÜRKÇE GİRİŞ PANELİ (CENTERED & ERGONOMIC) ====================
+        // Positioned perfectly in the center of the screen with a spacious width of 310.dp
+        // Frosty glass lets the beautiful metallic arch and spotlight shine gorgeously through it!
         AnimatedVisibility(
             visible = isLampOn,
-            enter = slideInHorizontally(initialOffsetX = { it }) + fadeIn(animationSpec = tween(600)),
-            exit = slideOutHorizontally(targetOffsetX = { it }) + fadeOut(animationSpec = tween(600)),
+            enter = slideInVertically(initialOffsetY = { it / 3 }) + fadeIn(animationSpec = tween(600)),
+            exit = slideOutVertically(targetOffsetY = { it / 3 }) + fadeOut(animationSpec = tween(500)),
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 64.dp)
+                .align(Alignment.Center)
+                .padding(horizontal = 24.dp)
         ) {
             Column(
                 modifier = Modifier
-                    .width(260.dp) // Compact size to fit perfectly alongside the lamp side-by-side
+                    .width(310.dp) // Spacious 310.dp for absolute typing comfort and readability!
                     .graphicsLayer { clip = true }
                     // Translucent ice glass background
                     .background(Color(0xFF151724).copy(alpha = 0.50f), RoundedCornerShape(24.dp))
                     .border(1.dp, Color(0xFFFFFFFF).copy(alpha = 0.12f), RoundedCornerShape(24.dp))
-                    .padding(20.dp),
+                    .padding(24.dp),
                 horizontalAlignment = Alignment.Start
             ) {
                 // Kart Başlığı (Dinamik)
