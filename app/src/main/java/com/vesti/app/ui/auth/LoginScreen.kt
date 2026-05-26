@@ -91,6 +91,7 @@ fun LoginScreen(
     // Cord pulling physics
     val coroutineScope = rememberCoroutineScope()
     val cordStretchAnim = remember { Animatable(0f) }
+    val cordSwayAnim = remember { Animatable(0f) }
 
     // Infinite pulse transition for knob glow when lamp is off
     val infiniteTransition = rememberInfiniteTransition(label = "knobPulse")
@@ -218,6 +219,23 @@ fun LoginScreen(
                                         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
                                     )
                                 }
+                                coroutineScope.launch {
+                                    // Trigger physical horizontal sway pendulum swing decay
+                                    cordSwayAnim.animateTo(
+                                        targetValue = 0f,
+                                        animationSpec = keyframes {
+                                            durationMillis = 1400
+                                            0f at 0
+                                            -14f at 200
+                                            10f at 400
+                                            -7f at 600
+                                            4f at 800
+                                            -2f at 1000
+                                            1f at 1200
+                                            0f at 1400
+                                        }
+                                    )
+                                }
                             },
                             onDragCancel = {
                                 coroutineScope.launch {
@@ -240,6 +258,28 @@ fun LoginScreen(
                         isLampOn = !isLampOn
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         view.playSoundEffect(SoundEffectConstants.CLICK)
+                        coroutineScope.launch {
+                            // Micro cord pull animation on click
+                            cordStretchAnim.animateTo(12f, tween(100))
+                            cordStretchAnim.animateTo(0f, spring(dampingRatio = Spring.DampingRatioMediumBouncy))
+                        }
+                        coroutineScope.launch {
+                            // Realistic sway on click
+                            cordSwayAnim.animateTo(
+                                targetValue = 0f,
+                                animationSpec = keyframes {
+                                    durationMillis = 1400
+                                    0f at 0
+                                    -14f at 200
+                                    10f at 400
+                                    -7f at 600
+                                    4f at 800
+                                    -2f at 1000
+                                    1f at 1200
+                                    0f at 1400
+                                }
+                            )
+                        }
                     }
             ) {
                 val width = size.width
@@ -393,61 +433,66 @@ fun LoginScreen(
                     )
                 }
 
-                // Elegant beaded chain cord
+                // Elegant beaded chain cord (Swaying pendulum physics)
                 val cordStartX = shadeCenterX - 8.dp.toPx()
                 val cordStartY = shadeCenterY + 10.dp.toPx()
                 val cordLength = 70.dp.toPx()
                 val stretch = cordStretchAnim.value
+                val sway = cordSwayAnim.value.dp.toPx()
 
                 val numBeads = 10
                 val beadRadius = 1.8f.dp.toPx()
                 for (i in 0 until numBeads) {
                     val frac = i.toFloat() / (numBeads - 1)
                     val beadY = cordStartY + (cordLength * frac) + (stretch * frac)
+                    // Hinge physics: top bead is fixed (sway * 0), bottom bead swings fully (sway * 1)
+                    val beadX = cordStartX + (sway * frac)
 
                     val beadGradient = Brush.radialGradient(
                         colors = listOf(Color.White, Color(0xFF90A4AE), Color(0xFF37474F)),
-                        center = Offset(cordStartX - 0.5.dp.toPx(), beadY - 0.5.dp.toPx()),
+                        center = Offset(beadX - 0.5.dp.toPx(), beadY - 0.5.dp.toPx()),
                         radius = beadRadius
                     )
                     drawCircle(
                         brush = beadGradient,
                         radius = beadRadius,
-                        center = Offset(cordStartX, beadY)
+                        center = Offset(beadX, beadY)
                     )
                 }
 
-                // Pulse guide knob
+                // Pulse guide knob (Swaying at full pendulum extremity)
                 val knobY = cordStartY + cordLength + stretch + 4.dp.toPx()
+                val knobX = cordStartX + sway
+
                 if (!isLampOn) {
                     drawCircle(
                         color = ColorIndigoGlow.copy(alpha = pulseAlpha),
                         radius = (6.dp + 3.dp * pulseScale).toPx(),
-                        center = Offset(cordStartX, knobY)
+                        center = Offset(knobX, knobY)
                     )
                 }
 
                 val knobWidth = 4.dp.toPx()
                 val knobHeight = 11.dp.toPx()
                 val knobPath = Path().apply {
-                    moveTo(cordStartX, knobY - 4.dp.toPx())
+                    moveTo(knobX, knobY - 4.dp.toPx())
                     cubicTo(
-                        cordStartX - knobWidth, knobY + 1.dp.toPx(),
-                        cordStartX - knobWidth * 1.2f, knobY + knobHeight - 3.dp.toPx(),
-                        cordStartX, knobY + knobHeight
+                        knobX - knobWidth, knobY + 1.dp.toPx(),
+                        knobX - knobWidth * 1.2f, knobY + knobHeight - 3.dp.toPx(),
+                        knobX, knobY + knobHeight
                     )
                     cubicTo(
-                        cordStartX + knobWidth * 1.2f, knobY + knobHeight - 3.dp.toPx(),
-                        cordStartX + knobWidth, knobY + 1.dp.toPx(),
-                        cordStartX, knobY - 4.dp.toPx()
+                        knobX + knobWidth * 1.2f, knobY + knobHeight - 3.dp.toPx(),
+                        knobX + knobWidth, knobY + 1.dp.toPx(),
+                        knobX, knobY - 4.dp.toPx()
                     )
                     close()
                 }
 
                 val knobGradient = Brush.linearGradient(
                     colors = listOf(Color(0xFFCFD8DC), Color(0xFF607D8B), Color(0xFF263238)),
-                    start = Offset(cordStartX - knobWidth, knobY),
-                    end = Offset(cordStartX + knobWidth, knobY)
+                    start = Offset(knobX - knobWidth, knobY),
+                    end = Offset(knobX + knobWidth, knobY)
                 )
                 drawPath(path = knobPath, brush = knobGradient)
             }
