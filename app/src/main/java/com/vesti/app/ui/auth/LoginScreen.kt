@@ -107,6 +107,13 @@ fun LoginScreen(
             }
         } catch (e: ApiException) {
             e.printStackTrace()
+            val errorMsg = when (e.statusCode) {
+                10 -> "Google Giriş Başarısız (Hata Kodu 10): Bilgisayarınızın SHA-1 imzasını Google Cloud Console'a eklemelisiniz."
+                7 -> "Ağ Bağlantısı Hatası: Lütfen internetinizi kontrol edin."
+                12500 -> "Google Sign-In Yapılandırma Eksik (Kod: 12500)."
+                else -> "Google Hatası: ${e.localizedMessage} (Kod: ${e.statusCode})"
+            }
+            android.widget.Toast.makeText(context, errorMsg, android.widget.Toast.LENGTH_LONG).show()
         }
     }
 
