@@ -1,5 +1,6 @@
 package com.vesti.app.ui.auth
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -170,7 +171,46 @@ fun RegisterScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Divider(modifier = Modifier.weight(1f), color = Color.LightGray.copy(alpha = 0.5f))
+                    Text(
+                        text = " veya ",
+                        color = Color.Gray,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                    Divider(modifier = Modifier.weight(1f), color = Color.LightGray.copy(alpha = 0.5f))
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedButton(
+                    onClick = { viewModel.loginWithGoogleMock() },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(6.dp),
+                    border = BorderStroke(1.dp, Color.LightGray),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.White,
+                        contentColor = VestiColors.DarkIndigo
+                    )
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        GoogleColoredIcon()
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Google ile Kayıt Ol",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically

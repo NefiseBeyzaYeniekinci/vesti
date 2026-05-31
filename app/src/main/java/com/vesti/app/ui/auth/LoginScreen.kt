@@ -9,6 +9,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -725,6 +726,45 @@ fun LoginScreen(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Divider(modifier = Modifier.weight(1f), color = Color.White.copy(alpha = 0.08f))
+                    Text(
+                        text = " veya ",
+                        color = Color.White.copy(alpha = 0.35f),
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+                    Divider(modifier = Modifier.weight(1f), color = Color.White.copy(alpha = 0.08f))
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedButton(
+                    onClick = { viewModel.loginWithGoogleMock() },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f)),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.White.copy(alpha = 0.05f),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        GoogleColoredIcon()
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = if (isRegisterMode) "Google ile Kayıt Ol" else "Google ile Giriş Yap",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Modlar Arası Geçiş Footer Bağlantısı
@@ -760,5 +800,57 @@ fun LoginScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun GoogleColoredIcon() {
+    Canvas(modifier = Modifier.size(18.dp)) {
+        val strokeWidth = 2.5f.dp.toPx()
+        val radius = 9.dp.toPx()
+        val center = Offset(size.width / 2, size.height / 2)
+        
+        // Draw the horizontal blue bar of the G
+        drawRect(
+            color = Color(0xFF4285F4),
+            topLeft = Offset(center.x - 1.dp.toPx(), center.y - 1.25f.dp.toPx()),
+            size = Size(8.dp.toPx(), 2.5f.dp.toPx())
+        )
+        
+        // Red segment (top arc)
+        drawArc(
+            color = Color(0xFFEA4335),
+            startAngle = 180f,
+            sweepAngle = 135f,
+            useCenter = false,
+            style = Stroke(width = strokeWidth)
+        )
+        
+        // Blue segment (right arc)
+        drawArc(
+            color = Color(0xFF4285F4),
+            startAngle = -45f,
+            sweepAngle = 90f,
+            useCenter = false,
+            style = Stroke(width = strokeWidth)
+        )
+        
+        // Green segment (bottom arc)
+        drawArc(
+            color = Color(0xFF34A853),
+            startAngle = 45f,
+            sweepAngle = 135f,
+            useCenter = false,
+            style = Stroke(width = strokeWidth)
+        )
+        
+        // Yellow segment (left arc)
+        drawArc(
+            color = Color(0xFFFBBC05),
+            startAngle = 135f,
+            sweepAngle = 90f,
+            useCenter = false,
+            style = Stroke(width = strokeWidth)
+        )
     }
 }

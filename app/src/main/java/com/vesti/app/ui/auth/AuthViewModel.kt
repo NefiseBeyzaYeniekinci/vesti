@@ -42,6 +42,17 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         }
     }
 
+    fun loginWithGoogleMock() {
+        viewModelScope.launch {
+            _authState.value = AuthState.Loading
+            kotlinx.coroutines.delay(1000)
+            repository.login(LoginRequest("google@vesti.app", "google_pass")).fold(
+                onSuccess = { _authState.value = AuthState.Success("Google ile başarıyla giriş yapıldı!") },
+                onFailure = { _authState.value = AuthState.Error(it.message ?: "Google ile giriş başarısız") }
+            )
+        }
+    }
+
     fun logout() {
         viewModelScope.launch {
             repository.logout()
