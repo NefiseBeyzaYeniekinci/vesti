@@ -42,12 +42,14 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         }
     }
 
-    fun loginWithGoogleMock() {
+    fun loginWithGoogleSuccess(email: String, name: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            kotlinx.coroutines.delay(1000)
-            repository.loginWithGoogle().fold(
-                onSuccess = { _authState.value = AuthState.Success("Google ile başarıyla giriş yapıldı!") },
+            // 1. Prisma veritabanına Google kullanıcısını kaydetmeyi dene (zaten varsa sessizce devam ederiz)
+            repository.register(RegisterRequest(name, email, "google_oauth_pass"))
+            // 2. Gerçek veritabanından kullanıcı bilgilerini çekerek oturum aç ve JWT al
+            repository.login(LoginRequest(email, "google_oauth_pass")).fold(
+                onSuccess = { _authState.value = AuthState.Success("Google ile başarıyla giriş yapıldı: $email") },
                 onFailure = { _authState.value = AuthState.Error(it.message ?: "Google ile giriş başarısız") }
             )
         }

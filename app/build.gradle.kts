@@ -81,4 +81,7 @@ dependencies {
     
     // Google Play Services Location for weather feature
     implementation("com.google.android.gms:play-services-location:21.1.0")
+    
+    // Google Play Services Auth for real Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 }

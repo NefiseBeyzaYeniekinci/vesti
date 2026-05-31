@@ -63,6 +63,12 @@ import com.vesti.app.data.network.LoginRequest
 import com.vesti.app.data.network.RegisterRequest
 import com.vesti.app.ui.theme.VestiColors
 import kotlinx.coroutines.launch
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
 
 // Özel Renk Paleti Aligned with Your Premium Theme
 val ColorDarkCharcoal = Color(0xFF0F1015)
@@ -79,6 +85,30 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit
 ) {
     val authState by viewModel.authState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+    val gso = remember {
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestProfile()
+            .build()
+    }
+    val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val email = account?.email ?: ""
+            val displayName = account?.displayName ?: "Google User"
+            if (email.isNotEmpty()) {
+                viewModel.loginWithGoogleSuccess(email, displayName)
+            }
+        } catch (e: ApiException) {
+            e.printStackTrace()
+        }
+    }
 
     // State Yönetimi
     var isLampOn by remember { mutableStateOf(false) }
@@ -745,7 +775,11 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedButton(
-                    onClick = { viewModel.loginWithGoogleMock() },
+                    onClick = {
+                        googleSignInClient.signOut().addOnCompleteListener {
+                            googleSignInLauncher.launch(googleSignInClient.signInIntent)
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth().height(48.dp),
                     shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f)),
