@@ -102,6 +102,47 @@ fun GeneralProfileContent(onLogout: () -> Unit) {
     var name by remember { mutableStateOf("Nefise Beyza") }
     var bio by remember { mutableStateOf("") }
     var city by remember { mutableStateOf("") }
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = {
+                Text(
+                    text = AppConfig.t("Çıkış Yap", "Log Out"),
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = AppConfig.t(
+                        "Çıkış yapmak istediğinizden emin misiniz?", 
+                        "Are you sure you want to log out?"
+                    )
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showLogoutDialog = false
+                        onLogout()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
+                ) {
+                    Text(text = AppConfig.t("Evet, Çıkış Yap", "Yes, Log Out"), color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text(text = AppConfig.t("İptal", "Cancel"), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+                }
+            },
+            shape = RoundedCornerShape(16.dp),
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            textContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -281,7 +322,7 @@ fun GeneralProfileContent(onLogout: () -> Unit) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedButton(
-                    onClick = onLogout,
+                    onClick = { showLogoutDialog = true },
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                     shape = RoundedCornerShape(16.dp),
                     border = BorderStroke(1.5.dp, Color(0xFFEF4444)),
