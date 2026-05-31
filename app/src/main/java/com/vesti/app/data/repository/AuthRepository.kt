@@ -39,6 +39,11 @@ class AuthRepository(private val authApi: AuthApi, private val tokenManager: Tok
         }
     }
     
+    suspend fun loginWithGoogle(): Result<String> {
+        tokenManager.saveToken("google_mock_token_abc123")
+        return Result.success("Google login successful")
+    }
+
     suspend fun logout() {
         tokenManager.clearToken()
     }
