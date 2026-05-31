@@ -1,5 +1,6 @@
 package com.vesti.app.ui.profile
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -18,35 +19,41 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vesti.app.AppConfig
 import com.vesti.app.ui.theme.VestiColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen() {
     val tabs = listOf(
-        "Genel Profil",
-        "Siparişlerim",
-        "Satışlarım & Kazançlarım",
-        "Ödeme Yöntemleri",
-        "Kampanyalar & Kodlar",
-        "Gizlilik ve Görünüm",
-        "Güvenlik"
+        AppConfig.t("Genel Profil", "General Profile"),
+        AppConfig.t("Siparişlerim", "My Orders"),
+        AppConfig.t("Satışlarım & Kazançlarım", "My Sales & Earnings"),
+        AppConfig.t("Ödeme Yöntemleri", "Payment Methods"),
+        AppConfig.t("Kampanyalar & Kodlar", "Campaigns & Coupons"),
+        AppConfig.t("Gizlilik ve Görünüm", "Privacy & Appearance"),
+        AppConfig.t("Güvenlik", "Security")
     )
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     Scaffold(
         topBar = {
-            Column(modifier = Modifier.background(Color.White)) {
+            Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
                 CenterAlignedTopAppBar(
                     title = {
-                        Text("Profil ve Ayarlar", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = VestiColors.DarkIndigo)
+                        Text(
+                            text = AppConfig.t("Profil ve Ayarlar", "Profile & Settings"),
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 20.sp,
+                            color = if (AppConfig.isDarkMode) Color.White else VestiColors.DarkIndigo
+                        )
                     },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
                 )
                 
                 ScrollableTabRow(
                     selectedTabIndex = selectedTabIndex,
-                    containerColor = Color.White,
+                    containerColor = MaterialTheme.colorScheme.surface,
                     edgePadding = 16.dp,
                     indicator = { tabPositions ->
                         TabRowDefaults.Indicator(
@@ -55,7 +62,7 @@ fun ProfileScreen() {
                             height = 3.dp
                         )
                     },
-                    divider = { Divider(color = Color(0xFFF3F4F6)) }
+                    divider = { Divider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)) }
                 ) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
@@ -65,7 +72,7 @@ fun ProfileScreen() {
                                 Text(
                                     title, 
                                     fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (selectedTabIndex == index) VestiColors.Primary else Color.Gray
+                                    color = if (selectedTabIndex == index) VestiColors.Primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                 ) 
                             }
                         )
@@ -73,7 +80,7 @@ fun ProfileScreen() {
                 }
             }
         },
-        containerColor = VestiColors.Background
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -82,6 +89,7 @@ fun ProfileScreen() {
         ) {
             when (selectedTabIndex) {
                 0 -> GeneralProfileContent()
+                5 -> PrivacyAndAppearanceContent()
                 else -> PlaceholderTabContent(tabs[selectedTabIndex])
             }
         }
@@ -105,8 +113,9 @@ fun GeneralProfileContent() {
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
         ) {
             Row(
                 modifier = Modifier.padding(20.dp),
@@ -116,15 +125,20 @@ fun GeneralProfileContent() {
                     modifier = Modifier
                         .size(80.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFEEF2FF)),
+                        .background(VestiColors.LightPurple),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("NB", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = VestiColors.Primary)
                 }
                 Spacer(modifier = Modifier.width(20.dp))
                 Column {
-                    Text("Nefise Beyza", fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.TextMain)
-                    Text("nefisebeyzaa05@gmail.com", fontSize = 14.sp, color = Color.Gray)
+                    Text(
+                        text = "Nefise Beyza",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text("nefisebeyzaa05@gmail.com", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                     Spacer(modifier = Modifier.height(8.dp))
                     Surface(
                         color = Color(0xFFFFF7ED),
@@ -136,7 +150,12 @@ fun GeneralProfileContent() {
                         ) {
                             Icon(Icons.Default.Star, contentDescription = "Star", tint = Color(0xFFFFB300), modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("0.0 Güvenilirlik Puanı", fontSize = 12.sp, color = Color(0xFFD97706), fontWeight = FontWeight.Bold)
+                            Text(
+                                text = "0.0 " + AppConfig.t("Güvenilirlik Puanı", "Trust Score"),
+                                fontSize = 12.sp,
+                                color = Color(0xFFD97706),
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
@@ -145,15 +164,21 @@ fun GeneralProfileContent() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Form Fields
+        // Form Fields Card
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
-                Text("Ad Soyad", fontSize = 14.sp, color = VestiColors.TextMain, fontWeight = FontWeight.Bold)
+                Text(
+                    text = AppConfig.t("Ad Soyad", "Full Name"),
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = name,
@@ -161,47 +186,78 @@ fun GeneralProfileContent() {
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White,
-                        unfocusedBorderColor = Color(0xFFE5E7EB),
-                        focusedBorderColor = VestiColors.Primary
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                        focusedBorderColor = VestiColors.Primary,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text("Hakkımda (Biyografi)", fontSize = 14.sp, color = VestiColors.TextMain, fontWeight = FontWeight.Bold)
+                Text(
+                    text = AppConfig.t("Hakkımda (Biyografi)", "About Me (Bio)"),
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = bio,
                     onValueChange = { bio = it },
                     modifier = Modifier.fillMaxWidth().height(120.dp),
-                    placeholder = { Text("Kendi moda tarzınızdan ve sevdiğiniz markalardan bahsedin...", color = Color.LightGray, fontSize = 14.sp) },
+                    placeholder = { 
+                        Text(
+                            text = AppConfig.t(
+                                "Kendi moda tarzınızdan ve sevdiğiniz markalardan bahsedin...", 
+                                "Talk about your fashion style and brands you love..."
+                            ), 
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f), 
+                            fontSize = 14.sp
+                        ) 
+                    },
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White,
-                        unfocusedBorderColor = Color(0xFFE5E7EB),
-                        focusedBorderColor = VestiColors.Primary
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                        focusedBorderColor = VestiColors.Primary,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Text("Konum / Şehir", fontSize = 14.sp, color = VestiColors.TextMain, fontWeight = FontWeight.Bold)
+                Text(
+                    text = AppConfig.t("Konum / Şehir", "Location / City"),
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = city,
                     onValueChange = { city = it },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    placeholder = { Text("Örn: İstanbul, Beşiktaş", color = Color.LightGray, fontSize = 14.sp) },
+                    placeholder = { 
+                        Text(
+                            text = AppConfig.t("Örn: İstanbul, Beşiktaş", "e.g. London, Soho"), 
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f), 
+                            fontSize = 14.sp
+                        ) 
+                    },
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White,
-                        unfocusedBorderColor = Color(0xFFE5E7EB),
-                        focusedBorderColor = VestiColors.Primary
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                        focusedBorderColor = VestiColors.Primary,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
@@ -214,12 +270,119 @@ fun GeneralProfileContent() {
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary)
                 ) {
-                    Text("Tüm Değişiklikleri Kaydet", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(
+                        text = AppConfig.t("Tüm Değişiklikleri Kaydet", "Save All Changes"),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 }
             }
         }
         
         Spacer(modifier = Modifier.height(100.dp)) // Bottom padding for nav bar
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PrivacyAndAppearanceContent() {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val prefs = remember { context.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE) }
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+    ) {
+
+        
+        // Section: Language (Dil Ayarları)
+        Text(
+            text = AppConfig.t("Dil Ayarları", "Language Settings"),
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
+        )
+        
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                // Turkish Option Row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Türkçe",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = AppConfig.t("Uygulama dilini Türkçe yapın", "Change the application language to Turkish"),
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        )
+                    }
+                    RadioButton(
+                        selected = AppConfig.language == "tr",
+                        onClick = {
+                            AppConfig.language = "tr"
+                            prefs.edit().putString("language", "tr").apply()
+                        },
+                        colors = RadioButtonDefaults.colors(selectedColor = VestiColors.Primary)
+                    )
+                }
+                
+                Divider(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+                
+                // English Option Row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "English (US)",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = AppConfig.t("Uygulama dilini İngilizce yapın", "Change the application language to English"),
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        )
+                    }
+                    RadioButton(
+                        selected = AppConfig.language == "en",
+                        onClick = {
+                            AppConfig.language = "en"
+                            prefs.edit().putString("language", "en").apply()
+                        },
+                        colors = RadioButtonDefaults.colors(selectedColor = VestiColors.Primary)
+                    )
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(100.dp))
     }
 }
 
@@ -230,14 +393,23 @@ fun PlaceholderTabContent(tabName: String) {
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(Icons.Default.Star, contentDescription = null, tint = Color.LightGray, modifier = Modifier.size(64.dp))
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f),
+                modifier = Modifier.size(64.dp)
+            )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                "$tabName verileriniz burada listelenecek.", 
-                color = Color.Gray, 
+                text = AppConfig.t(
+                    "$tabName verileriniz burada listelenecek.", 
+                    "Your $tabName data will be listed here."
+                ), 
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), 
                 fontSize = 16.sp, 
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
     }
 }
+

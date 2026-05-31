@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Vesti</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_wardrobe">Wardrobe</string>
+    <string name="nav_outfit">Outfit</string>
+    <string name="nav_market">Market</string>
+    <string name="nav_profile">Profile</string>
+</resources>

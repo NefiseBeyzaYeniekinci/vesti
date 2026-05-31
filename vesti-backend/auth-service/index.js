@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { PrismaClient } = require('@prisma/client');
 const Redis = require('ioredis');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const app = express();
@@ -45,6 +46,7 @@ app.post('/register', async (req, res) => {
 
         const newUser = await prisma.user.create({
             data: {
+                id: crypto.randomUUID(),
                 name,
                 email,
                 password: hashedPassword

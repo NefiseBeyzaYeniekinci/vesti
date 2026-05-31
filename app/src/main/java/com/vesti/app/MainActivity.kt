@@ -50,6 +50,7 @@ import com.vesti.app.ui.checkout.CheckoutScreen
 import com.vesti.app.ui.checkout.CheckoutViewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.vesti.app.AppConfig
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,11 +78,23 @@ class MainActivity : ComponentActivity() {
         val checkoutViewModel = CheckoutViewModel(paymentApi)
 
         val prefs = applicationContext.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        
+        // Load global AppConfig preferences on startup
+        AppConfig.isDarkMode = false // Force isDarkMode to false globally
+        AppConfig.language = prefs.getString("language", "tr") ?: "tr"
+        AppConfig.updateLocale(applicationContext, AppConfig.language)
+
         val isFirstTime = prefs.getBoolean("is_first_time", true)
         val startDest = if (isFirstTime) "onboarding" else "login"
 
         setContent {
-            VestiTheme {
+            // Reactively update the locale configuration inside compose context
+            val context = androidx.compose.ui.platform.LocalContext.current
+            androidx.compose.runtime.LaunchedEffect(AppConfig.language) {
+                AppConfig.updateLocale(context, AppConfig.language)
+            }
+
+            VestiTheme(darkTheme = false) {
                 val topLevelNavController = rememberNavController()
                 
                 NavHost(

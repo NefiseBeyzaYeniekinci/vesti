@@ -32,6 +32,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vesti.app.AppConfig
 import com.vesti.app.ui.theme.VestiColors
 import com.vesti.app.ui.wardrobe.WardrobeState
 import android.widget.Toast
@@ -57,10 +58,10 @@ fun ProductDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Ürün Detayı", fontWeight = FontWeight.Bold, color = VestiColors.DarkIndigo) },
+                title = { Text(AppConfig.t("Ürün Detayı", "Product Details"), fontWeight = FontWeight.Bold, color = VestiColors.DarkIndigo) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri Dön")
+                        Icon(Icons.Default.ArrowBack, contentDescription = AppConfig.t("Geri Dön", "Go Back"))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = VestiColors.Background)
@@ -84,7 +85,7 @@ fun ProductDetailScreen(
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(1f).height(50.dp)
                     ) {
-                        Text("Sipariş Ver", fontWeight = FontWeight.Bold)
+                        Text(AppConfig.t("Sipariş Ver", "Order Now"), fontWeight = FontWeight.Bold)
                     }
                     
                     OutlinedButton(
@@ -94,19 +95,20 @@ fun ProductDetailScreen(
                         modifier = Modifier.weight(1f).height(50.dp),
                         contentPadding = PaddingValues(0.dp)
                     ) {
-                        Icon(Icons.Default.ChatBubbleOutline, contentDescription = "Mesaj", tint = VestiColors.TextMain, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.ChatBubbleOutline, contentDescription = AppConfig.t("Mesaj", "Message"), tint = VestiColors.TextMain, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Mesaj At", color = VestiColors.TextMain, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text(AppConfig.t("Mesaj At", "Send Message"), color = VestiColors.TextMain, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
 
                     // Highly interactive active/inactive Swap Button!
                     val context = LocalContext.current
+                    val swapNotEligibleMsg = AppConfig.t("Bu ürün takasa uygun değil!", "This item is not eligible for swap!")
                     Button(
                         onClick = {
                             if (product.isSwap) {
                                 showSwapSheet = true
                             } else {
-                                Toast.makeText(context, "Bu ürün takasa uygun değil!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, swapNotEligibleMsg, Toast.LENGTH_SHORT).show()
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -118,13 +120,13 @@ fun ProductDetailScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.SwapHoriz,
-                            contentDescription = "Takas",
+                            contentDescription = AppConfig.t("Takas", "Swap"),
                             tint = if (product.isSwap) Color.White else Color.Gray,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Takas",
+                            text = AppConfig.t("Takas", "Swap"),
                             color = if (product.isSwap) Color.White else Color.Gray,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
@@ -163,7 +165,7 @@ fun ProductDetailScreen(
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.padding(12.dp).align(Alignment.TopStart)
                     ) {
-                        Text("⇄ Takasa Uygun", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
+                        Text(AppConfig.t("⇄ Takasa Uygun", "⇄ Available for Swap"), color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp))
                     }
                 }
             }
@@ -171,15 +173,31 @@ fun ProductDetailScreen(
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Surface(color = VestiColors.LightPurple, shape = RoundedCornerShape(4.dp)) {
-                        Text("DIŞ GİYİM", color = VestiColors.Primary, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
+                        Text(AppConfig.t("DIŞ GİYİM", "OUTERWEAR"), color = VestiColors.Primary, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
                     }
                     Surface(color = Color(0xFFF3F4F6), shape = RoundedCornerShape(4.dp)) {
-                        Text(product.size, color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
+                        val sizeDisp = AppConfig.t(product.size, when {
+                            product.size == "Standart" -> "Standard"
+                            product.size.startsWith("Beden:") -> product.size.replace("Beden:", "Size:")
+                            else -> product.size
+                        })
+                        Text(sizeDisp, color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
                     }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(product.title, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.TextMain)
+                val titleDisp = AppConfig.t(product.title, when(product.title) {
+                    "Vintage Deri Ceket" -> "Vintage Leather Jacket"
+                    "Zara Beyaz Keten Gömlek" -> "Zara White Linen Shirt"
+                    "Siyah Mini Elbise" -> "Black Mini Dress"
+                    "Güneş Gözlüğü" -> "Sunglasses"
+                    "Kışlık Şişme Mont" -> "Winter Puffer Jacket"
+                    "Polo Yaka Tişört" -> "Polo Neck T-Shirt"
+                    "Nike Air Force 1" -> "Nike Air Force 1"
+                    "Levi's 501 Jean" -> "Levi's 501 Jeans"
+                    else -> product.title
+                })
+                Text(titleDisp, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.TextMain)
                 Text(product.price, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.Primary)
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -195,11 +213,49 @@ fun ProductDetailScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.Star, contentDescription = "Açıklama", tint = Color(0xFFD97706), modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Satıcı Açıklaması", color = Color(0xFFD97706), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text(AppConfig.t("Satıcı Açıklaması", "Seller Description"), color = Color(0xFFD97706), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         }
                         Spacer(modifier = Modifier.height(6.dp))
+                        val descriptionText = when (product.id) {
+                            "1" -> AppConfig.t(
+                                "80'lerden kalma, harika durumda hakiki deri ceket. Hiçbir yırtığı veya söküğü yoktur.",
+                                "Genuine leather jacket from the 80s, in excellent condition. No tears or rips."
+                            )
+                            "2" -> AppConfig.t(
+                                "Sadece birkaç kez giyildi, orijinal kutusuyla birlikte gönderilecektir.",
+                                "Worn only a few times, will be shipped with its original box."
+                            )
+                            "3" -> AppConfig.t(
+                                "Yaz ayları için mükemmel, sıfır etiketli keten gömlek.",
+                                "Perfect for summer months, brand new linen shirt with tags."
+                            )
+                            "4" -> AppConfig.t(
+                                "Klasik model, renginde solma yoktur, çok temiz.",
+                                "Classic model, no fading in color, very clean."
+                            )
+                            "5" -> AppConfig.t(
+                                "Çok az giyilmiş lacivert polo yaka tişört.",
+                                "Navy blue polo collar t-shirt, worn very little."
+                            )
+                            "6" -> AppConfig.t(
+                                "Özel günler için ideal şık mini elbise.",
+                                "Elegant mini dress, ideal for special occasions."
+                            )
+                            "7" -> AppConfig.t(
+                                "Kutusunda sıfır, garanti belgesi mevcuttur.",
+                                "Brand new in box, warranty card is available."
+                            )
+                            "8" -> AppConfig.t(
+                                "Çok sıcak tutan, temiz kışlık şişme mont.",
+                                "Very warm, clean winter puffer jacket."
+                            )
+                            else -> AppConfig.t(
+                                "Temiz durumda, herhangi bir hasarı bulunmayan ürün.",
+                                "Clean condition, no damage of any kind."
+                            )
+                        }
                         Text(
-                            "80'lerden kalma, harika durumda hakiki deri ceket. Hiçbir yırtığı veya söküğü yoktur.",
+                            text = descriptionText,
                             color = VestiColors.TextMain,
                             fontSize = 14.sp,
                             lineHeight = 20.sp
@@ -217,7 +273,7 @@ fun ProductDetailScreen(
                         modifier = Modifier.weight(1f)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Marka", color = Color.Gray, fontSize = 12.sp)
+                            Text(AppConfig.t("Marka", "Brand"), color = Color.Gray, fontSize = 12.sp)
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(product.brand, color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }
@@ -228,9 +284,16 @@ fun ProductDetailScreen(
                         modifier = Modifier.weight(1f)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Durumu", color = Color.Gray, fontSize = 12.sp)
+                            Text(AppConfig.t("Durumu", "Condition"), color = Color.Gray, fontSize = 12.sp)
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text(product.condition, color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            val condDisp = AppConfig.t(product.condition, when (product.condition) {
+                                "Sıfır" -> "Brand New"
+                                "Yeni Gibi" -> "Like New"
+                                "Az Kullanılmış" -> "Lightly Used"
+                                "Kullanılmış" -> "Used"
+                                else -> product.condition
+                            })
+                            Text(condDisp, color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }
                     }
                 }
@@ -268,9 +331,9 @@ fun ProductDetailScreen(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.CheckCircle, contentDescription = "Güvenli", tint = Color(0xFF10B981), modifier = Modifier.size(14.dp))
+                            Icon(Icons.Default.CheckCircle, contentDescription = AppConfig.t("Güvenli", "Secure"), tint = Color(0xFF10B981), modifier = Modifier.size(14.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Vesti Güvencesi", color = Color(0xFF10B981), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                            Text(AppConfig.t("Vesti Güvencesi", "Vesti Guarantee"), color = Color(0xFF10B981), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -303,7 +366,7 @@ fun ProductDetailScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Takas Teklifi Yap",
+                        text = AppConfig.t("Takas Teklifi Yap", "Make a Swap Offer"),
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
                         color = VestiColors.TextMain
@@ -312,13 +375,13 @@ fun ProductDetailScreen(
                         showSwapSheet = false
                         selectedWardrobeItem = null
                     }) {
-                        Icon(Icons.Default.Close, contentDescription = "Kapat", tint = Color.Gray)
+                        Icon(Icons.Default.Close, contentDescription = AppConfig.t("Kapat", "Close"), tint = Color.Gray)
                     }
                 }
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Takas etmek istediğin kıyafetini gardırobundan hızlıca seç:",
+                    text = AppConfig.t("Takas etmek istediğin kıyafetini gardırobundan hızlıca seç:", "Quickly choose the clothes you want to swap from your wardrobe:"),
                     color = Color.Gray,
                     fontSize = 13.sp
                 )
@@ -330,7 +393,7 @@ fun ProductDetailScreen(
                     val wItems = (wardrobeState as WardrobeState.Success).items
                     if (wItems.isEmpty()) {
                         Text(
-                            text = "Gardırobunuzda henüz kıyafet yok. Takas yapmak için önce gardırobunuza kıyafet eklemelisiniz.",
+                            text = AppConfig.t("Gardırobunuzda henüz kıyafet yok. Takas yapmak için önce gardırobunuza kıyafet eklemelisiniz.", "Your wardrobe is empty. You must add clothes to your wardrobe first to make a swap."),
                             color = Color.Gray,
                             fontSize = 13.sp,
                             modifier = Modifier.padding(vertical = 16.dp)
@@ -344,6 +407,18 @@ fun ProductDetailScreen(
                         ) {
                             items(wardrobeCats) { cat ->
                                 val isSelected = selectedWardrobeCategory == cat
+                                val displayCat = AppConfig.t(cat, when(cat) {
+                                    "Hepsi" -> "All"
+                                    "Tişört" -> "T-Shirt"
+                                    "Gömlek" -> "Shirt"
+                                    "Kazak" -> "Sweater"
+                                    "Ceket" -> "Jacket"
+                                    "Pantolon" -> "Pants"
+                                    "Takım" -> "Suit"
+                                    "Aksesuar" -> "Accessory"
+                                    "Ayakkabı" -> "Shoes"
+                                    else -> cat
+                                })
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(12.dp))
@@ -352,7 +427,7 @@ fun ProductDetailScreen(
                                         .padding(horizontal = 12.dp, vertical = 6.dp)
                                 ) {
                                     Text(
-                                        text = cat,
+                                        text = displayCat,
                                         color = if (isSelected) VestiColors.Primary else Color.Gray,
                                         fontSize = 11.sp,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
@@ -368,7 +443,7 @@ fun ProductDetailScreen(
                         
                         if (filteredWItems.isEmpty()) {
                             Text(
-                                text = "Bu kategoride kıyafetiniz bulunmuyor.",
+                                text = AppConfig.t("Bu kategoride kıyafetiniz bulunmuyor.", "You don't have clothes in this category."),
                                 color = Color.Gray,
                                 fontSize = 13.sp,
                                 modifier = Modifier.padding(vertical = 24.dp).align(Alignment.CenterHorizontally)
@@ -407,8 +482,20 @@ fun ProductDetailScreen(
                                                     .background(Color.Black.copy(alpha = 0.6f))
                                                     .padding(6.dp)
                                             ) {
+                                                val catDisplay = AppConfig.t(wItem.category, when(wItem.category.lowercase()) {
+                                                    "tişört" -> "T-Shirt"
+                                                    "gömlek" -> "Shirt"
+                                                    "pantolon" -> "Pants"
+                                                    "ceket" -> "Jacket"
+                                                    "takım" -> "Suit"
+                                                    "aksesuar" -> "Accessory"
+                                                    "ayakkabı" -> "Shoes"
+                                                    "elbise" -> "Dress"
+                                                    "etek" -> "Skirt"
+                                                    else -> wItem.category
+                                                })
                                                 Text(
-                                                    text = wItem.category,
+                                                    text = catDisplay,
                                                     color = Color.White,
                                                     fontSize = 10.sp,
                                                     fontWeight = FontWeight.Bold,
@@ -439,7 +526,7 @@ fun ProductDetailScreen(
                         .height(52.dp)
                 ) {
                     Text(
-                        text = if (selectedWardrobeItem != null) "Takas Teklifini Gönder" else "Önce Kıyafet Seçin",
+                        text = if (selectedWardrobeItem != null) AppConfig.t("Takas Teklifini Gönder", "Send Swap Offer") else AppConfig.t("Önce Kıyafet Seçin", "Select Clothes First"),
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
@@ -460,14 +547,14 @@ fun ProductDetailScreen(
             icon = {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Başarılı",
+                    contentDescription = AppConfig.t("Başarılı", "Success"),
                     tint = Color(0xFF10B981),
                     modifier = Modifier.size(48.dp)
                 )
             },
             title = {
                 Text(
-                    text = "Teklifin İletildi!",
+                    text = AppConfig.t("Teklifin İletildi!", "Offer Sent!"),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     color = VestiColors.TextMain
@@ -475,7 +562,10 @@ fun ProductDetailScreen(
             },
             text = {
                 Text(
-                    text = "${product.sellerName} teklifini inceleyip kısa süre içerisinde sana mesaj kutusu üzerinden dönüş yapacak.",
+                    text = AppConfig.t(
+                        "${product.sellerName} teklifini inceleyip kısa süre içerisinde sana mesaj kutusu üzerinden dönüş yapacak.",
+                        "${product.sellerName} will review your offer and get back to you via messages shortly."
+                    ),
                     color = Color.Gray,
                     fontSize = 14.sp
                 )
@@ -489,7 +579,7 @@ fun ProductDetailScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Tamam", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(AppConfig.t("Tamam", "OK"), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             },
             containerColor = Color.White,

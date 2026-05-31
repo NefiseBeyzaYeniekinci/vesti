@@ -43,18 +43,18 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun VestiTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false, // Forcing darkTheme to be false
     dynamicColor: Boolean = false, // Dynamic color is disabled to use brand colors
     content: @Composable () -> Unit
 ) {
-    val colorScheme = LightColorScheme // Web tarafıyla birebir uyumlu "off-white" temanın zorunlu kılınması
+    val colorScheme = LightColorScheme // Force light colors always
     
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true // Light status bar (dark icons)
         }
     }
 

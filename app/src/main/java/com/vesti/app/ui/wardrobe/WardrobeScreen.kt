@@ -55,6 +55,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import androidx.compose.material.icons.filled.Label
+import com.vesti.app.AppConfig
 import com.vesti.app.data.network.WardrobeItemDto
 import com.vesti.app.ui.theme.VestiColors
 
@@ -134,7 +135,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Yeni Kıyafet Ekle",
+                    contentDescription = AppConfig.t("Yeni Kıyafet Ekle", "Add New Clothes"),
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -153,7 +154,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                     .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
                 Text(
-                    text = "Dijital Gardırobun",
+                    text = AppConfig.t("Dijital Gardırobun", "Digital Wardrobe"),
                     color = VestiColors.TextMain,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold
@@ -179,12 +180,24 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
             ) {
                 categories.forEach { cat ->
                     val isSelected = selectedCategoryFilter == cat
+                    val catDisplay = AppConfig.t(cat, when(cat) {
+                        "Hepsi" -> "All"
+                        "Tişört" -> "T-Shirt"
+                        "Gömlek" -> "Shirt"
+                        "Pantolon" -> "Pants"
+                        "Ceket" -> "Jacket"
+                        "Ayakkabı" -> "Shoes"
+                        "Elbise" -> "Dress"
+                        "Aksesuar" -> "Accessory"
+                        "Etek" -> "Skirt"
+                        else -> cat
+                    })
                     Tab(
                         selected = isSelected,
                         onClick = { selectedCategoryFilter = cat },
                         text = {
                             Text(
-                                text = cat,
+                                text = catDisplay,
                                 color = if (isSelected) VestiColors.Primary else Color.Gray,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                 fontSize = 14.sp
@@ -243,7 +256,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                 }
                                 Spacer(modifier = Modifier.height(24.dp))
                                 Text(
-                                    text = "Gardırobunuz Henüz Boş",
+                                    text = AppConfig.t("Gardırobunuz Henüz Boş", "Your Wardrobe is Empty"),
                                     color = VestiColors.TextMain,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
@@ -251,7 +264,10 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "Yeni parçalar ekleyerek dijital gardırobunuzu oluşturun.",
+                                    text = AppConfig.t(
+                                        "Yeni parçalar ekleyerek dijital gardırobunuzu oluşturun.",
+                                        "Create your digital wardrobe by adding new items."
+                                    ),
                                     color = Color.Gray,
                                     fontSize = 14.sp,
                                     textAlign = TextAlign.Center
@@ -372,18 +388,18 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Default.ArrowBack,
-                                                    contentDescription = "Geri Dön",
+                                                    contentDescription = AppConfig.t("Geri Dön", "Go Back"),
                                                     modifier = Modifier.size(16.dp)
                                                 )
                                                 Text(
-                                                    text = "Tüm Koleksiyonlar",
+                                                    text = AppConfig.t("Tüm Koleksiyonlar", "All Collections"),
                                                     fontWeight = FontWeight.Bold,
                                                     fontSize = 14.sp
                                                 )
                                             }
                                         }
                                     }
- 
+  
                                     // Sub-category / Material selection horizontal chips
                                     if (subCategories.isNotEmpty()) {
                                         LazyRow(
@@ -393,6 +409,29 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                         ) {
                                             items(subCategories) { sub ->
                                                 val isSelected = selectedSubCategoryFilter == sub
+                                                val displaySub = AppConfig.t(sub, when (sub) {
+                                                    "Hepsi" -> "All"
+                                                    "Kot" -> "Denim"
+                                                    "Kumaş" -> "Fabric"
+                                                    "Keten" -> "Linen"
+                                                    "Deri" -> "Leather"
+                                                    "Kaban" -> "Coat"
+                                                    "Klasik" -> "Classic"
+                                                    "Basic" -> "Basic"
+                                                    "Oversize" -> "Oversize"
+                                                    "Polo" -> "Polo"
+                                                    "Eşofman" -> "Tracksuit"
+                                                    "Blazer" -> "Blazer"
+                                                    "Takım Elbise" -> "Suit"
+                                                    "Gözlük" -> "Glasses"
+                                                    "Şapka" -> "Hat"
+                                                    "Bere" -> "Beanie"
+                                                    "Saat" -> "Watch"
+                                                    "Kemer" -> "Belt"
+                                                    "Sneaker" -> "Sneaker"
+                                                    "Bot" -> "Boots"
+                                                    else -> sub
+                                                })
                                                 Box(
                                                     modifier = Modifier
                                                         .clip(RoundedCornerShape(14.dp))
@@ -401,7 +440,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                                         .padding(horizontal = 16.dp, vertical = 8.dp)
                                                 ) {
                                                     Text(
-                                                        text = sub,
+                                                        text = displaySub,
                                                         color = if (isSelected) Color.White else VestiColors.TextMain,
                                                         fontWeight = FontWeight.Bold,
                                                         fontSize = 13.sp
@@ -416,9 +455,51 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                             modifier = Modifier.fillMaxSize(),
                                             contentAlignment = Alignment.Center
                                         ) {
+                                            val categoryDisp = AppConfig.t(selectedCategoryFilter, when(selectedCategoryFilter) {
+                                                "Tişört" -> "T-Shirt"
+                                                "Gömlek" -> "Shirt"
+                                                "Pantolon" -> "Pants"
+                                                "Ceket" -> "Jacket"
+                                                "Ayakkabı" -> "Shoes"
+                                                "Elbise" -> "Dress"
+                                                "Aksesuar" -> "Accessory"
+                                                "Etek" -> "Skirt"
+                                                else -> selectedCategoryFilter
+                                            })
+                                            val subDisp = AppConfig.t(selectedSubCategoryFilter, when(selectedSubCategoryFilter) {
+                                                "Kot" -> "Denim"
+                                                "Kumaş" -> "Fabric"
+                                                "Keten" -> "Linen"
+                                                "Deri" -> "Leather"
+                                                "Kaban" -> "Coat"
+                                                "Klasik" -> "Classic"
+                                                "Basic" -> "Basic"
+                                                "Oversize" -> "Oversize"
+                                                "Polo" -> "Polo"
+                                                "Eşofman" -> "Tracksuit"
+                                                "Blazer" -> "Blazer"
+                                                "Takım Elbise" -> "Suit"
+                                                "Gözlük" -> "Glasses"
+                                                "Şapka" -> "Hat"
+                                                "Bere" -> "Beanie"
+                                                "Saat" -> "Watch"
+                                                "Kemer" -> "Belt"
+                                                "Sneaker" -> "Sneaker"
+                                                "Bot" -> "Boots"
+                                                else -> selectedSubCategoryFilter
+                                            })
                                             Text(
-                                                text = if (selectedSubCategoryFilter == "Hepsi") "$selectedCategoryFilter kategorisinde ürün yok."
-                                                       else "$selectedCategoryFilter kategorisinde $selectedSubCategoryFilter ürünü bulunmuyor.",
+                                                text = if (selectedSubCategoryFilter == "Hepsi") {
+                                                    AppConfig.t(
+                                                        "$categoryDisp kategorisinde ürün yok.",
+                                                        "No items in the $categoryDisp category."
+                                                    )
+                                                } else {
+                                                    AppConfig.t(
+                                                        "$categoryDisp kategorisinde $subDisp ürünü bulunmuyor.",
+                                                        "No $subDisp items found in the $categoryDisp category."
+                                                    )
+                                                },
                                                 color = Color.Gray,
                                                 fontSize = 14.sp
                                             )
@@ -502,7 +583,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                     
                     // 2. Header
                     Text(
-                        text = "Görsel Yükle",
+                        text = AppConfig.t("Görsel Yükle", "Upload Image"),
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
                         color = VestiColors.TextMain
@@ -542,13 +623,13 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
                             Text(
-                                text = "Kamera ile Çek",
+                                text = AppConfig.t("Kamera ile Çek", "Take with Camera"),
                                 fontWeight = FontWeight.Bold,
                                 color = VestiColors.TextMain,
                                 fontSize = 15.sp
                             )
                             Text(
-                                text = "Kamerayı kullanarak anlık fotoğrafla",
+                                text = AppConfig.t("Kamerayı kullanarak anlık fotoğrafla", "Take a photo using the camera"),
                                 color = Color.Gray,
                                 fontSize = 12.sp
                             )
@@ -582,13 +663,13 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                         Spacer(modifier = Modifier.width(16.dp))
                         Column {
                             Text(
-                                text = "Galeriden Seç",
+                                text = AppConfig.t("Galeriden Seç", "Select from Gallery"),
                                 fontWeight = FontWeight.Bold,
                                 color = VestiColors.TextMain,
                                 fontSize = 15.sp
                             )
                             Text(
-                                text = "Mevcut görseller arasından tercih yap",
+                                text = AppConfig.t("Mevcut görseller arasından tercih yap", "Choose from your existing gallery"),
                                 color = Color.Gray,
                                 fontSize = 12.sp
                             )
@@ -662,7 +743,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Kıyafet Detayları",
+                            text = AppConfig.t("Kıyafet Detayları", "Clothing Details"),
                             fontWeight = FontWeight.Bold,
                             fontSize = 22.sp,
                             color = VestiColors.TextMain
@@ -678,7 +759,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                             customCategoryText = ""
                             inputSubCategory = "Standart"
                         }) {
-                            Icon(Icons.Default.Close, contentDescription = "Kapat", tint = Color.Gray)
+                            Icon(Icons.Default.Close, contentDescription = AppConfig.t("Kapat", "Close"), tint = Color.Gray)
                         }
                     }
                     
@@ -716,7 +797,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
 
                         // Kategori Seçimi (Kutusuz, Saf Minimalist ve Yumuşak Renkler)
                         Column {
-                            Text("Kategori", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                            Text(AppConfig.t("Kategori", "Category"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                             Spacer(modifier = Modifier.height(12.dp))
                             val categoryOptions = listOf("Tişört", "Gömlek", "Pantolon", "Ceket", "Takım", "Aksesuar", "Ayakkabı", "Elbise", "Etek")
                             val allOptions = categoryOptions + "Özel"
@@ -729,6 +810,22 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                     ) {
                                         rowItems.forEach { cat ->
                                             val isSelected = if (cat == "Özel") isCustomCategorySelected else (!isCustomCategorySelected && inputCategory == cat)
+                                            val catLabel = if (cat == "Özel") {
+                                                AppConfig.t("+ Diğer", "+ Other")
+                                            } else {
+                                                AppConfig.t(cat, when(cat) {
+                                                    "Tişört" -> "T-Shirt"
+                                                    "Gömlek" -> "Shirt"
+                                                    "Pantolon" -> "Pants"
+                                                    "Ceket" -> "Jacket"
+                                                    "Takım" -> "Suit"
+                                                    "Aksesuar" -> "Accessory"
+                                                    "Ayakkabı" -> "Shoes"
+                                                    "Elbise" -> "Dress"
+                                                    "Etek" -> "Skirt"
+                                                    else -> cat
+                                                })
+                                            }
                                             Box(
                                                 modifier = Modifier
                                                     .weight(1f)
@@ -746,7 +843,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                                 contentAlignment = Alignment.Center
                                             ) {
                                                 Text(
-                                                    text = if (cat == "Özel") "+ Diğer" else cat,
+                                                    text = catLabel,
                                                     color = if (isSelected) Color.White else VestiColors.TextMain,
                                                     fontSize = 13.sp,
                                                     fontWeight = FontWeight.Medium
@@ -767,8 +864,8 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                 OutlinedTextField(
                                     value = customCategoryText,
                                     onValueChange = { customCategoryText = it },
-                                    label = { Text("Özel Kategori Adı") },
-                                    placeholder = { Text("Örn: Şapka, Gözlük, Bere, Çorap", color = Color.LightGray) },
+                                    label = { Text(AppConfig.t("Özel Kategori Adı", "Custom Category Name")) },
+                                    placeholder = { Text(AppConfig.t("Örn: Şapka, Gözlük, Bere, Çorap", "e.g. Hat, Glasses, Beanie, Socks"), color = Color.LightGray) },
                                     modifier = Modifier.fillMaxWidth(),
                                     shape = RoundedCornerShape(12.dp),
                                     colors = OutlinedTextFieldDefaults.colors(
@@ -794,11 +891,34 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                             if (!isCustomCategorySelected && availableSubTypes.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Column {
-                                    Text("Tür / Kumaş Seçimi", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                                    Text(AppConfig.t("Tür / Kumaş Seçimi", "Style / Fabric Selection"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                                     Spacer(modifier = Modifier.height(12.dp))
                                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                         items(availableSubTypes) { sub ->
                                             val isSelected = inputSubCategory == sub
+                                            val displaySub = AppConfig.t(sub, when (sub) {
+                                                "Standart" -> "Standard"
+                                                "Kot" -> "Denim"
+                                                "Kumaş" -> "Fabric"
+                                                "Keten" -> "Linen"
+                                                "Deri" -> "Leather"
+                                                "Kaban" -> "Coat"
+                                                "Klasik" -> "Classic"
+                                                "Basic" -> "Basic"
+                                                "Oversize" -> "Oversize"
+                                                "Polo" -> "Polo"
+                                                "Eşofman" -> "Tracksuit"
+                                                "Blazer" -> "Blazer"
+                                                "Takım Elbise" -> "Suit"
+                                                "Gözlük" -> "Glasses"
+                                                "Şapka" -> "Hat"
+                                                "Bere" -> "Beanie"
+                                                "Saat" -> "Watch"
+                                                "Kemer" -> "Belt"
+                                                "Sneaker" -> "Sneaker"
+                                                "Bot" -> "Boots"
+                                                else -> sub
+                                            })
                                             Box(
                                                 modifier = Modifier
                                                     .clip(RoundedCornerShape(14.dp))
@@ -807,7 +927,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                                     .padding(horizontal = 16.dp, vertical = 8.dp)
                                             ) {
                                                 Text(
-                                                    text = if (sub == "Standart") "Normal" else sub,
+                                                    text = displaySub,
                                                     color = if (isSelected) Color.White else VestiColors.TextMain,
                                                     fontSize = 13.sp,
                                                     fontWeight = FontWeight.Bold
@@ -821,22 +941,23 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
 
                         // Beden Seçimi (Kutusuz, Yuvarlak Şık Kapsüller)
                         Column {
-                            Text("Beden Seçimi", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                            Text(AppConfig.t("Beden Seçimi", "Size Selection"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                             Spacer(modifier = Modifier.height(12.dp))
                             val sizeOptions = listOf("XS", "S", "M", "L", "XL", "XXL", "Standart")
                             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 items(sizeOptions) { sz ->
                                     val isSelected = inputSize == sz
+                                    val szDisplay = if (sz == "Standart") AppConfig.t("Standart", "Standard") else sz
                                     Box(
                                         modifier = Modifier
-                                            .size(width = 56.dp, height = 40.dp)
+                                            .size(width = 72.dp, height = 40.dp)
                                             .clip(RoundedCornerShape(14.dp))
                                             .background(if (isSelected) VestiColors.Primary else Color(0xFFF7F7F7))
                                             .clickable { inputSize = sz }
                                             .wrapContentSize(Alignment.Center)
                                     ) {
                                         Text(
-                                            text = sz,
+                                            text = szDisplay,
                                             color = if (isSelected) Color.White else VestiColors.TextMain,
                                             fontSize = 13.sp,
                                             fontWeight = FontWeight.Bold
@@ -848,7 +969,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
 
                         // Renk Kataloğu (Kutusuz, Canlı Önizleme)
                         Column {
-                            Text("Renk Kataloğu", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                            Text(AppConfig.t("Renk Kataloğu", "Color Catalog"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                             Spacer(modifier = Modifier.height(12.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -876,7 +997,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                                 .background(Color.White.copy(alpha = 0.85f)),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            Text("Özel", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = VestiColors.TextMain)
+                                            Text(AppConfig.t("Özel", "Custom"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = VestiColors.TextMain)
                                         }
                                     }
                                 }
@@ -884,8 +1005,8 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                 OutlinedTextField(
                                     value = inputColor,
                                     onValueChange = { inputColor = it },
-                                    label = { Text("Kıyafet Rengi") },
-                                    placeholder = { Text("Örn: Gül Kurusu, Vişne Çürüğü, Krem") },
+                                    label = { Text(AppConfig.t("Kıyafet Rengi", "Clothing Color")) },
+                                    placeholder = { Text(AppConfig.t("Örn: Siyah, Beyaz, Mavi", "e.g. Black, White, Blue")) },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(12.dp),
                                     colors = OutlinedTextFieldDefaults.colors(
@@ -899,12 +1020,12 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
 
                         // Marka Bilgisi (Kutusuz, Şık Giriş)
                         Column {
-                            Text("Marka Bilgisi", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                            Text(AppConfig.t("Marka Bilgisi", "Brand Information"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                             Spacer(modifier = Modifier.height(12.dp))
                             OutlinedTextField(
                                 value = inputBrand,
                                 onValueChange = { inputBrand = it },
-                                placeholder = { Text("örn. Zara, H&M, Boutique", color = Color.LightGray) },
+                                placeholder = { Text(AppConfig.t("örn. Zara, H&M, Boutique", "e.g. Zara, H&M, Boutique"), color = Color.LightGray) },
                                 leadingIcon = { Icon(Icons.Default.Label, contentDescription = null, tint = VestiColors.Primary) },
                                 modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(12.dp),
@@ -955,7 +1076,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                 .fillMaxWidth()
                                 .height(52.dp)
                         ) {
-                            Text("Gardıroba Kaydet", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
+                            Text(AppConfig.t("Gardıroba Kaydet", "Save to Wardrobe"), fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
                         }
                         
                         TextButton(
@@ -972,7 +1093,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("İptal Et", color = Color.Gray, fontWeight = FontWeight.Medium)
+                            Text(AppConfig.t("İptal Et", "Cancel"), color = Color.Gray, fontWeight = FontWeight.Medium)
                         }
                     }
                 }
@@ -984,8 +1105,8 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
     if (itemToDelete != null) {
         AlertDialog(
             onDismissRequest = { itemToDelete = null },
-            title = { Text("Kıyafeti Sil", fontWeight = FontWeight.Bold) },
-            text = { Text("Bu kıyafeti gardırobunuzdan kalıcı olarak silmek istediğinize emin misiniz?") },
+            title = { Text(AppConfig.t("Kıyafeti Sil", "Delete Item"), fontWeight = FontWeight.Bold) },
+            text = { Text(AppConfig.t("Bu kıyafeti gardırobunuzdan kalıcı olarak silmek istediğinize emin misiniz?", "Are you sure you want to permanently delete this item from your wardrobe?")) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -994,12 +1115,12 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {
-                    Text("Sil", color = Color.White)
+                    Text(AppConfig.t("Sil", "Delete"), color = Color.White)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { itemToDelete = null }) {
-                    Text("İptal", color = Color.Gray)
+                    Text(AppConfig.t("İptal", "Cancel"), color = Color.Gray)
                 }
             }
         )
@@ -1106,8 +1227,21 @@ fun CategoryCollectionCard(
                     .align(Alignment.BottomStart)
                     .padding(16.dp)
             ) {
+                val displayName = AppConfig.t(categoryName, when (categoryName) {
+                    "Tişört" -> "T-Shirt"
+                    "Gömlek" -> "Shirt"
+                    "Pantolon" -> "Pants"
+                    "Ceket" -> "Jacket"
+                    "Ayakkabı" -> "Shoes"
+                    "Elbise" -> "Dress"
+                    "Aksesuar" -> "Accessory"
+                    "Etek" -> "Skirt"
+                    "Kazak" -> "Sweater"
+                    "Takım" -> "Suit"
+                    else -> categoryName
+                })
                 Text(
-                    text = categoryName,
+                    text = displayName,
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -1115,7 +1249,7 @@ fun CategoryCollectionCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "$itemCount Parça Kıyafet",
+                    text = AppConfig.t("$itemCount Parça Kıyafet", "$itemCount Clothes Items"),
                     color = Color.LightGray,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
@@ -1167,16 +1301,18 @@ fun WardrobeItemCard(item: WardrobeItemDto, onDeleteClick: () -> Unit) {
                     .padding(horizontal = 12.dp, vertical = 12.dp)
             ) {
                 Column {
+                    val itemCategoryDisplay = AppConfig.translateCategory(item.category)
                     Text(
-                        text = item.category,
+                        text = itemCategoryDisplay,
                         color = Color.White,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
                     if (item.color.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(2.dp))
+                        val itemColorDisplay = AppConfig.translateColor(item.color)
                         Text(
-                            text = item.color,
+                            text = itemColorDisplay,
                             color = Color.LightGray,
                             fontSize = 11.sp,
                             maxLines = 1
@@ -1198,7 +1334,7 @@ fun WardrobeItemCard(item: WardrobeItemDto, onDeleteClick: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Sil",
+                    contentDescription = AppConfig.t("Sil", "Delete"),
                     tint = Color.White,
                     modifier = Modifier.size(16.dp)
                 )
@@ -1209,9 +1345,10 @@ fun WardrobeItemCard(item: WardrobeItemDto, onDeleteClick: () -> Unit) {
 
 @Composable
 fun HangerLoadingAnimation(
-    title: String = "Kıyafetiniz Askıya Asılıyor",
+    title: String? = null,
     subtitle: String = ""
 ) {
+    val resolvedTitle = title ?: AppConfig.t("Kıyafetiniz Askıya Asılıyor", "Hanging your clothes...")
     val infiniteTransition = rememberInfiniteTransition(label = "hanger")
     
     val scale by infiniteTransition.animateFloat(
@@ -1317,7 +1454,7 @@ fun HangerLoadingAnimation(
         Spacer(modifier = Modifier.height(18.dp))
         
         Text(
-            text = title,
+            text = resolvedTitle,
             color = VestiColors.TextMain,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -1340,47 +1477,48 @@ fun resolveColorFromName(name: String): Color? {
     val clean = name.lowercase().trim()
     return when {
         clean.isBlank() -> null
-        clean.contains("gül kurusu") -> Color(0xFFC08081)
-        clean.contains("vişne çürüğü") -> Color(0xFF722F37)
-        clean.contains("petrol") -> Color(0xFF005F73)
-        clean.contains("haki") -> Color(0xFF5E6737)
-        clean.contains("saks") -> Color(0xFF0038A8)
-        clean.contains("pudra") -> Color(0xFFFFD1DC)
-        clean.contains("ekru") -> Color(0xFFF3EAD3)
-        clean.contains("taba") -> Color(0xFFB35A2B)
-        clean.contains("antrasit") -> Color(0xFF36454F)
-        clean.contains("hardal") -> Color(0xFFE1AD01)
-        clean.contains("mint") -> Color(0xFFAAF0D1)
-        clean.contains("lila") -> Color(0xFFC8A2C8)
-        clean.contains("somon") -> Color(0xFFFF8C69)
-        clean.contains("gece mavisi") -> Color(0xFF191970)
-        clean.contains("fıstık") -> Color(0xFFB2EC5D)
-        clean.contains("kiremit") -> Color(0xFFB64227)
-        clean.contains("vizon") -> Color(0xFF7A6855)
-        clean.contains("şeftali") -> Color(0xFFFFDAB9)
-        clean.contains("bordo") -> Color(0xFF800020)
+        clean.contains("gül kurusu") || clean.contains("rose dust") -> Color(0xFFC08081)
+        clean.contains("vişne çürüğü") || clean.contains("cherry dregs") -> Color(0xFF722F37)
+        clean.contains("petrol") || clean.contains("teal") -> Color(0xFF005F73)
+        clean.contains("haki") || clean.contains("khaki") -> Color(0xFF5E6737)
+        clean.contains("saks") || clean.contains("royal blue") -> Color(0xFF0038A8)
+        clean.contains("pudra") || clean.contains("powder pink") -> Color(0xFFFFD1DC)
+        clean.contains("ekru") || clean.contains("ecru") -> Color(0xFFF3EAD3)
+        clean.contains("taba") || clean.contains("tan") -> Color(0xFFB35A2B)
+        clean.contains("antrasit") || clean.contains("anthracite") || clean.contains("charcoal") -> Color(0xFF36454F)
+        clean.contains("hardal") || clean.contains("mustard") -> Color(0xFFE1AD01)
+        clean.contains("mint") || clean.contains("nane") -> Color(0xFFAAF0D1)
+        clean.contains("lila") || clean.contains("lilac") -> Color(0xFFC8A2C8)
+        clean.contains("somon") || clean.contains("salmon") -> Color(0xFFFF8C69)
+        clean.contains("gece mavisi") || clean.contains("midnight blue") -> Color(0xFF191970)
+        clean.contains("fıstık") || clean.contains("pistachio") -> Color(0xFFB2EC5D)
+        clean.contains("kiremit") || clean.contains("brick red") -> Color(0xFFB64227)
+        clean.contains("vizon") || clean.contains("mink") -> Color(0xFF7A6855)
+        clean.contains("şeftali") || clean.contains("peach") -> Color(0xFFFFDAB9)
+        clean.contains("bordo") || clean.contains("burgundy") -> Color(0xFF800020)
         clean.contains("indigo") -> Color(0xFF4B0082)
         clean.contains("camel") || clean.contains("deve tüyü") -> Color(0xFFC19A6B)
-        clean.contains("altın") || clean.contains("dore") -> Color(0xFFD4AF37)
-        clean.contains("gümüş") || clean.contains("lame") -> Color(0xFFC0C0C0)
-        clean.contains("fuşya") -> Color(0xFFFF00FF)
-        clean.contains("turkuaz") -> Color(0xFF40E0D0)
-        clean.contains("mercan") -> Color(0xFFFF7F50)
+        clean.contains("altın") || clean.contains("dore") || clean.contains("gold") -> Color(0xFFD4AF37)
+        clean.contains("gümüş") || clean.contains("lame") || clean.contains("silver") -> Color(0xFFC0C0C0)
+        clean.contains("fuşya") || clean.contains("fuchsia") -> Color(0xFFFF00FF)
+        clean.contains("turkuaz") || clean.contains("turquoise") -> Color(0xFF40E0D0)
+        clean.contains("mercan") || clean.contains("coral") -> Color(0xFFFF7F50)
         
         // Base colors
-        clean.contains("siyah") -> Color.Black
-        clean.contains("beyaz") -> Color.White
-        clean.contains("mavi") -> Color(0xFF2196F3)
-        clean.contains("kırmızı") -> Color(0xFFF44336)
-        clean.contains("yeşil") -> Color(0xFF4CAF50)
-        clean.contains("gri") -> Color(0xFF9E9E9E)
-        clean.contains("krem") -> Color(0xFFFFFDD0)
-        clean.contains("bej") -> Color(0xFFF5F5DC)
-        clean.contains("sarı") -> Color(0xFFFFEB3B)
-        clean.contains("turuncu") -> Color(0xFFFF9800)
-        clean.contains("mor") -> Color(0xFF9C27B0)
-        clean.contains("pembe") -> Color(0xFFE91E63)
-        clean.contains("kahve") -> Color(0xFF795548)
+        clean.contains("siyah") || clean.contains("black") -> Color.Black
+        clean.contains("beyaz") || clean.contains("white") -> Color.White
+        clean.contains("mavi") || clean.contains("blue") -> Color(0xFF2196F3)
+        clean.contains("kırmızı") || clean.contains("red") -> Color(0xFFF44336)
+        clean.contains("yeşil") || clean.contains("green") -> Color(0xFF4CAF50)
+        clean.contains("gri") || clean.contains("gray") || clean.contains("grey") -> Color(0xFF9E9E9E)
+        clean.contains("krem") || clean.contains("cream") -> Color(0xFFFFFDD0)
+        clean.contains("bej") || clean.contains("beige") -> Color(0xFFF5F5DC)
+        clean.contains("sarı") || clean.contains("yellow") -> Color(0xFFFFEB3B)
+        clean.contains("turuncu") || clean.contains("orange") -> Color(0xFFFF9800)
+        clean.contains("mor") || clean.contains("purple") || clean.contains("violet") -> Color(0xFF9C27B0)
+        clean.contains("pembe") || clean.contains("pink") -> Color(0xFFE91E63)
+        clean.contains("kahve") || clean.contains("brown") -> Color(0xFF795548)
+        clean.contains("lacivert") || clean.contains("navy") -> Color(0xFF1A237E)
         
         else -> null
     }

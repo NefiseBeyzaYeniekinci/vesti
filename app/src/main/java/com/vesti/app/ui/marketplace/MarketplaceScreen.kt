@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vesti.app.AppConfig
 import com.vesti.app.ui.theme.VestiColors
 
 data class MockProduct(
@@ -252,7 +253,7 @@ fun MarketplaceScreen(
                     IconButton(onClick = onNavigateToMessages) {
                         Icon(
                             imageVector = Icons.Default.ChatBubbleOutline,
-                            contentDescription = "Mesajlar",
+                            contentDescription = AppConfig.t("Mesajlar", "Messages"),
                             tint = VestiColors.Primary
                         )
                     }
@@ -277,7 +278,7 @@ fun MarketplaceScreen(
                 contentColor = Color.White,
                 shape = CircleShape
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "İlan Ver")
+                Icon(imageVector = Icons.Default.Add, contentDescription = AppConfig.t("İlan Ver", "Post Listing"))
             }
         },
         containerColor = VestiColors.Background
@@ -293,8 +294,8 @@ fun MarketplaceScreen(
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Kıyafet, marka veya kategori ara...", color = Color.Gray, fontSize = 13.sp) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Ara", tint = Color.Gray, modifier = Modifier.size(20.dp)) },
+                placeholder = { Text(AppConfig.t("Kıyafet, marka veya kategori ara...", "Search clothes, brands or categories..."), color = Color.Gray, fontSize = 13.sp) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = AppConfig.t("Ara", "Search"), tint = Color.Gray, modifier = Modifier.size(20.dp)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -318,6 +319,13 @@ fun MarketplaceScreen(
             ) {
                 items(filtersList) { filterOpt ->
                     val isSelected = activeChip == filterOpt || (filterOpt == "Filtrele" && (filterSize != "Hepsi" || filterBrand != "Hepsi" || filterCondition != "Hepsi" || filterTradeable != null || filterPriceMin.isNotEmpty() || filterPriceMax.isNotEmpty()))
+                    val displayOpt = AppConfig.t(filterOpt, when(filterOpt) {
+                        "Filtrele" -> "Filter"
+                        "Takas Edilebilir" -> "Tradeable"
+                        "Yeni Gibi" -> "Like New"
+                        "Sıfır" -> "Brand New"
+                        else -> filterOpt
+                    })
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
@@ -344,7 +352,7 @@ fun MarketplaceScreen(
                                 )
                             }
                             Text(
-                                text = filterOpt,
+                                text = displayOpt,
                                 color = if (isSelected) VestiColors.Primary else Color.DarkGray,
                                 fontSize = 12.sp,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
@@ -356,7 +364,7 @@ fun MarketplaceScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Grid of products (Guaranteed 16.dp Right Margin!)
+            // Grid of products
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 100.dp),
@@ -394,25 +402,26 @@ fun MarketplaceScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Detaylı Filtreleme",
+                        text = AppConfig.t("Detaylı Filtreleme", "Detailed Filtering"),
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
                         color = VestiColors.DarkIndigo
                     )
                     IconButton(onClick = { showFilterDialog = false }) {
-                        Icon(Icons.Default.Close, contentDescription = "Kapat", tint = Color.Gray)
+                        Icon(Icons.Default.Close, contentDescription = AppConfig.t("Kapat", "Close"), tint = Color.Gray)
                     }
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // 1. Brand (Marka) Filter
-                Text("Marka", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Text(AppConfig.t("Marka", "Brand"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(8.dp))
                 val brandOptions = listOf("Hepsi", "Vintage", "Nike", "Zara", "Levi's", "Lacoste", "Mango", "Ray-Ban", "The North Face")
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(brandOptions) { opt ->
                         val isSelected = filterBrand == opt
+                        val brandDisp = if (opt == "Hepsi") AppConfig.t("Hepsi", "All") else opt
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(12.dp))
@@ -420,7 +429,7 @@ fun MarketplaceScreen(
                                 .clickable { filterBrand = opt }
                                 .padding(horizontal = 14.dp, vertical = 8.dp)
                         ) {
-                            Text(opt, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(brandDisp, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -428,12 +437,13 @@ fun MarketplaceScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // 2. Size (Beden) Filter
-                Text("Beden", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Text(AppConfig.t("Beden", "Size"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(8.dp))
                 val sizeOptions = listOf("Hepsi", "S", "M", "L", "XL", "32", "42")
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(sizeOptions) { opt ->
                         val isSelected = filterSize == opt
+                        val sizeDisp = if (opt == "Hepsi") AppConfig.t("Hepsi", "All") else opt
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(12.dp))
@@ -441,7 +451,7 @@ fun MarketplaceScreen(
                                 .clickable { filterSize = opt }
                                 .padding(horizontal = 14.dp, vertical = 8.dp)
                         ) {
-                            Text(opt, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(sizeDisp, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -449,7 +459,7 @@ fun MarketplaceScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // 3. Tradeability (Takas Edilebilirlik) Filter
-                Text("İlan Türü (Takas Edilebilirlik)", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Text(AppConfig.t("İlan Türü (Takas Edilebilirlik)", "Listing Type (Tradeability)"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -462,6 +472,12 @@ fun MarketplaceScreen(
                     )
                     swapOptions.forEach { (label, value, short) ->
                         val isSelected = filterTradeable == value
+                        val swapLabel = AppConfig.t(label, when(label) {
+                            "Tümü" -> "All"
+                            "Takas Edilebilir" -> "Tradeable"
+                            "Sadece Satılık" -> "For Sale Only"
+                            else -> label
+                        })
                         Box(
                             modifier = Modifier
                                 .weight(1f)
@@ -471,20 +487,28 @@ fun MarketplaceScreen(
                                 .padding(vertical = 10.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(label, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(swapLabel, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 4. Condition (Kullanılma Derecesi) Filter
-                Text("Kullanım Derecesi", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                // 4. Condition Filter
+                Text(AppConfig.t("Kullanım Derecesi", "Condition"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(8.dp))
                 val conditionOptions = listOf("Hepsi", "Sıfır", "Yeni Gibi", "Az Kullanılmış", "Kullanılmış")
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(conditionOptions) { opt ->
                         val isSelected = filterCondition == opt
+                        val condDisp = AppConfig.t(opt, when (opt) {
+                            "Hepsi" -> "All"
+                            "Sıfır" -> "Brand New"
+                            "Yeni Gibi" -> "Like New"
+                            "Az Kullanılmış" -> "Lightly Used"
+                            "Kullanılmış" -> "Used"
+                            else -> opt
+                        })
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(12.dp))
@@ -492,15 +516,15 @@ fun MarketplaceScreen(
                                 .clickable { filterCondition = opt }
                                 .padding(horizontal = 14.dp, vertical = 8.dp)
                         ) {
-                            Text(opt, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(condDisp, color = if (isSelected) Color.White else Color.DarkGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 5. Price Range (Fiyat Aralığı) Filter
-                Text("Fiyat Aralığı", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                // 5. Price Range
+                Text(AppConfig.t("Fiyat Aralığı", "Price Range"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -510,7 +534,7 @@ fun MarketplaceScreen(
                     OutlinedTextField(
                         value = filterPriceMin,
                         onValueChange = { filterPriceMin = it },
-                        placeholder = { Text("En Az", color = Color.Gray, fontSize = 12.sp) },
+                        placeholder = { Text(AppConfig.t("En Az", "Min"), color = Color.Gray, fontSize = 12.sp) },
                         modifier = Modifier.weight(1f),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -527,7 +551,7 @@ fun MarketplaceScreen(
                     OutlinedTextField(
                         value = filterPriceMax,
                         onValueChange = { filterPriceMax = it },
-                        placeholder = { Text("En Çok", color = Color.Gray, fontSize = 12.sp) },
+                        placeholder = { Text(AppConfig.t("En Çok", "Max"), color = Color.Gray, fontSize = 12.sp) },
                         modifier = Modifier.weight(1f),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -563,7 +587,7 @@ fun MarketplaceScreen(
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.DarkGray)
                     ) {
-                        Text("Temizle", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(AppConfig.t("Temizle", "Clear"), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
 
                     Button(
@@ -574,7 +598,7 @@ fun MarketplaceScreen(
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary)
                     ) {
-                        Text("Sonuçları Uygula", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
+                        Text(AppConfig.t("Sonuçları Uygula", "Apply Results"), fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color.White)
                     }
                 }
                 
@@ -609,7 +633,7 @@ fun MarketplaceScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Yeni İlan Oluştur",
+                        text = AppConfig.t("Yeni İlan Oluştur", "Create New Listing"),
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
                         color = VestiColors.TextMain
@@ -620,21 +644,21 @@ fun MarketplaceScreen(
                         currentPhotoUri = null
                         selectedImageUri = null
                     }) {
-                        Icon(Icons.Default.Close, contentDescription = "Kapat", tint = Color.Gray)
+                        Icon(Icons.Default.Close, contentDescription = AppConfig.t("Kapat", "Close"), tint = Color.Gray)
                     }
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 // Option 1: Choose from Digital Wardrobe
-                Text("1. Gardırobumdan Hızlı Seç", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Text(AppConfig.t("1. Gardırobumdan Hızlı Seç", "1. Quick Pick from My Wardrobe"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(10.dp))
                 
                 val wardrobeState by wardrobeViewModel.state.collectAsStateWithLifecycle()
                 if (wardrobeState is WardrobeState.Success) {
                     val wItems = (wardrobeState as WardrobeState.Success).items
                     if (wItems.isEmpty()) {
-                        Text("Gardırobunuzda henüz kıyafet yok.", color = Color.Gray, fontSize = 12.sp, modifier = Modifier.padding(vertical = 8.dp))
+                        Text(AppConfig.t("Gardırobunuzda henüz kıyafet yok.", "You don't have clothes in your wardrobe yet."), color = Color.Gray, fontSize = 12.sp, modifier = Modifier.padding(vertical = 8.dp))
                     } else {
                         // Category Filters Row for wardrobe select
                         val wardrobeCats = listOf("Hepsi", "Tişört", "Gömlek", "Kazak", "Ceket", "Pantolon", "Takım", "Aksesuar", "Ayakkabı")
@@ -644,6 +668,18 @@ fun MarketplaceScreen(
                         ) {
                             items(wardrobeCats) { cat ->
                                 val isSelected = selectedWardrobeCategory == cat
+                                val displayCat = AppConfig.t(cat, when(cat) {
+                                    "Hepsi" -> "All"
+                                    "Tişört" -> "T-Shirt"
+                                    "Gömlek" -> "Shirt"
+                                    "Kazak" -> "Sweater"
+                                    "Ceket" -> "Jacket"
+                                    "Pantolon" -> "Pants"
+                                    "Takım" -> "Suit"
+                                    "Aksesuar" -> "Accessory"
+                                    "Ayakkabı" -> "Shoes"
+                                    else -> cat
+                                })
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(12.dp))
@@ -652,7 +688,7 @@ fun MarketplaceScreen(
                                         .padding(horizontal = 12.dp, vertical = 6.dp)
                                 ) {
                                     Text(
-                                        text = cat,
+                                        text = displayCat,
                                         color = if (isSelected) VestiColors.Primary else Color.Gray,
                                         fontSize = 11.sp,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
@@ -667,7 +703,7 @@ fun MarketplaceScreen(
                         }
                         
                         if (filteredWItems.isEmpty()) {
-                            Text("Bu kategoride kıyafetiniz bulunmuyor.", color = Color.Gray, fontSize = 12.sp, modifier = Modifier.padding(vertical = 12.dp))
+                            Text(AppConfig.t("Bu kategoride kıyafetiniz bulunmuyor.", "You have no clothes in this category."), color = Color.Gray, fontSize = 12.sp, modifier = Modifier.padding(vertical = 12.dp))
                         } else {
                             LazyRow(
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -709,7 +745,19 @@ fun MarketplaceScreen(
                                                     .background(Color.Black.copy(alpha = 0.6f))
                                                     .padding(4.dp)
                                             ) {
-                                                Text(wItem.category, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                                val catDisplay = AppConfig.t(wItem.category, when(wItem.category.lowercase()) {
+                                                    "tişört" -> "T-Shirt"
+                                                    "gömlek" -> "Shirt"
+                                                    "pantolon" -> "Pants"
+                                                    "ceket" -> "Jacket"
+                                                    "takım" -> "Suit"
+                                                    "aksesuar" -> "Accessory"
+                                                    "ayakkabı" -> "Shoes"
+                                                    "elbise" -> "Dress"
+                                                    "etek" -> "Skirt"
+                                                    else -> wItem.category
+                                                })
+                                                Text(catDisplay, color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                                             }
                                         }
                                     }
@@ -722,7 +770,7 @@ fun MarketplaceScreen(
                 Spacer(modifier = Modifier.height(20.dp))
                 
                 // Option 2: Upload or Capture Custom Photo
-                Text("2. Veya Fotoğraf Çek / Yükle", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Text(AppConfig.t("2. Veya Fotoğraf Çek / Yükle", "2. Or Take / Upload Photo"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(10.dp))
                 
                 val galleryLauncher = rememberLauncherForActivityResult(
@@ -753,7 +801,7 @@ fun MarketplaceScreen(
                         shape = RoundedCornerShape(14.dp),
                         modifier = Modifier.weight(1f).height(48.dp)
                     ) {
-                        Text("Kamera İle Çek", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(AppConfig.t("Kamera İle Çek", "Take with Camera"), color = Color.White, fontWeight = FontWeight.Bold)
                     }
                     
                     OutlinedButton(
@@ -763,7 +811,7 @@ fun MarketplaceScreen(
                         shape = RoundedCornerShape(14.dp),
                         modifier = Modifier.weight(1f).height(48.dp)
                     ) {
-                        Text("Galeriden Seç", fontWeight = FontWeight.Bold)
+                        Text(AppConfig.t("Galeriden Seç", "Select from Gallery"), fontWeight = FontWeight.Bold)
                     }
                 }
                 
@@ -772,7 +820,7 @@ fun MarketplaceScreen(
                 // Image Preview if selected
                 val previewData = selectedImageUri ?: currentPhotoUri
                 if (previewData != null) {
-                    Text("Seçilen Ürün Görseli", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 13.sp)
+                    Text(AppConfig.t("Seçilen Ürün Görseli", "Selected Product Image"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     Box(
                         modifier = Modifier
@@ -796,14 +844,14 @@ fun MarketplaceScreen(
                 }
                 
                 // Form Fields
-                Text("3. İlan Bilgileri", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                Text(AppConfig.t("3. İlan Bilgileri", "3. Listing Details"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(10.dp))
                 
                 OutlinedTextField(
                     value = inputTitle,
                     onValueChange = { inputTitle = it },
-                    label = { Text("Ürün Başlığı") },
-                    placeholder = { Text("Örn: Vintage Deri Ceket") },
+                    label = { Text(AppConfig.t("Ürün Başlığı", "Product Title")) },
+                    placeholder = { Text(AppConfig.t("Örn: Vintage Deri Ceket", "e.g. Vintage Leather Jacket")) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = VestiColors.Primary)
@@ -814,8 +862,8 @@ fun MarketplaceScreen(
                 OutlinedTextField(
                     value = inputPrice,
                     onValueChange = { inputPrice = it },
-                    label = { Text("Fiyat (₺)") },
-                    placeholder = { Text("Örn: 1250") },
+                    label = { Text(AppConfig.t("Fiyat (₺)", "Price (₺)")) },
+                    placeholder = { Text(AppConfig.t("Örn: 1250", "e.g. 1250")) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = VestiColors.Primary)
@@ -826,8 +874,8 @@ fun MarketplaceScreen(
                 OutlinedTextField(
                     value = inputBrand,
                     onValueChange = { inputBrand = it },
-                    label = { Text("Marka") },
-                    placeholder = { Text("Örn: Zara, Vintage") },
+                    label = { Text(AppConfig.t("Marka", "Brand")) },
+                    placeholder = { Text(AppConfig.t("Örn: Zara, Vintage", "e.g. Zara, Vintage")) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = VestiColors.Primary)
@@ -836,12 +884,19 @@ fun MarketplaceScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 
                 // Condition chip choices
-                Text("Durum Seçimi", fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 13.sp)
+                Text(AppConfig.t("Durum Seçimi", "Condition Selection"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 13.sp)
                 Spacer(modifier = Modifier.height(8.dp))
-                val conditionOptions = listOf("Yeni Gibi", "Sıfır", "Az Kullanılmış", "Kullanılmış")
+                val inputConds = listOf("Yeni Gibi", "Sıfır", "Az Kullanılmış", "Kullanılmış")
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(conditionOptions) { cond ->
+                    items(inputConds) { cond ->
                         val isSelected = inputCondition == cond
+                        val condDisp = AppConfig.t(cond, when(cond) {
+                            "Yeni Gibi" -> "Like New"
+                            "Sıfır" -> "Brand New"
+                            "Az Kullanılmış" -> "Lightly Used"
+                            "Kullanılmış" -> "Used"
+                            else -> cond
+                        })
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(12.dp))
@@ -850,7 +905,7 @@ fun MarketplaceScreen(
                                 .padding(horizontal = 14.dp, vertical = 8.dp)
                         ) {
                             Text(
-                                text = cond,
+                                text = condDisp,
                                 color = if (isSelected) Color.White else VestiColors.TextMain,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
@@ -892,7 +947,7 @@ fun MarketplaceScreen(
                         .fillMaxWidth()
                         .height(52.dp)
                 ) {
-                    Text("İlanı Yayınla", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(AppConfig.t("İlanı Yayınla", "Publish Listing"), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
                 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -953,7 +1008,7 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.padding(8.dp).align(Alignment.TopStart)
                     ) {
-                        Text("⇄ TAKAS", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
+                        Text(AppConfig.t("⇄ TAKAS", "⇄ SWAP"), color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
                     }
                 }
                 Surface(
@@ -961,7 +1016,14 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.padding(8.dp).align(Alignment.BottomStart)
                 ) {
-                    Text(product.condition, color = VestiColors.TextMain, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
+                    val condDisp = AppConfig.t(product.condition, when (product.condition) {
+                        "Sıfır" -> "Brand New"
+                        "Yeni Gibi" -> "Like New"
+                        "Az Kullanılmış" -> "Lightly Used"
+                        "Kullanılmış" -> "Used"
+                        else -> product.condition
+                    })
+                    Text(condDisp, color = VestiColors.TextMain, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
                 }
             }
             
@@ -979,11 +1041,27 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(product.brand, color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
-                        Text(product.size, color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                        val sizeDisp = AppConfig.t(product.size, when {
+                            product.size == "Standart" -> "Standard"
+                            product.size.startsWith("Beden:") -> product.size.replace("Beden:", "Size:")
+                            else -> product.size
+                        })
+                        Text(sizeDisp, color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
                     }
                     Spacer(modifier = Modifier.height(4.dp))
+                    val titleDisp = AppConfig.t(product.title, when(product.title) {
+                        "Vintage Deri Ceket" -> "Vintage Leather Jacket"
+                        "Zara Beyaz Keten Gömlek" -> "Zara White Linen Shirt"
+                        "Siyah Mini Elbise" -> "Black Mini Dress"
+                        "Güneş Gözlüğü" -> "Sunglasses"
+                        "Kışlık Şişme Mont" -> "Winter Puffer Jacket"
+                        "Polo Yaka Tişört" -> "Polo Neck T-Shirt"
+                        "Nike Air Force 1" -> "Nike Air Force 1"
+                        "Levi's 501 Jean" -> "Levi's 501 Jeans"
+                        else -> product.title
+                    })
                     Text(
-                        text = product.title,
+                        text = titleDisp,
                         color = VestiColors.TextMain,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,

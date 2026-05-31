@@ -1,11 +1,12 @@
 # Android/Gradle
-esti-android/.gradle/
-vesti-android/.idea/
-vesti-android/build/
-vesti-android/app/build/
-vesti-android/local.properties
-vesti-android/*.iml
-vesti-android/.cxx/
+.gradle/
+.idea/
+build/
+app/build/
+local.properties
+*.iml
+.cxx/
+
 
 # Node.js
 **/node_modules/

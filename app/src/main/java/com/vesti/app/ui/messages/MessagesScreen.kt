@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vesti.app.AppConfig
 import com.vesti.app.ui.theme.VestiColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,10 +30,10 @@ fun MessagesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mesajlar", fontWeight = FontWeight.Bold, color = VestiColors.DarkIndigo) },
+                title = { Text(AppConfig.t("Mesajlar", "Messages"), fontWeight = FontWeight.Bold, color = VestiColors.DarkIndigo) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri")
+                        Icon(Icons.Default.ArrowBack, contentDescription = AppConfig.t("Geri", "Back"))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = VestiColors.Background)
@@ -46,7 +47,7 @@ fun MessagesScreen(
                 .padding(paddingValues)
         ) {
             Text(
-                text = "1 okunmamış konuşma",
+                text = AppConfig.t("1 okunmamış konuşma", "1 unread conversation"),
                 color = Color.Gray,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -62,19 +63,40 @@ fun MessagesScreen(
             ) {
                 LazyColumn {
                     item { 
-                        MessageItem("Ayşe K.", "Zara Keten Blazer - Bej", "Evet, hâlâ satılıkta. Fiyatta anlaşabiliriz \uD83D\uDE0A", "10 dk önce", true, "AK") {
+                        MessageItem(
+                            name = "Ayşe K.",
+                            product = AppConfig.t("Zara Keten Blazer - Bej", "Zara Linen Blazer - Beige"),
+                            message = AppConfig.t("Evet, hâlâ satılıkta. Fiyatta anlaşabiliriz \uD83D\uDE0A", "Yes, still for sale. We can negotiate the price \uD83D\uDE0A"),
+                            time = AppConfig.t("10 dk önce", "10m ago"),
+                            unread = true,
+                            initials = "AK"
+                        ) {
                             onNavigateToChat("aysek")
                         } 
                     }
                     item { Divider(color = Color(0xFFF3F4F6)) }
                     item { 
-                        MessageItem("Elif T.", "Mango Midi Etek - Siyah", "Sen: Kargo bilgilerini paylaşır mısın?", "3 sa önce", false, "ET") {
+                        MessageItem(
+                            name = "Elif T.",
+                            product = AppConfig.t("Mango Midi Etek - Siyah", "Mango Midi Skirt - Black"),
+                            message = AppConfig.t("Sen: Kargo bilgilerini paylaşır mısın?", "You: Could you share the shipping details?"),
+                            time = AppConfig.t("3 sa önce", "3h ago"),
+                            unread = false,
+                            initials = "ET"
+                        ) {
                             onNavigateToChat("elift")
                         } 
                     }
                     item { Divider(color = Color(0xFFF3F4F6)) }
                     item { 
-                        MessageItem("Zeynep A.", "H&M Denim Ceket", "Takas teklifi için teşekkürler ama geçiyorum \uD83D\uDE4F", "1 gün önce", false, "ZA") {
+                        MessageItem(
+                            name = "Zeynep A.",
+                            product = AppConfig.t("H&M Denim Ceket", "H&M Denim Jacket"),
+                            message = AppConfig.t("Takas teklifi için teşekkürler ama geçiyorum \uD83D\uDE4F", "Thanks for the swap offer, but I'll pass \uD83D\uDE4F"),
+                            time = AppConfig.t("1 gün önce", "1 day ago"),
+                            unread = false,
+                            initials = "ZA"
+                        ) {
                             onNavigateToChat("zeynepa")
                         } 
                     }

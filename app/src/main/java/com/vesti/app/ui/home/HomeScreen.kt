@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.vesti.app.AppConfig
 import com.vesti.app.ui.theme.VestiColors
 import com.vesti.app.ui.wardrobe.WardrobeState
 import com.vesti.app.ui.wardrobe.WardrobeViewModel
@@ -84,14 +85,14 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Son Eklenen Parçalar",
+                        text = AppConfig.t("Son Eklenen Parçalar", "Recently Added Clothes"),
                         color = VestiColors.TextMain,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.3).sp
                     )
                     Text(
-                        text = "Tümünü Gör",
+                        text = AppConfig.t("Tümünü Gör", "View All"),
                         color = VestiColors.Primary,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
@@ -104,8 +105,8 @@ fun HomeScreen(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF1F1F1))
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
                     ) {
                         Column(
                             modifier = Modifier
@@ -114,15 +115,18 @@ fun HomeScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Dolabın henüz boş duruyor 🧥",
+                                text = AppConfig.t("Dolabın henüz boş duruyor 🧥", "Your wardrobe is empty 🧥"),
                                 color = VestiColors.TextMain,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Gardırop sekmesinden kıyafetlerini ekleyerek stil önerileri almaya başla!",
-                                color = Color.Gray,
+                                text = AppConfig.t(
+                                    "Gardırop sekmesinden kıyafetlerini ekleyerek stil önerileri almaya başla!",
+                                    "Add clothes from the wardrobe tab to start getting style recommendations!"
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 fontSize = 12.sp,
                                 lineHeight = 16.sp
                             )
@@ -176,14 +180,14 @@ fun HomeScreen(
                                     }
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
-                                        text = cloth.category,
+                                        text = AppConfig.translateCategory(cloth.category),
                                         color = VestiColors.TextMain,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(horizontal = 8.dp)
                                     )
                                     Text(
-                                        text = cloth.brand ?: cloth.color,
+                                        text = cloth.brand ?: AppConfig.translateColor(cloth.color),
                                         color = Color.Gray,
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Medium,
@@ -202,7 +206,7 @@ fun HomeScreen(
             // 2. Wardrobe Analysis (Dolabının Analizi)
             item {
                 Text(
-                    text = "Dolabının Analizi",
+                    text = AppConfig.t("Dolabının Analizi", "Wardrobe Analysis"),
                     color = VestiColors.TextMain,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -215,7 +219,7 @@ fun HomeScreen(
                         val items = ws.items
                         val total = items.size
                         val favCat = items.groupBy { it.category }
-                            .maxByOrNull { it.value.size }?.key ?: "Yok"
+                            .maxByOrNull { it.value.size }?.key ?: AppConfig.t("Yok", "None")
                         val colors = items.groupBy { it.color }
                             .mapValues { it.value.size }
                             .toList()
@@ -223,18 +227,19 @@ fun HomeScreen(
                             .take(4)
                         Triple(total, favCat, colors)
                     }
-                    else -> Triple(0, "Yükleniyor...", emptyList())
+                    else -> Triple(0, AppConfig.t("Yükleniyor...", "Loading..."), emptyList())
                 }
 
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF1F1F1))
+                    shape = RoundedCornerShape(28.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp)
+                        modifier = Modifier.padding(24.dp)
                     ) {
+                        // Card Header Info
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -242,89 +247,309 @@ fun HomeScreen(
                         ) {
                             Column {
                                 Text(
-                                    text = "Dolap Çeşitliliği",
-                                    color = Color.Gray,
+                                    text = AppConfig.t("Dolap Çeşiti", "Wardrobe Diversity"),
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Medium
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = if (totalItems > 8) "Kombin Hazırlığı: Zengin" else "Kombin Hazırlığı: Başlangıç",
+                                    text = if (totalItems > 8) {
+                                        AppConfig.t("Kombin Hazırlığı: Zengin", "Outfit Readiness: Rich")
+                                    } else {
+                                        AppConfig.t("Kombin Hazırlığı: Başlangıç", "Outfit Readiness: Starter")
+                                    },
                                     color = VestiColors.Primary,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
+                            
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(12.dp))
                                     .background(VestiColors.LightPurple)
-                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                                    .padding(horizontal = 14.dp, vertical = 6.dp)
                             ) {
                                 Text(
-                                    text = "$totalItems Parça",
+                                    text = AppConfig.t("$totalItems Parça", "$totalItems Items"),
                                     color = VestiColors.Primary,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
                         }
-
-                        Divider(modifier = Modifier.padding(vertical = 16.dp), color = Color(0xFFF1F1F1))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                        
+                        Spacer(modifier = Modifier.height(20.dp))
+                        
+                        // GRAPHICAL WARDROBE (CLOSET)
+                        // Drawn as a sleek round enclosure with hangers, shelf, and labeled compartments!
+                        // SLEEK MODERN DIGITAL WARDROBE ANALYSIS CARD
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(230.dp),
+                            shape = RoundedCornerShape(20.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0))
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Favori Kategori",
-                                    color = Color.Gray,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = favCategory,
-                                    color = VestiColors.TextMain,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            
-                            Column(modifier = Modifier.weight(1.2f)) {
-                                Text(
-                                    text = "Renk Paletin",
-                                    color = Color.Gray,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                                Spacer(modifier = Modifier.height(6.dp))
-                                if (colorPalette.isEmpty()) {
-                                    Text(
-                                        text = "Renk verisi henüz yok",
-                                        color = Color.LightGray,
-                                        fontSize = 12.sp
-                                    )
-                                } else {
-                                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                        colorPalette.forEach { (colorName, _) ->
-                                            val resolvedColor = when (colorName.lowercase()) {
-                                                "siyah" -> Color.Black
-                                                "beyaz" -> Color.White
-                                                "mavi" -> Color(0xFF2196F3)
-                                                "kırmızı" -> Color(0xFFF44336)
-                                                "yeşil" -> Color(0xFF4CAF50)
-                                                "gri" -> Color(0xFF9E9E9E)
-                                                "krem" -> Color(0xFFFFFDD0)
-                                                else -> VestiColors.Primary
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(Color(0xFFFAFAFD)) // Soft modern high-tech grey background
+                            ) {
+                                // Upper Section: Modern Clothing Rack & Stack
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1.3f)
+                                ) {
+                                    // LEFT PARTITION: Dynamic Color Palette Stack
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .fillMaxHeight()
+                                            .padding(top = 16.dp, start = 16.dp, end = 8.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(
+                                            text = AppConfig.t("Renk Paleti", "Color Palette"),
+                                            color = VestiColors.TextMain.copy(alpha = 0.5f),
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            letterSpacing = 1.sp
+                                        )
+                                        
+                                        Spacer(modifier = Modifier.height(12.dp))
+
+                                        // Dynamic modern layered sheet visual of colors
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .weight(1f),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            val stackColors = colorPalette.map { (name, _) ->
+                                                when (name.lowercase()) {
+                                                    "siyah" -> Color(0xFF212121)
+                                                    "beyaz" -> Color(0xFFECEFF1)
+                                                    "mavi" -> Color(0xFF42A5F5)
+                                                    "kırmızı" -> Color(0xFFEF5350)
+                                                    "yeşil" -> Color(0xFF66BB6A)
+                                                    "gri" -> Color(0xFFB0BEC5)
+                                                    "krem" -> Color(0xFFFFFDE7)
+                                                    "bej" -> Color(0xFFF5F5DC)
+                                                    "sarı" -> Color(0xFFFFEE58)
+                                                    "turuncu" -> Color(0xFFFFA726)
+                                                    "mor" -> Color(0xFFAB47BC)
+                                                    "pembe" -> Color(0xFFEC407A)
+                                                    "kahve", "kahverengi" -> Color(0xFF8D6E63)
+                                                    else -> VestiColors.Primary
+                                                }
+                                            }.take(3)
+
+                                            if (stackColors.isEmpty()) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(width = 54.dp, height = 12.dp)
+                                                        .clip(RoundedCornerShape(4.dp))
+                                                        .background(Color(0xFFECEFF1))
+                                                )
+                                            } else {
+                                                Box(contentAlignment = Alignment.Center) {
+                                                    stackColors.forEachIndexed { index, col ->
+                                                        val offset = (index * 8).dp
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .offset(y = -offset, x = offset / 2)
+                                                                .size(width = 54.dp, height = 14.dp)
+                                                                .clip(RoundedCornerShape(4.dp))
+                                                                .background(col)
+                                                                .border(1.dp, Color.White.copy(alpha = 0.4f), RoundedCornerShape(4.dp))
+                                                        )
+                                                    }
+                                                }
                                             }
-                                            Box(
+                                        }
+
+                                        Spacer(modifier = Modifier.height(4.dp))
+
+                                        Text(
+                                            text = AppConfig.translateColor(if (colorPalette.isNotEmpty()) colorPalette[0].first else "Yok"),
+                                            color = VestiColors.Primary,
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                    }
+
+                                    // MIDDLE DIVIDER
+                                    Box(
+                                        modifier = Modifier
+                                            .width(1.dp)
+                                            .fillMaxHeight()
+                                            .background(Color(0xFFECEFF1))
+                                    )
+
+                                    // RIGHT PARTITION: Sleek Digital Clothes Rack with Hangers
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1.3f)
+                                            .fillMaxHeight()
+                                            .padding(top = 16.dp, start = 8.dp, end = 16.dp)
+                                    ) {
+                                        // Modern Silver-Blue Hanging Rail
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(2.dp)
+                                                .align(Alignment.TopCenter)
+                                                .padding(top = 8.dp)
+                                                .background(Color(0xFFB0BEC5))
+                                        )
+
+                                        if (colorPalette.isEmpty()) {
+                                            Text(
+                                                text = AppConfig.t("Renk verisi yok", "No color data"),
+                                                color = Color.Gray.copy(alpha = 0.5f),
+                                                fontSize = 11.sp,
+                                                modifier = Modifier.align(Alignment.Center)
+                                            )
+                                        } else {
+                                            Row(
                                                 modifier = Modifier
-                                                    .size(22.dp)
-                                                    .clip(CircleShape)
-                                                    .background(resolvedColor)
-                                                    .border(1.dp, Color(0xFFE0E0E0), CircleShape)
+                                                    .fillMaxWidth()
+                                                    .padding(top = 10.dp),
+                                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                                verticalAlignment = Alignment.Top
+                                            ) {
+                                                colorPalette.forEach { (colorName, _) ->
+                                                    val resolvedColor = when (colorName.lowercase()) {
+                                                        "siyah" -> Color(0xFF212121)
+                                                        "beyaz" -> Color(0xFFECEFF1)
+                                                        "mavi" -> Color(0xFF42A5F5)
+                                                        "kırmızı" -> Color(0xFFEF5350)
+                                                        "yeşil" -> Color(0xFF66BB6A)
+                                                        "gri" -> Color(0xFFB0BEC5)
+                                                        "krem" -> Color(0xFFFFFDE7)
+                                                        "bej" -> Color(0xFFF5F5DC)
+                                                        "sarı" -> Color(0xFFFFEE58)
+                                                        "turuncu" -> Color(0xFFFFA726)
+                                                        "mor" -> Color(0xFFAB47BC)
+                                                        "pembe" -> Color(0xFFEC407A)
+                                                        "kahve", "kahverengi" -> Color(0xFF8D6E63)
+                                                        else -> VestiColors.Primary
+                                                    }
+
+                                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                        // Silver hook
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .width(1.dp)
+                                                                .height(8.dp)
+                                                                .background(Color(0xFFB0BEC5))
+                                                        )
+                                                        // Modern digital shirt outline
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .size(width = 28.dp, height = 32.dp)
+                                                                .clip(RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp, bottomStart = 2.dp, bottomEnd = 2.dp))
+                                                                .background(resolvedColor)
+                                                                .border(1.dp, Color.White.copy(alpha = 0.5f), RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp, bottomStart = 2.dp, bottomEnd = 2.dp)),
+                                                            contentAlignment = Alignment.Center
+                                                        ) {
+                                                            Box(
+                                                                modifier = Modifier
+                                                                    .size(width = 8.dp, height = 3.dp)
+                                                                    .align(Alignment.TopCenter)
+                                                                    .clip(RoundedCornerShape(bottomStart = 3.dp, bottomEnd = 3.dp))
+                                                                    .background(Color(0xFFFAFAFD)) // Matches partition background
+                                                            )
+                                                        }
+                                                        Spacer(modifier = Modifier.height(4.dp))
+                                                        Text(
+                                                            text = AppConfig.translateColor(colorName),
+                                                            fontSize = 9.sp,
+                                                            fontWeight = FontWeight.Bold,
+                                                            color = VestiColors.TextMain.copy(alpha = 0.6f)
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Sleek Divider Line
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(1.dp)
+                                        .background(Color(0xFFECEFF1))
+                                )
+
+                                // Lower Metrics: Clean Rounded Grey-Indigo compartments
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(0.7f)
+                                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    // Total Items compartment
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .fillMaxHeight()
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(Color(0xFFF3F4F6)) // Modern light grey
+                                            .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(12.dp))
+                                            .padding(6.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                            Text(
+                                                text = AppConfig.t("Toplam Parça", "Total Items"),
+                                                fontSize = 9.sp,
+                                                color = VestiColors.TextMain.copy(alpha = 0.5f),
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Spacer(modifier = Modifier.height(2.dp))
+                                            Text(
+                                                text = "$totalItems " + AppConfig.t("Adet", "Items"),
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                color = VestiColors.Primary
+                                            )
+                                        }
+                                    }
+
+                                    // Favorite Category compartment
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .fillMaxHeight()
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(Color(0xFFF3F4F6))
+                                            .border(1.dp, Color(0xFFE5E7EB), RoundedCornerShape(12.dp))
+                                            .padding(6.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                            Text(
+                                                text = AppConfig.t("Favori Kategori", "Fav Category"),
+                                                fontSize = 9.sp,
+                                                color = VestiColors.TextMain.copy(alpha = 0.5f),
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Spacer(modifier = Modifier.height(2.dp))
+                                            Text(
+                                                text = AppConfig.translateCategory(favCategory),
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                color = VestiColors.Primary
                                             )
                                         }
                                     }
@@ -354,10 +579,10 @@ fun HomeScreen(
 @Composable
 fun HomeHeader(onNotificationsClick: () -> Unit) {
     val greeting = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-        in 6..11 -> "Günaydın"
-        in 12..17 -> "Tünaydın"
-        in 18..22 -> "İyi Akşamlar"
-        else -> "İyi Geceler"
+        in 6..11 -> AppConfig.t("Günaydın", "Good Morning")
+        in 12..17 -> AppConfig.t("Tünaydın", "Good Afternoon")
+        in 18..22 -> AppConfig.t("İyi Akşamlar", "Good Evening")
+        else -> AppConfig.t("İyi Geceler", "Good Night")
     }
 
     Row(
@@ -368,7 +593,7 @@ fun HomeHeader(onNotificationsClick: () -> Unit) {
         Column {
             Text(
                 text = "$greeting,",
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -459,7 +684,10 @@ fun WeatherCard() {
                 // Left text block (Dynamic style tip)
                 Column(modifier = Modifier.weight(1.3f)) {
                     Text(
-                        text = "Bugün hava sıcak ve güneşli! İnce tişörtler ve keten pantolonlar giymek için harika bir gün. ☀️",
+                        text = AppConfig.t(
+                            "Bugün hava sıcak ve güneşli! İnce tişörtler ve keten pantolonlar giymek için harika bir gün. ☀️",
+                            "Today is warm and sunny! A great day to wear light t-shirts and linen pants. ☀️"
+                        ),
                         color = Color.White,
                         fontSize = 16.sp,
                         fontFamily = androidx.compose.ui.text.font.FontFamily.Serif,
@@ -496,7 +724,7 @@ fun WeatherCard() {
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "İSTANBUL • GÜNEŞLİ",
+                        text = AppConfig.t("İSTANBUL • GÜNEŞLİ", "ISTANBUL • SUNNY"),
                         color = Color.White.copy(alpha = 0.9f),
                         fontSize = 8.sp,
                         fontWeight = FontWeight.Bold,
@@ -514,9 +742,9 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onNavigateToOutfit() }
-            .border(1.dp, Color(0xFFF1F1F1), RoundedCornerShape(24.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), RoundedCornerShape(24.dp)),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -528,7 +756,7 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "BUGÜNÜN İLHAMI",
+                    text = AppConfig.t("BUGÜNÜN İLHAMI", "DAILY INSPIRATION"),
                     color = VestiColors.Primary,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.ExtraBold,
@@ -536,15 +764,18 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Zamansız Vintage Ruhu",
+                    text = AppConfig.t("Zamansız Vintage Ruhu", "Timeless Vintage Spirit"),
                     color = VestiColors.TextMain,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Dolabındaki parçaları Retro esintilerle birleştirerek çaba gerektirmeyen şıklığı yakala.",
-                    color = Color.Gray,
+                    text = AppConfig.t(
+                        "Dolabındaki parçaları Retro esintilerle birleştirerek çaba gerektirmeyen şıklığı yakala.",
+                        "Combine items in your closet with Retro vibes to capture effortless elegance."
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     fontSize = 12.sp,
                     lineHeight = 16.sp
                 )
@@ -554,7 +785,7 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Kombini Keşfet",
+                        text = AppConfig.t("Kombini Keşfet", "Explore Outfit"),
                         color = VestiColors.Primary,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
@@ -600,7 +831,7 @@ fun NotificationsDialog(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
         Column(
@@ -626,7 +857,7 @@ fun NotificationsDialog(
                         modifier = Modifier.size(24.dp)
                     )
                     Text(
-                        text = "Bildirimler",
+                        text = AppConfig.t("Bildirimler", "Notifications"),
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
                         color = VestiColors.TextMain
@@ -642,7 +873,7 @@ fun NotificationsDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Kapat",
+                        contentDescription = AppConfig.t("Kapat", "Close"),
                         tint = Color.Gray,
                         modifier = Modifier.size(16.dp)
                     )
@@ -657,9 +888,12 @@ fun NotificationsDialog(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 NotificationRow(
-                    title = "VesVes Güncellemesi",
-                    message = "VesVes stil asistanınız başarıyla güncellendi! Yepyeni stil ipuçlarını hemen denemek için Kombin sekmesine göz atın.",
-                    time = "10d",
+                    title = AppConfig.t("VesVes Güncellemesi", "VesVes Update"),
+                    message = AppConfig.t(
+                        "VesVes stil asistanınız başarıyla güncellendi! Yepyeni stil ipuçlarını hemen denemek için Kombin sekmesine göz atın.",
+                        "Your VesVes style assistant was successfully updated! Check out the Outfit tab to try brand new style tips."
+                    ),
+                    time = AppConfig.t("10d", "10d"),
                     isNew = true,
                     avatarContent = {
                         Box(
@@ -683,9 +917,12 @@ fun NotificationsDialog(
                     }
                 )
                 NotificationRow(
-                    title = "Bugünün Önerisi",
-                    message = "İstanbul'da hava sıcaklığı 24° ve güneşli! Dolabındaki keten gömlek tam bugün giymek için harika bir parça.",
-                    time = "2sa",
+                    title = AppConfig.t("Bugünün Önerisi", "Today's Suggestion"),
+                    message = AppConfig.t(
+                        "İstanbul'da hava sıcaklığı 24° ve güneşli! Dolabındaki keten gömlek tam bugün giymek için harika bir parça.",
+                        "The weather in Istanbul is 24° and sunny! The linen shirt in your closet is a great item to wear today."
+                    ),
+                    time = AppConfig.t("2sa", "2h"),
                     isNew = true,
                     avatarContent = {
                         Box(
@@ -709,9 +946,12 @@ fun NotificationsDialog(
                     }
                 )
                 NotificationRow(
-                    title = "Takas Teklifi",
-                    message = "Siyah Ceket ilanıza @beyza kullanıcısından yeni bir takas teklifi geldi. Değerlendirmek için ilan detayına gidin.",
-                    time = "5sa",
+                    title = AppConfig.t("Takas Teklifi", "Swap Offer"),
+                    message = AppConfig.t(
+                        "Siyah Ceket ilanıza @beyza kullanıcısından yeni bir takas teklifi geldi. Değerlendirmek için ilan detayına gidin.",
+                        "A new swap offer has arrived from user @beyza for your Black Jacket listing. Go to the listing detail to evaluate it."
+                    ),
+                    time = AppConfig.t("5sa", "5h"),
                     isNew = false,
                     avatarContent = {
                         Box(

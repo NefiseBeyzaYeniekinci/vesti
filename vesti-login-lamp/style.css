@@ -1,0 +1,595 @@
+/* ==========================================================================
+   VESTI PREMIUM INTERACTIVE FLOOR-LAMP LOGIN PAGE STYLE
+   ========================================================================== */
+
+/* Design Tokens & Theme Variables */
+:root {
+    --primary-color: #7986CB;        /* Soft Classic Indigo */
+    --primary-light: #9FA8DA;        /* Light Soft Indigo */
+    --accent-color: #FF6F61;         /* Vivid Coral */
+    --bg-dark-room: #0D0D19;         /* Dark Room Ambient Background */
+    --bg-lit-room: #14142B;          /* Lit Room Ambient Background */
+    --dark-indigo: #29294D;          /* Deep Indigo Accent */
+    --text-light: #ECEFF1;           /* Light Text */
+    --text-muted: #90A4AE;           /* Muted Slate Text */
+    --glass-bg: rgba(26, 26, 46, 0.45); /* Glassmorphic Card BG */
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --transition-smooth: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --transition-fast: all 0.2s ease-out;
+}
+
+/* Global Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-dark-room);
+    color: var(--text-light);
+    overflow-x: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 1s ease-in-out;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Page Toggled Lighting States */
+body.light-on {
+    background-color: var(--bg-lit-room);
+}
+
+/* Container Structure */
+.auth-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 0 40px;
+    z-index: 10;
+}
+
+/* Volumetric Stage Spotlight Cone */
+.volumetric-light-cone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Start from lamp shade (around x: 200px, y: 160px) and expand to the right credentials card */
+    background: radial-gradient(circle at 18% 18%, rgba(121, 134, 203, 0.24) 0%, rgba(121, 134, 203, 0.04) 55%, rgba(0, 0, 0, 0) 80%);
+    clip-path: polygon(18% 18%, 100% 10%, 100% 100%, 0% 100%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+    transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+body.light-on .volumetric-light-cone {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   LEFT COLUMN: STATIC & INTERACTIVE SVG FLOOR LAMP
+   ========================================================================== */
+.lamp-section {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 15;
+}
+
+.lamp-svg {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    max-height: 85vh;
+}
+
+/* Ambient Bulb/Filament Toggling */
+.bulb-filament {
+    transition: stroke 0.3s ease, filter 0.3s ease;
+    filter: none;
+}
+
+body.light-on .bulb-filament {
+    stroke: #FFF9C4;
+    filter: drop-shadow(0px 0px 10px #FFF) drop-shadow(0px 0px 20px #FFF9C4);
+}
+
+.shade-rim {
+    transition: fill 0.3s ease;
+}
+
+body.light-on .shade-rim {
+    fill: #FFF9C4;
+}
+
+/* Bead Pull Chain Dragging State */
+.pull-chain-group {
+    transform-origin: 205px 162px;
+    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pull-hitbox:active ~ .pull-chain-group,
+.pull-hitbox:active {
+    cursor: grabbing;
+}
+
+/* Pull Instruction Hint */
+.pull-hint {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    backdrop-filter: blur(10px);
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    animation: pulseHint 2.5s infinite ease-in-out;
+}
+
+body.light-on .pull-hint {
+    opacity: 0;
+    transform: translate(-50%, 15px);
+}
+
+.hand-icon {
+    stroke: var(--primary-color);
+}
+
+@keyframes pulseHint {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, 0); }
+    50% { opacity: 1; transform: translate(-50%, -6px); }
+}
+
+
+/* ==========================================================================
+   RIGHT COLUMN: GLASSMORPHIC CREDENTIALS CARD
+   ========================================================================== */
+.card-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    transform: translateY(20px) scale(0.97);
+    opacity: 0.05;
+    pointer-events: none;
+    transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1),
+                box-shadow 0.8s ease;
+}
+
+/* Card Becomes Glowing & Fully Interactive When Light is Turned On */
+body.light-on .auth-card {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0) scale(1);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(121, 134, 203, 0.15);
+}
+
+/* Brand Header & Clothing Logo Asset */
+.brand-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logo-circle {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: rgba(121, 134, 203, 0.08);
+    border: 1.5px solid rgba(121, 134, 203, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    color: var(--primary-color);
+    transition: transform 0.6s ease;
+}
+
+.auth-card:hover .logo-circle {
+    transform: rotate(15deg) scale(1.05);
+}
+
+.logo-svg {
+    width: 24px;
+    height: 24px;
+}
+
+.brand-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--text-light);
+    text-transform: lowercase;
+}
+
+/* Auth Navigation Tabs Selector */
+.auth-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-muted);
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.tab-btn.active {
+    background: rgba(121, 134, 203, 0.15);
+    color: var(--text-light);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Form Styling & Floating Labels */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+    transition: max-height 0.4s ease, opacity 0.4s ease, margin-bottom 0.4s ease;
+    overflow: visible;
+}
+
+.input-group.hidden {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.input-group input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.15);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 16px 16px;
+    font-family: var(--font-main);
+    font-size: 14px;
+    color: var(--text-light);
+    outline: none;
+    transition: var(--transition-fast);
+}
+
+.input-group input:focus {
+    border-color: var(--primary-color);
+    background: rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0 10px rgba(121, 134, 203, 0.15);
+}
+
+/* Floating Label Logic */
+.input-group label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: var(--transition-fast);
+}
+
+.input-group input:focus ~ label,
+.input-group input:not(:placeholder-shown) ~ label {
+    top: 0;
+    left: 12px;
+    transform: translateY(-50%) scale(0.85);
+    background: #191932;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--primary-color);
+}
+
+/* Password Toggle Icon */
+.password-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: var(--transition-fast);
+}
+
+.password-toggle:hover {
+    color: var(--text-light);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.eye-icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* Remember Me & Forgot Password Layout */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.remember-me input {
+    display: none;
+}
+
+/* Premium Custom Checkbox styling */
+.custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 5px;
+    display: inline-block;
+    position: relative;
+    transition: var(--transition-fast);
+    background: rgba(0,0,0,0.15);
+}
+
+.remember-me input:checked ~ .custom-checkbox {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.remember-me input:checked ~ .custom-checkbox::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.forgot-password {
+    color: var(--primary-light);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.forgot-password:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+/* Submit Action Button with Indigo Gradient */
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    border: none;
+    outline: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-family: var(--font-main);
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(121, 134, 203, 0.35);
+    transition: var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(121, 134, 203, 0.45);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Loading Spinner Inside Button */
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #FFF;
+    animation: spin 0.8s linear infinite;
+}
+
+.spinner.hidden {
+    display: none;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* VEYA Divider */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.05);
+}
+
+.auth-divider:not(:empty)::before {
+    margin-right: 12px;
+}
+
+.auth-divider:not(:empty)::after {
+    margin-left: 12px;
+}
+
+/* Google OAuth Login Button */
+.google-btn {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 14px;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-light);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: var(--transition-fast);
+}
+
+.google-btn:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.google-icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* Footer Link Area */
+.auth-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.auth-footer a {
+    color: var(--primary-light);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-fast);
+}
+
+.auth-footer a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+
+/* ==========================================================================
+   RESPONSIVE DESIGN & MOBILE LAYOUT SCALING
+   ========================================================================== */
+@media (max-width: 900px) {
+    .auth-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        padding: 40px 20px;
+        height: auto;
+        min-height: 100vh;
+        gap: 30px;
+        justify-items: center;
+    }
+
+    .volumetric-light-cone {
+        background: radial-gradient(circle at 50% 120px, rgba(121, 134, 203, 0.22) 0%, rgba(121, 134, 203, 0.03) 60%, rgba(0, 0, 0, 0) 85%);
+        clip-path: none;
+    }
+
+    .lamp-section {
+        height: auto;
+        padding-top: 20px;
+    }
+
+    .lamp-svg {
+        max-width: 220px;
+        max-height: 280px;
+    }
+
+    .pull-hint {
+        bottom: -40px;
+        font-size: 12px;
+        padding: 8px 14px;
+    }
+
+    .card-section {
+        padding-bottom: 40px;
+    }
+
+    .auth-card {
+        padding: 30px 24px;
+    }
+}

@@ -8,10 +8,222 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  password  String
+  id                         String                    @id
+  name                       String?
+  email                      String?                   @unique
+  emailVerified              DateTime?
+  image                      String?
+  password                   String?
+  role                       String                    @default("user")
+  createdAt                  DateTime                  @default(now())
+  updatedAt                  DateTime                  @updatedAt
+  bio                        String?
+  isPublic                   Boolean                   @default(true)
+  location                   String?
+  trustScore                 Float                     @default(0.0)
+  cityCode                   String?                   @default("Istanbul")
+  Account                    Account[]
+  ConversationParticipant    ConversationParticipant[]
+  Favorite                   Favorite[]
+  Listing                    Listing[]
+  Message                    Message[]
+  Order_Order_buyerIdToUser  Order[]                   @relation("Order_buyerIdToUser")
+  Order_Order_sellerIdToUser Order[]                   @relation("Order_sellerIdToUser")
+  PromoRedemption            PromoRedemption[]
+  SavedCard                  SavedCard[]
+  Session                    Session[]
+  StyleProfile               StyleProfile?
+  WardrobeItem               WardrobeItem[]
+}
+
+model Account {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Conversation {
+  id                      String                    @id
+  listingId               String?
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime
+  Listing                 Listing?                  @relation(fields: [listingId], references: [id])
+  ConversationParticipant ConversationParticipant[]
+  Message                 Message[]
+}
+
+model ConversationParticipant {
+  conversationId String
+  userId         String
+  Conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  User           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, userId])
+}
+
+model Favorite {
+  id        String   @id
+  userId    String
+  listingId String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  Listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+}
+
+model Listing {
+  id           String         @id
+  userId       String
+  title        String
+  description  String
+  category     String
+  brand        String?
+  size         String?
+  condition    String
+  price        Float
+  allowSwap    Boolean        @default(false)
+  images       String[]
+  status       String         @default("active")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  Conversation Conversation[]
+  Favorite     Favorite[]
+  User         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Order        Order[]
+}
+
+model Message {
+  id             String       @id
+  conversationId String
+  senderId       String
+  content        String
+  read           Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  Conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  User           User         @relation(fields: [senderId], references: [id])
+}
+
+model Order {
+  id                        String          @id
+  buyerId                   String
+  sellerId                  String
+  listingId                 String
+  price                     Float
+  currency                  String          @default("TRY")
+  status                    String          @default("pending")
+  trackingNumber            String?
+  trackingCarrier           String?
+  shippingAddress           String?
+  notes                     String?
+  createdAt                 DateTime        @default(now())
+  updatedAt                 DateTime
+  User_Order_buyerIdToUser  User            @relation("Order_buyerIdToUser", fields: [buyerId], references: [id])
+  Listing                   Listing         @relation(fields: [listingId], references: [id])
+  User_Order_sellerIdToUser User            @relation("Order_sellerIdToUser", fields: [sellerId], references: [id])
+  TrackingEvent             TrackingEvent[]
+}
+
+model PromoCode {
+  id              String            @id
+  code            String            @unique
+  discountType    String
+  discountValue   Float
+  description     String?
+  minOrderAmount  Float?
+  expiresAt       DateTime?
+  isActive        Boolean           @default(true)
+  maxUses         Int?
+  usedCount       Int               @default(0)
+  createdAt       DateTime          @default(now())
+  PromoRedemption PromoRedemption[]
+}
+
+model PromoRedemption {
+  id          String    @id
+  userId      String
+  promoCodeId String
+  redeemedAt  DateTime  @default(now())
+  PromoCode   PromoCode @relation(fields: [promoCodeId], references: [id], onDelete: Cascade)
+  User        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, promoCodeId])
+}
+
+model SavedCard {
+  id         String   @id
+  userId     String
+  cardNumber String
+  cardName   String
+  expiryDate String
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  User       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id           String   @id
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StyleProfile {
+  id         String   @id
+  userId     String   @unique
+  bodyType   String?
+  colors     String[]
+  styles     String[]
+  topSize    String?
+  bottomSize String?
+  shoeSize   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  User       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TrackingEvent {
+  id          String   @id
+  orderId     String
+  status      String
+  description String
+  location    String?
+  createdAt   DateTime @default(now())
+  Order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model WardrobeItem {
+  id        String   @id
+  userId    String
+  name      String
+  category  String
+  color     String?
+  brand     String?
+  size      String?
+  imageUrl  String?
+  tags      String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

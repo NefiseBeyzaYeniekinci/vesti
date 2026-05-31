@@ -51,13 +51,16 @@ class CheckoutViewModel(private val api: PaymentApi) : ViewModel() {
                     if (checkoutResponse.success) {
                         _state.value = CheckoutState.Success(checkoutResponse)
                     } else {
-                        _state.value = CheckoutState.Error(checkoutResponse.error ?: "Ödeme reddedildi.")
+                        val errMsg = checkoutResponse.error ?: if (com.vesti.app.AppConfig.language == "en") "Payment rejected." else "Ödeme reddedildi."
+                        _state.value = CheckoutState.Error(errMsg)
                     }
                 } else {
-                    _state.value = CheckoutState.Error("İşlem başarısız: ${response.code()}")
+                    val prefix = if (com.vesti.app.AppConfig.language == "en") "Transaction failed: " else "İşlem başarısız: "
+                    _state.value = CheckoutState.Error(prefix + response.code())
                 }
             } catch (e: Exception) {
-                _state.value = CheckoutState.Error("Ağ hatası: ${e.message}")
+                val prefix = if (com.vesti.app.AppConfig.language == "en") "Network error: " else "Ağ hatası: "
+                _state.value = CheckoutState.Error(prefix + e.message)
             }
         }
     }

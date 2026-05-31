@@ -25,9 +25,9 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./auth-service/.env
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/vesti_auth?schema=public
-      - REDIS_URL=redis://redis:6379/0
+    # environment:
+    #   - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/vesti_auth?schema=public
+    #   - REDIS_URL=redis://redis:6379/0
     depends_on:
       - postgres
       - redis

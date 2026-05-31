@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vesti - Giriş Yap</title>
+    <!-- Google Fonts: Outfit for premium modern appearance -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-off">
+    <div class="auth-container">
+        <!-- Volumetric Stage Light Cone -->
+        <div class="volumetric-light-cone"></div>
+
+        <!-- Left Column: SVG Interactive Floor Lamp -->
+        <div class="lamp-section">
+            <svg class="lamp-svg" viewBox="0 0 300 800" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Bulb Glow Filter -->
+                    <filter id="bulb-glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="15" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                    <!-- Metallic Gradient for Stand -->
+                    <linearGradient id="metallic-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#4F4F5A" />
+                        <stop offset="50%" stop-color="#8E8E9F" />
+                        <stop offset="100%" stop-color="#3A3A42" />
+                    </linearGradient>
+                    <!-- Metallic Brass/Gold Gradient for Joints -->
+                    <linearGradient id="brass-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#D4AF37" />
+                        <stop offset="50%" stop-color="#F3E5AB" />
+                        <stop offset="100%" stop-color="#AA7C11" />
+                    </linearGradient>
+                </defs>
+
+                <!-- Lamp Base -->
+                <ellipse cx="100" cy="740" rx="60" ry="12" fill="url(#metallic-gradient)" />
+                <ellipse cx="100" cy="736" rx="56" ry="10" fill="#2E2E36" />
+
+                <!-- Vertical Stand Pole -->
+                <rect x="97" y="150" width="6" height="580" fill="url(#metallic-gradient)" />
+
+                <!-- Joints & Screw Hinge Details -->
+                <circle cx="100" cy="150" r="7" fill="url(#brass-gradient)" />
+                <rect x="98" y="143" width="4" height="14" fill="#1C1C21" transform="rotate(45 100 150)" />
+
+                <!-- Graceful Curved Neck -->
+                <path d="M 100 150 C 100 80, 200 80, 200 120" fill="none" stroke="url(#metallic-gradient)" stroke-width="8" stroke-linecap="round" />
+
+                <!-- Shade Swivel Hinge -->
+                <circle cx="200" cy="120" r="5" fill="url(#brass-gradient)" />
+
+                <!-- Bell-Shaped Metal Shade Dome -->
+                <path d="M 175 160 Q 200 125, 225 160 Z" fill="url(#metallic-gradient)" />
+                <!-- Inside Shade Cavity (Dark reflection when off, light glow when on) -->
+                <ellipse class="shade-rim" cx="200" cy="160" rx="25" ry="5" fill="#1E1E24" />
+
+                <!-- Filament Bulb -->
+                <g class="filament-bulb">
+                    <!-- Glass Shell -->
+                    <circle cx="200" cy="172" r="9" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" />
+                    <rect x="198" y="160" width="4" height="6" fill="#7A7A8A" />
+                    <!-- Filament Coil (Glows when light is on) -->
+                    <path class="bulb-filament" d="M 197 172 Q 200 166, 203 172" fill="none" stroke="#FFB300" stroke-width="1.2" />
+                </g>
+
+                <!-- Pull Chain Group (Chain of beads + teardrop pull weight) -->
+                <g class="pull-chain-group" id="pull-chain">
+                    <!-- Bead Chain Links (15 tiny metallic circles linked) -->
+                    <line x1="205" y1="162" x2="205" y2="280" stroke="#8E8E9F" stroke-width="1.5" stroke-dasharray="3,3" />
+                    
+                    <!-- Beads -->
+                    <circle cx="205" cy="168" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="176" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="184" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="192" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="200" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="208" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="216" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="224" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="232" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="240" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="248" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="256" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="264" r="2.5" fill="url(#metallic-gradient)" />
+                    <circle cx="205" cy="272" r="2.5" fill="url(#metallic-gradient)" />
+
+                    <!-- Beautiful Teardrop Metallic Pull Weight -->
+                    <path class="pull-weight" d="M 205 280 C 201 280, 201 292, 205 296 C 209 292, 209 280, 205 280 Z" fill="url(#brass-gradient)" filter="drop-shadow(0px 2px 3px rgba(0,0,0,0.4))" />
+                </g>
+
+                <!-- Invisible Wide Pull Chain Hitbox (Ensures dragging is extremely easy) -->
+                <rect class="pull-hitbox" id="pull-hitbox" x="185" y="160" width="40" height="150" fill="transparent" cursor="grab" />
+            </svg>
+
+            <!-- Tactile Interactive Help Note -->
+            <div class="pull-hint">
+                <svg class="hand-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 11V6a2 2 0 0 1 4 0v5m-4 0a2 2 0 0 0-2 2v4a5 5 0 0 0 10 0v-4m-8 2h8"/>
+                </svg>
+                <span>Işığı açmak için ipi çekin</span>
+            </div>
+        </div>
+
+        <!-- Right Column: Glassmorphic Auth Credentials Card -->
+        <div class="card-section">
+            <div class="auth-card">
+                <!-- Vesti Header & Clothing Logo -->
+                <div class="brand-header">
+                    <div class="logo-circle">
+                        <!-- Custom T-Shirt Icon SVG -->
+                        <svg class="logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.37 8.91l-3-1.73a2 2 0 0 0-2 0l-.74.43a2 2 0 0 1-2.09 0l-.74-.43a2 2 0 0 0-2 0l-3 1.73A2 2 0 0 0 6 10.64v7.72A2 2 0 0 0 8 20.36h8a2 2 0 0 0 2-2v-7.72a2 2 0 0 0-.63-1.73z" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 13V20" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h1 class="brand-title">vesti</h1>
+                </div>
+
+                <!-- Tabs: Login / Register Switcher -->
+                <div class="auth-tabs">
+                    <button class="tab-btn active" id="tab-login">Giriş Yap</button>
+                    <button class="tab-btn" id="tab-register">Kayıt Ol</button>
+                </div>
+
+                <!-- Main Form -->
+                <form id="auth-form" autocomplete="off" onsubmit="return false;">
+                    <!-- Full Name Group (Only displayed in Register Mode) -->
+                    <div class="input-group hidden" id="group-name">
+                        <input type="text" id="input-name" required placeholder=" " />
+                        <label for="input-name">Ad Soyad</label>
+                    </div>
+
+                    <!-- Email Input Group -->
+                    <div class="input-group">
+                        <input type="email" id="input-email" required placeholder=" " />
+                        <label for="input-email">E-posta</label>
+                    </div>
+
+                    <!-- Password Input Group -->
+                    <div class="input-group">
+                        <input type="password" id="input-password" required placeholder=" " />
+                        <label for="input-password">Şifre</label>
+                        <button type="button" class="password-toggle" id="toggle-password">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Extra Actions Row (Remember Me & Forgot Password) -->
+                    <div class="form-actions" id="form-actions-row">
+                        <label class="remember-me">
+                            <input type="checkbox" id="check-remember">
+                            <span class="custom-checkbox"></span>
+                            Beni Hatırla
+                        </label>
+                        <a href="#" class="forgot-password">Şifremi Unuttum</a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="submit-btn" id="btn-submit">
+                        <span class="btn-text" id="submit-btn-text">Giriş Yap</span>
+                        <div class="spinner hidden" id="submit-spinner"></div>
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="auth-divider">
+                        <span>VEYA</span>
+                    </div>
+
+                    <!-- Google Authentication Button -->
+                    <button type="button" class="google-btn" id="btn-google">
+                        <svg class="google-icon" viewBox="0 0 24 24">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                        </svg>
+                        Google ile Giriş Yap
+                    </button>
+                </form>
+
+                <!-- Footer Text Link -->
+                <div class="auth-footer">
+                    <p id="footer-text">Hesabınız yok mu? <a href="#" id="footer-link">Kayıt Ol</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

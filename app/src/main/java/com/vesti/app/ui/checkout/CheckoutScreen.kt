@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vesti.app.AppConfig
 import com.vesti.app.ui.theme.VestiColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,7 +40,7 @@ fun CheckoutScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Güvenli Ödeme", color = VestiColors.Background) },
+                title = { Text(AppConfig.t("Güvenli Ödeme", "Secure Payment"), color = VestiColors.Background) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = VestiColors.DarkIndigo)
             )
         }
@@ -53,8 +54,8 @@ fun CheckoutScreen(
                     ) {
                         CircularProgressIndicator(color = VestiColors.Accent)
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("3D Secure İşlemi ve Banka Onayı Bekleniyor...")
-                        Text("Lütfen pencereyi kapatmayın.", style = MaterialTheme.typography.bodySmall)
+                        Text(AppConfig.t("3D Secure İşlemi ve Banka Onayı Bekleniyor...", "3D Secure Processing & Bank Approval Pending..."))
+                        Text(AppConfig.t("Lütfen pencereyi kapatmayın.", "Please do not close this window."), style = MaterialTheme.typography.bodySmall)
                     }
                 }
                 is CheckoutState.Success -> {
@@ -70,19 +71,19 @@ fun CheckoutScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Siparişiniz Alınmıştır!",
+                            text = AppConfig.t("Siparişiniz Alınmıştır!", "Your Order Has Been Placed!"),
                             style = MaterialTheme.typography.headlineMedium,
                             color = Color(0xFF4CAF50)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "Sipariş No: ${currentState.response.transactionId}")
+                        Text(text = AppConfig.t("Sipariş No: ", "Order No: ") + currentState.response.transactionId)
                         Spacer(modifier = Modifier.height(24.dp))
                         Button(
                             onClick = { /* Siparişi Takip Et mantığı buraya eklenecek */ },
                             modifier = Modifier.fillMaxWidth().height(50.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = VestiColors.DarkIndigo)
                         ) {
-                            Text("Siparişi Takip Et")
+                            Text(AppConfig.t("Siparişi Takip Et", "Track Order"))
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         OutlinedButton(
@@ -92,7 +93,7 @@ fun CheckoutScreen(
                             },
                             modifier = Modifier.fillMaxWidth().height(50.dp)
                         ) {
-                            Text("Market'e Dön")
+                            Text(AppConfig.t("Market'e Dön", "Back to Market"))
                         }
                     }
                 }
@@ -115,14 +116,14 @@ fun CheckoutScreen(
                             colors = CardDefaults.cardColors(containerColor = VestiColors.LightPurple)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                Text(text = "Sipariş Özeti", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                Text(text = AppConfig.t("Sipariş Özeti", "Order Summary"), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("Ürün Kodu:")
+                                    Text(AppConfig.t("Ürün Kodu:", "Product Code:"))
                                     Text(itemId, fontWeight = FontWeight.Medium)
                                 }
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("Toplam Tutar:")
+                                    Text(AppConfig.t("Toplam Tutar:", "Total Amount:"))
                                     Text("$price TRY", fontWeight = FontWeight.Bold, color = VestiColors.DarkIndigo)
                                 }
                             }
@@ -152,7 +153,7 @@ fun CheckoutScreen(
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                     Column {
                                         Text("CARDHOLDER", color = Color.LightGray, style = MaterialTheme.typography.labelSmall)
-                                        Text(if (cardholderName.isEmpty()) "AD SOYAD" else cardholderName.uppercase(), color = VestiColors.Background)
+                                        Text(if (cardholderName.isEmpty()) AppConfig.t("AD SOYAD", "FULL NAME") else cardholderName.uppercase(), color = VestiColors.Background)
                                     }
                                     Column {
                                         Text("EXPIRES", color = Color.LightGray, style = MaterialTheme.typography.labelSmall)
@@ -168,7 +169,7 @@ fun CheckoutScreen(
                         OutlinedTextField(
                             value = cardholderName,
                             onValueChange = { cardholderName = it },
-                            label = { Text("Kart Üzerindeki İsim") },
+                            label = { Text(AppConfig.t("Kart Üzerindeki İsim", "Name on Card")) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
                         )
@@ -176,7 +177,7 @@ fun CheckoutScreen(
                         OutlinedTextField(
                             value = cardNumber,
                             onValueChange = { if (it.length <= 16) cardNumber = it },
-                            label = { Text("Kart Numarası") },
+                            label = { Text(AppConfig.t("Kart Numarası", "Card Number")) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
@@ -194,7 +195,7 @@ fun CheckoutScreen(
                                         }
                                     }
                                 },
-                                label = { Text("SKT (AA/YY)") },
+                                label = { Text(AppConfig.t("SKT (AA/YY)", "Expiry (MM/YY)")) },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 modifier = Modifier.weight(1f),
                                 singleLine = true
@@ -213,9 +214,9 @@ fun CheckoutScreen(
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(checked = isSecurePaymentEnabled, onCheckedChange = { isSecurePaymentEnabled = it })
-                            Text("3D Güvenli Ödeme", fontSize = 14.sp)
+                            Text(AppConfig.t("3D Güvenli Ödeme", "3D Secure Payment"), fontSize = 14.sp)
                             Spacer(modifier = Modifier.width(4.dp))
-                            Icon(imageVector = Icons.Default.Lock, contentDescription = "Güvenli", tint = Color(0xFF10B981), modifier = Modifier.size(16.dp))
+                            Icon(imageVector = Icons.Default.Lock, contentDescription = "Secure", tint = Color(0xFF10B981), modifier = Modifier.size(16.dp))
                         }
 
                         Spacer(modifier = Modifier.weight(1f))
@@ -239,7 +240,7 @@ fun CheckoutScreen(
                             modifier = Modifier.fillMaxWidth().height(56.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary)
                         ) {
-                            Text("Sipariş Ver ($price TRY)", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text(AppConfig.t("Sipariş Ver", "Place Order") + " ($price TRY)", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         }
                     }
                 }
