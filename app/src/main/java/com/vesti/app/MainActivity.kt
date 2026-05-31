@@ -140,7 +140,18 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable("main") {
-                        MainAppScreen(wardrobeViewModel, outfitViewModel, marketplaceViewModel, checkoutViewModel)
+                        MainAppScreen(
+                            wardrobeViewModel = wardrobeViewModel,
+                            outfitViewModel = outfitViewModel,
+                            marketplaceViewModel = marketplaceViewModel,
+                            checkoutViewModel = checkoutViewModel,
+                            onLogout = {
+                                authViewModel.logout()
+                                topLevelNavController.navigate("login") {
+                                    popUpTo("main") { inclusive = true }
+                                }
+                            }
+                        )
                     }
                 }
             }
@@ -153,7 +164,8 @@ fun MainAppScreen(
     wardrobeViewModel: WardrobeViewModel,
     outfitViewModel: OutfitViewModel,
     marketplaceViewModel: MarketplaceViewModel,
-    checkoutViewModel: CheckoutViewModel
+    checkoutViewModel: CheckoutViewModel,
+    onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -185,7 +197,9 @@ fun MainAppScreen(
                     onNavigateToMessages = { navController.navigate("messages") }
                 ) 
             }
-            composable("profile") { com.vesti.app.ui.profile.ProfileScreen() }
+            composable("profile") { 
+                com.vesti.app.ui.profile.ProfileScreen(onLogout = onLogout) 
+            }
             composable("messages") { 
                 com.vesti.app.ui.messages.MessagesScreen(
                     onNavigateBack = { navController.popBackStack() },

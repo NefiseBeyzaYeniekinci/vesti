@@ -24,7 +24,7 @@ import com.vesti.app.ui.theme.VestiColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(onLogout: () -> Unit) {
     val tabs = listOf(
         AppConfig.t("Genel Profil", "General Profile"),
         AppConfig.t("Siparişlerim", "My Orders"),
@@ -88,7 +88,7 @@ fun ProfileScreen() {
                 .padding(paddingValues)
         ) {
             when (selectedTabIndex) {
-                0 -> GeneralProfileContent()
+                0 -> GeneralProfileContent(onLogout = onLogout)
                 5 -> PrivacyAndAppearanceContent()
                 else -> PlaceholderTabContent(tabs[selectedTabIndex])
             }
@@ -98,7 +98,7 @@ fun ProfileScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GeneralProfileContent() {
+fun GeneralProfileContent(onLogout: () -> Unit) {
     var name by remember { mutableStateOf("Nefise Beyza") }
     var bio by remember { mutableStateOf("") }
     var city by remember { mutableStateOf("") }
@@ -275,6 +275,22 @@ fun GeneralProfileContent() {
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedButton(
+                    onClick = onLogout,
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(1.5.dp, Color(0xFFEF4444)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFEF4444))
+                ) {
+                    Text(
+                        text = AppConfig.t("Çıkış Yap", "Log Out"),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
