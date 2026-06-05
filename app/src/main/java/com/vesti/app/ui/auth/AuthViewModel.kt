@@ -42,14 +42,15 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         }
     }
 
-    fun loginWithGoogleSuccess(email: String, name: String) {
+    /**
+     * Google Sign-In'den alınan gerçek ID Token'ı backend'e göndererek giriş yapar.
+     * Backend bu token'ı doğrulayıp JWT döndürür.
+     */
+    fun loginWithGoogleSuccess(idToken: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            // 1. Prisma veritabanına Google kullanıcısını kaydetmeyi dene (zaten varsa sessizce devam ederiz)
-            repository.register(RegisterRequest(name, email, "google_oauth_pass"))
-            // 2. Gerçek veritabanından kullanıcı bilgilerini çekerek oturum aç ve JWT al
-            repository.login(LoginRequest(email, "google_oauth_pass")).fold(
-                onSuccess = { _authState.value = AuthState.Success("Google ile başarıyla giriş yapıldı: $email") },
+            repository.loginWithGoogle(idToken).fold(
+                onSuccess = { _authState.value = AuthState.Success(it) },
                 onFailure = { _authState.value = AuthState.Error(it.message ?: "Google ile giriş başarısız") }
             )
         }
@@ -66,3 +67,4 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
         _authState.value = AuthState.Idle
     }
 }
+

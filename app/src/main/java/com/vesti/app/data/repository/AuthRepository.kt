@@ -4,6 +4,7 @@ import com.vesti.app.data.local.TokenManager
 import com.vesti.app.data.network.AuthApi
 import com.vesti.app.data.network.LoginRequest
 import com.vesti.app.data.network.RegisterRequest
+import org.json.JSONObject
 
 class AuthRepository(private val authApi: AuthApi, private val tokenManager: TokenManager) {
 
@@ -14,15 +15,31 @@ class AuthRepository(private val authApi: AuthApi, private val tokenManager: Tok
                 val token = response.body()?.token
                 if (!token.isNullOrEmpty()) {
                     tokenManager.saveToken(token)
-                    Result.success("Login successful")
+                    Result.success("Giriş başarılı")
                 } else {
-                    Result.failure(Exception("Token missing from response"))
+                    Result.failure(Exception("Sunucudan token alınamadı"))
                 }
             } else {
-                Result.failure(Exception(response.errorBody()?.string() ?: "Login failed"))
+                // Hata mesajını JSON'dan düzgün parse et
+                val errorJson = response.errorBody()?.string()
+                val errorMsg = try {
+                    JSONObject(errorJson ?: "{}").optString("error", null)
+                        ?: JSONObject(errorJson ?: "{}").optString("message", "Giriş başarısız")
+                } catch (e: Exception) {
+                    "E-posta veya şifre hatalı"
+                }
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val msg = when {
+                e.message?.contains("Unable to resolve host") == true ||
+                e.message?.contains("failed to connect") == true ->
+                    "Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin."
+                e.message?.contains("timeout") == true ->
+                    "Sunucu yanıt vermiyor. Lütfen tekrar deneyin."
+                else -> e.message ?: "Bilinmeyen bir hata oluştu"
+            }
+            Result.failure(Exception(msg))
         }
     }
 
@@ -30,21 +47,57 @@ class AuthRepository(private val authApi: AuthApi, private val tokenManager: Tok
         return try {
             val response = authApi.register(request)
             if (response.isSuccessful && response.body() != null) {
-                Result.success("Registration successful")
+                val token = response.body()?.token
+                if (!token.isNullOrEmpty()) {
+                    tokenManager.saveToken(token)
+                }
+                Result.success("Kayıt başarılı")
             } else {
-                Result.failure(Exception(response.errorBody()?.string() ?: "Registration failed"))
+                val errorJson = response.errorBody()?.string()
+                val errorMsg = try {
+                    JSONObject(errorJson ?: "{}").optString("error", null)
+                        ?: JSONObject(errorJson ?: "{}").optString("message", "Kayıt başarısız")
+                } catch (e: Exception) {
+                    "Bu e-posta adresi zaten kullanımda olabilir"
+                }
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val msg = when {
+                e.message?.contains("Unable to resolve host") == true ||
+                e.message?.contains("failed to connect") == true ->
+                    "Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin."
+                else -> e.message ?: "Bilinmeyen bir hata oluştu"
+            }
+            Result.failure(Exception(msg))
         }
     }
-    
-    suspend fun loginWithGoogle(): Result<String> {
-        tokenManager.saveToken("google_mock_token_abc123")
-        return Result.success("Google login successful")
+
+    suspend fun loginWithGoogle(idToken: String): Result<String> {
+        return try {
+            val response = authApi.googleLogin(com.vesti.app.data.network.GoogleAuthRequest(idToken))
+            if (response.isSuccessful && response.body() != null) {
+                val token = response.body()?.token
+                if (!token.isNullOrEmpty()) {
+                    tokenManager.saveToken(token)
+                    Result.success("Google ile başarıyla giriş yapıldı")
+                } else {
+                    Result.failure(Exception("Google girişi sırasında token alınamadı"))
+                }
+            } else {
+                val errorJson = response.errorBody()?.string()
+                val errorMsg = try {
+                    JSONObject(errorJson ?: "{}").optString("error", "Google girişi başarısız")
+                } catch (e: Exception) { "Google girişi başarısız" }
+                Result.failure(Exception(errorMsg))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception(e.message ?: "Google girişi sırasında hata oluştu"))
+        }
     }
 
     suspend fun logout() {
         tokenManager.clearToken()
     }
 }
+

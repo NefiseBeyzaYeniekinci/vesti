@@ -563,6 +563,121 @@ fun HomeScreen(
 
             item {
                 DailyRecommendationCard(onNavigateToOutfit = onNavigateToOutfit)
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
+            // 3. Tarzına Özel Seçimler (En az 10 kıyafet barajı)
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = AppConfig.t("Tarzına Özel Seçimler", "Selections for Your Style"),
+                        color = VestiColors.TextMain,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-0.3).sp
+                    )
+                    Text(
+                        text = AppConfig.t("Tümünü Gör", "View All"),
+                        color = VestiColors.Primary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable { onNavigateToMarket() }
+                    )
+                }
+                Spacer(modifier = Modifier.height(14.dp))
+
+                val wardrobeCount = when (val ws = wardrobeState) {
+                    is WardrobeState.Success -> ws.items.size
+                    else -> 0
+                }
+
+                if (wardrobeCount < 10) {
+                    // 10 kıyafet barajı uyarısı
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Text(
+                                text = "👗",
+                                fontSize = 32.sp
+                            )
+                            Text(
+                                text = AppConfig.t(
+                                    "Tarzına özel seçimler için dolabında en az 10 kıyafet olmalı!",
+                                    "You need at least 10 items in your wardrobe for style selections!"
+                                ),
+                                color = VestiColors.TextMain,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                lineHeight = 20.sp,
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            )
+                            Text(
+                                text = AppConfig.t(
+                                    "Şu an ${wardrobeCount}/10 kıyafet var. ${10 - wardrobeCount} tane daha eklemen yeterli!",
+                                    "You have ${wardrobeCount}/10 items. Add ${10 - wardrobeCount} more to unlock this!"
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                fontSize = 12.sp,
+                                lineHeight = 16.sp
+                            )
+                            Button(
+                                onClick = onNavigateToWardrobe,
+                                shape = RoundedCornerShape(100.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary)
+                            ) {
+                                Text(AppConfig.t("Kıyafet Ekle", "Add Clothes"), fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                } else {
+                    // Yeterli kıyafet var, Market'e yönlendir
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text("✨", fontSize = 28.sp)
+                            Text(
+                                text = AppConfig.t(
+                                    "Tarzına uygun seçimler seni bekliyor!",
+                                    "Selections matching your style await you!"
+                                ),
+                                color = VestiColors.TextMain,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
+                            )
+                            Button(
+                                onClick = onNavigateToMarket,
+                                shape = RoundedCornerShape(100.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary)
+                            ) {
+                                Text(AppConfig.t("Keşfet", "Explore"), fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
             }
         }
 

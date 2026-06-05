@@ -75,6 +75,41 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     
+    // Hava durumu durumu
+    var currentTemp by remember { mutableStateOf<Int?>(null) }
+    var currentWeatherDesc by remember { mutableStateOf<String?>(null) }
+    var locationPermissionGranted by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+    val locationPermission = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    // Konum izni varsa hava durumunu çek
+    LaunchedEffect(locationPermission.status.isGranted) {
+        if (locationPermission.status.isGranted) {
+            locationPermissionGranted = true
+            try {
+                @SuppressLint("MissingPermission")
+                val location = kotlinx.coroutines.tasks.await(fusedLocationClient.lastLocation)
+                if (location != null) {
+                    try {
+                        val weatherResp = viewModel.getWeatherForChat(location.latitude, location.longitude)
+                        if (weatherResp != null) {
+                            currentTemp = Math.round(weatherResp.main.temp).toInt()
+                            currentWeatherDesc = weatherResp.weather.firstOrNull()?.description
+                        }
+                    } catch (_: Exception) {}
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (!locationPermission.status.isGranted) {
+            locationPermission.launchPermissionRequest()
+        }
+    }
+
     val sendMessage: (String) -> Unit = { text ->
         val userText = text.trim()
         if (userText.isNotEmpty()) {
@@ -97,23 +132,56 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
                 isAiTyping = false
                 
                 val lower = userText.lowercase(java.util.Locale.getDefault())
+                val temp = currentTemp
+                val weatherDesc = currentWeatherDesc
+                
+                // Hava durumu bilgisini string olarak formatla
+                val weatherInfo = if (temp != null) {
+                    when {
+                        temp < 10 -> AppConfig.t("soğuk ($temp°C)", "cold ($temp°C)")
+                        temp < 18 -> AppConfig.t("serin ($temp°C)", "cool ($temp°C)")
+                        temp < 25 -> AppConfig.t("ılık ($temp°C)", "mild ($temp°C)")
+                        else -> AppConfig.t("sıcak ($temp°C)", "warm ($temp°C)")
+                    }
+                } else null
+
                 val aiResponse: String
                 val itemsToSuggest: List<WardrobeItemDto>?
                 
                 when {
-                    lower.contains("mülakat") || lower.contains("is") || lower.contains("iş") || lower.contains("interview") -> {
+                    lower.contains("spor") || lower.contains("koş") || lower.contains("gym") || lower.contains("egzersiz") || lower.contains("sport") -> {
                         aiResponse = if (AppConfig.language == "en") {
-                            "For interviews, presenting a professional and clean look is essential. I've designed a confident and respectable outfit for you from your wardrobe: 💼✨"
+                            if (weatherInfo != null)
+                                "For your workout in $weatherInfo weather, I suggest lightweight and breathable clothing. ${if (temp != null && temp < 15) "Don't forget a light jacket!" else "A t-shirt and shorts will be perfect! ☀️"} Here's a sporty combo from your wardrobe:"
+                            else
+                                "For your workout, breathable fabrics are key! A t-shirt with shorts and sneakers is the perfect sport combo. Here's what I recommend from your wardrobe:"
                         } else {
-                            "Mülakatlar için her zaman profesyonel ve sade bir duruş sergilemek son derece önemlidir. Senin için gardırobundaki parçaları inceleyerek kendinden emin ve saygın bir kombin oluşturdum: 💼✨"
+                            if (weatherInfo != null)
+                                "Spor için $weatherInfo havada nefes alan kumaşlar tercih etmelisin. ${if (temp != null && temp < 15) "İnce bir ceket almayı unutma! 🧥" else "Tişört ve şort mükemmel bir tercih olacak! ☀️"} Dolabından sana harika bir spor kombini hazırladım:"
+                            else
+                                "Spor için nefes alan kumaşlar çok önemli! Tişört, şort ve spor ayakkabı harika bir spor kombini yapar. Dolabından önerdiklerim:"
+                        }
+                        itemsToSuggest = listOf(mockTshirt, mockJeans, mockSneaker)
+                    }
+                    lower.contains("mülakat") || lower.contains("iş görüşme") || lower.contains("is") || lower.contains("iş") || lower.contains("interview") -> {
+                        aiResponse = if (AppConfig.language == "en") {
+                            if (weatherInfo != null)
+                                "For your interview in $weatherInfo weather, I've designed a professional and confident outfit. ${if (temp != null && temp > 22) "I went for lighter fabrics given the heat." else ""} Here's your power look:"
+                            else
+                                "For interviews, presenting a professional and clean look is essential. I've designed a confident and respectable outfit for you from your wardrobe: 💼✨"
+                        } else {
+                            if (weatherInfo != null)
+                                "Mülakat için $weatherInfo havada profesyonel ve kendinden emin bir kombin hazırladım. ${if (temp != null && temp > 22) "Sıcaktan dolayı daha hafif kumaşlar seçtim." else ""} İşte senin için güçlü bir görünüm: 💼✨"
+                            else
+                                "Mülakatlar için profesyonel ve sade bir duruş sergilemek önemlidir. İşte güçlü kombinin: 💼✨"
                         }
                         itemsToSuggest = listOf(mockShirt, mockBlazer, mockBlackJeans)
                     }
-                    lower.contains("yağmur") || lower.contains("havalar") || lower.contains("soğuk") || lower.contains("rain") || lower.contains("cold") -> {
+                    lower.contains("yağmur") || lower.contains("yağmurlu") || lower.contains("soğuk") || lower.contains("rain") || lower.contains("cold") -> {
                         aiResponse = if (AppConfig.language == "en") {
-                            "To stay stylish and protected in rainy or overcast weather, I've prepared a layered, leather-focused combination. These pieces will keep you sharp: 🌧️🧥"
+                            "To stay stylish and protected in rainy or cold weather, I've prepared a layered, leather-focused combination. These pieces will keep you sharp: 🌧️🧥"
                         } else {
-                            "Yağmurlu ve kapalı havalarda hem şık hem de korunaklı olmak için katmanlı ve deri ağırlıklı bir kombin hazırladım. Islak zeminlere karşı şıklığını koruyacak parçalar: 🌧️🧥"
+                            "Yağmurlu ve soğuk havalarda hem şık hem de korunaklı olmak için katmanlı bir kombin hazırladım. İşte önerim: 🌧️🧥"
                         }
                         itemsToSuggest = listOf(mockLeatherJacket, mockBlackJeans, mockSneaker)
                     }
@@ -121,23 +189,49 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
                         aiResponse = if (AppConfig.language == "en") {
                             "For a great vintage street style, I paired a retro leather jacket and a basic t-shirt. Completed with loose-fit jeans for an effortless cool vibe! 🕺👟"
                         } else {
-                            "Harika bir vintage sokak stili için retro deri ceket ve basic tişört birlikteliğinden yararlandım. Geniş kesim pantolonla tamamlayarak son derece havalı bir sokak kombini elde ettim! 🕺👟"
+                            "Harika bir vintage sokak stili için retro deri ceket ve basic tişört birlikteliğinden yararlandım! 🕺👟"
                         }
                         itemsToSuggest = listOf(mockLeatherJacket, mockTshirt, mockJeans)
                     }
-                    lower.contains("bugün") || lower.contains("giy") || lower.contains("öner") || lower.contains("today") || lower.contains("wear") -> {
+                    lower.contains("bugün") || lower.contains("giy") || lower.contains("öner") || lower.contains("today") || lower.contains("wear") || lower.contains("ne giysem") -> {
                         aiResponse = if (AppConfig.language == "en") {
-                            "Today is lovely! I've prepared a great outfit matching the spring breeze, opting for comfortable fabrics and light colors. Have a wonderful day! ☀️✨"
+                            if (weatherInfo != null)
+                                "Today is $weatherInfo! ${when {
+                                    temp != null && temp < 10 -> "Definitely go for layered warm clothing. A coat and thick pants are a must."
+                                    temp != null && temp < 18 -> "A light jacket over a shirt would be perfect. Not too cold, not too warm!"
+                                    temp != null && temp < 25 -> "Lovely weather! Light fabrics and comfortable clothes will keep you feeling great all day."
+                                    else -> "It's hot! Breathable fabrics, a light t-shirt and comfortable pants are the way to go."
+                                }} ☀️✨"
+                            else
+                                "Today is lovely! I've prepared a great outfit matching the spring breeze. ☀️✨"
                         } else {
-                            "Bugün hava oldukça güzel! Bahar esintisine uygun harika bir kombin hazırladım. Rahat kumaşlar ve açık renkler tercih ettim. Harika bir gün geçirmen dileğiyle! ☀️✨"
+                            if (weatherInfo != null)
+                                "Bugün hava $weatherInfo! ${when {
+                                    temp != null && temp < 10 -> "Kesinlikle katmanlı ve sıcak giysiler tercih etmelisin. Kaban ve kalın pantolon şart."
+                                    temp != null && temp < 18 -> "Gömlek üzerine ince bir ceket harika olur. Ne çok soğuk ne çok sıcak!"
+                                    temp != null && temp < 25 -> "Mükemmel bir hava! İnce kumaşlar ve rahat kıyafetler seni gün boyu iyi hissettiriri."
+                                    else -> "Sıcak bir gün! Nefes alan kumaşlar, ince tişört ve rahat pantolon tam sana göre."
+                                }} ☀️✨"
+                            else
+                                "Bugün hava oldukça güzel! Rahat kumaşlar ve açık renkler tercih ettim. ☀️✨"
                         }
-                        itemsToSuggest = listOf(mockTshirt, mockJeans, mockSneaker)
+                        itemsToSuggest = if (temp != null && temp < 15) {
+                            listOf(mockBlazer, mockShirt, mockBlackJeans)
+                        } else {
+                            listOf(mockTshirt, mockJeans, mockSneaker)
+                        }
                     }
                     else -> {
                         aiResponse = if (AppConfig.language == "en") {
-                            "Great question about your style! I looked closely at your wardrobe items. I suggest pairing a White T-shirt with Blue Jeans for a casual-smart look. A leather jacket on top is the perfect finishing touch! 🌟"
+                            if (weatherInfo != null)
+                                "Great question! With $weatherInfo weather today, I've put together a stylish outfit from your wardrobe. Here's what I recommend: 🌟"
+                            else
+                                "Great question about your style! I looked closely at your wardrobe. I suggest pairing a White T-shirt with Blue Jeans for a casual-smart look. A leather jacket on top is the perfect finishing touch! 🌟"
                         } else {
-                            "Tarzın hakkında harika bir soru! Gardırobundaki parçaları daha yakından inceledim. Sana spor-şık bir hava katması için Beyaz Tişört ile Mavi Kot Pantolonu birleştirmeyi öneriyorum. Üzerine alacağın deri ceket stiline mükemmel bir son dokunuş yapacaktır! 🌟"
+                            if (weatherInfo != null)
+                                "Harika bir soru! Bugün hava $weatherInfo, dolabındaki parçaları buna göre inceledim. İşte önerim: 🌟"
+                            else
+                                "Tarzın hakkında harika bir soru! Beyaz Tişört ile Mavi Kot'u birleştirmeyi öneriyorum. Üzerine deri ceket stiline mükemmel bir son dokunuş yapacak! 🌟"
                         }
                         itemsToSuggest = listOf(mockTshirt, mockJeans, mockLeatherJacket)
                     }
@@ -152,6 +246,7 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
             }
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -421,7 +516,7 @@ fun SuggestedItemCard(item: WardrobeItemDto) {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            val fullImageUrl = if (item.imageUrl.startsWith("http")) item.imageUrl else "http://192.168.1.103:8080${item.imageUrl}"
+            val fullImageUrl = if (item.imageUrl.startsWith("http")) item.imageUrl else "http://${com.vesti.app.data.network.RetrofitClient.HOST_IP}:3000${item.imageUrl}"
             
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)

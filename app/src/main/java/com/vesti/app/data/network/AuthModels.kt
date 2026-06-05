@@ -11,6 +11,10 @@ data class RegisterRequest(
     val password: String
 )
 
+data class GoogleAuthRequest(
+    val idToken: String
+)
+
 data class AuthResponse(
     val message: String,
     val token: String?,
@@ -22,7 +26,8 @@ data class UserResponse(
 )
 
 data class UserDto(
-    val id: Int,
+    val id: String,
     val name: String?,
     val email: String
 )
+

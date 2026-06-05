@@ -89,6 +89,7 @@ fun LoginScreen(
     val context = LocalContext.current
     val gso = remember {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("115116149051-ll3175p6o6c739bo2cgi4g03fvfnj0jr.apps.googleusercontent.com")
             .requestEmail()
             .requestProfile()
             .build()
@@ -100,10 +101,16 @@ fun LoginScreen(
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
             val account = task.getResult(ApiException::class.java)
-            val email = account?.email ?: ""
-            val displayName = account?.displayName ?: "Google User"
-            if (email.isNotEmpty()) {
-                viewModel.loginWithGoogleSuccess(email, displayName)
+            val idToken = account?.idToken
+            if (!idToken.isNullOrEmpty()) {
+                // idToken'ı backend'e gönderiyoruz (gerçek doğrulama)
+                viewModel.loginWithGoogleSuccess(idToken)
+            } else {
+                android.widget.Toast.makeText(
+                    context,
+                    "Google'dan ID Token alınamadı. Lütfen tekrar deneyin.",
+                    android.widget.Toast.LENGTH_LONG
+                ).show()
             }
         } catch (e: ApiException) {
             e.printStackTrace()

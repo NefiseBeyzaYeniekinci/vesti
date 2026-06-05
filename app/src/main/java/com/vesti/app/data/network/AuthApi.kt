@@ -13,9 +13,13 @@ interface AuthApi {
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 
+    @POST("auth/google")
+    suspend fun googleLogin(@Body request: GoogleAuthRequest): Response<AuthResponse>
+
     @POST("auth/logout")
     suspend fun logout(): Response<Unit>
 
     @GET("auth/me")
     suspend fun getMe(): Response<UserResponse>
 }
+

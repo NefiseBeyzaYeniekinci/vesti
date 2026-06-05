@@ -84,4 +84,8 @@ dependencies {
     
     // Google Play Services Auth for real Google Sign-In
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    // Coroutines Play Services (await {} for Tasks)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 }
+
