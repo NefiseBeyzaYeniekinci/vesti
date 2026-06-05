@@ -41,6 +41,7 @@ import com.vesti.app.AppConfig
 import com.vesti.app.ui.theme.VestiColors
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
 data class ChatMessage(
