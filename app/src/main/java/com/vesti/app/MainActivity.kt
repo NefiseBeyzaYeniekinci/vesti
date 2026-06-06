@@ -77,6 +77,9 @@ class MainActivity : ComponentActivity() {
         val paymentApi = RetrofitClient.getPaymentApi(tokenManager)
         val checkoutViewModel = CheckoutViewModel(paymentApi)
 
+        val notificationApi = RetrofitClient.getNotificationApi(tokenManager)
+        val notificationViewModel = com.vesti.app.ui.home.NotificationViewModel(notificationApi)
+
         val prefs = applicationContext.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
         
         // Load global AppConfig preferences on startup
@@ -146,6 +149,7 @@ class MainActivity : ComponentActivity() {
                             outfitViewModel = outfitViewModel,
                             marketplaceViewModel = marketplaceViewModel,
                             checkoutViewModel = checkoutViewModel,
+                            notificationViewModel = notificationViewModel,
                             onLogout = {
                                 authViewModel.logout()
                                 topLevelNavController.navigate("login") {
@@ -167,6 +171,7 @@ fun MainAppScreen(
     outfitViewModel: OutfitViewModel,
     marketplaceViewModel: MarketplaceViewModel,
     checkoutViewModel: CheckoutViewModel,
+    notificationViewModel: com.vesti.app.ui.home.NotificationViewModel,
     onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
@@ -182,6 +187,7 @@ fun MainAppScreen(
             composable("home") { 
                 com.vesti.app.ui.home.HomeScreen(
                     wardrobeViewModel = wardrobeViewModel,
+                    notificationViewModel = notificationViewModel,
                     onNavigateToOutfit = { navController.navigate("outfit") },
                     onNavigateToWardrobe = { navController.navigate("wardrobe") },
                     onNavigateToMarket = { navController.navigate("marketplace") }

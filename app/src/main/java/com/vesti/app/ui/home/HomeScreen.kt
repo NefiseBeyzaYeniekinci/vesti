@@ -43,6 +43,7 @@ import java.util.Calendar
 @Composable
 fun HomeScreen(
     wardrobeViewModel: WardrobeViewModel,
+    notificationViewModel: NotificationViewModel,
     onNavigateToOutfit: () -> Unit,
     onNavigateToWardrobe: () -> Unit,
     onNavigateToMarket: () -> Unit
@@ -683,6 +684,7 @@ fun HomeScreen(
 
         if (showNotificationsDialog) {
             NotificationsDialog(
+                viewModel = notificationViewModel,
                 onDismiss = { showNotificationsDialog = false },
                 onNavigateToOutfit = onNavigateToOutfit,
                 onNavigateToMarket = onNavigateToMarket
@@ -939,10 +941,17 @@ fun DailyRecommendationCard(onNavigateToOutfit: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsDialog(
+    viewModel: NotificationViewModel,
     onDismiss: () -> Unit,
     onNavigateToOutfit: () -> Unit,
     onNavigateToMarket: () -> Unit
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.markAllAsRead()
+    }
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
@@ -998,97 +1007,98 @@ fun NotificationsDialog(
             Spacer(modifier = Modifier.height(20.dp))
             
             // Notifications List
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                NotificationRow(
-                    title = AppConfig.t("VesVes Güncellemesi", "VesVes Update"),
-                    message = AppConfig.t(
-                        "VesVes stil asistanınız başarıyla güncellendi! Yepyeni stil ipuçlarını hemen denemek için Kombin sekmesine göz atın.",
-                        "Your VesVes style assistant was successfully updated! Check out the Outfit tab to try brand new style tips."
-                    ),
-                    time = AppConfig.t("10d", "10d"),
-                    isNew = true,
-                    avatarContent = {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(VestiColors.Primary.copy(alpha = 0.15f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "VV",
-                                color = VestiColors.Primary,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
-                        }
-                    },
-                    onClick = {
-                        onDismiss()
-                        onNavigateToOutfit()
+            Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                when (val currentState = state) {
+                    is NotificationState.Loading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = VestiColors.Primary
+                        )
                     }
-                )
-                NotificationRow(
-                    title = AppConfig.t("Bugünün Önerisi", "Today's Suggestion"),
-                    message = AppConfig.t(
-                        "İstanbul'da hava sıcaklığı 24° ve güneşli! Dolabındaki keten gömlek tam bugün giymek için harika bir parça.",
-                        "The weather in Istanbul is 24° and sunny! The linen shirt in your closet is a great item to wear today."
-                    ),
-                    time = AppConfig.t("2sa", "2h"),
-                    isNew = true,
-                    avatarContent = {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFFFF9C4)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = null,
-                                tint = Color(0xFFFBC02D),
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    },
-                    onClick = {
-                        onDismiss()
-                        onNavigateToOutfit()
+                    is NotificationState.Error -> {
+                        Text(
+                            text = currentState.message,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.align(Alignment.Center),
+                            fontSize = 14.sp
+                        )
                     }
-                )
-                NotificationRow(
-                    title = AppConfig.t("Takas Teklifi", "Swap Offer"),
-                    message = AppConfig.t(
-                        "Siyah Ceket ilanıza @beyza kullanıcısından yeni bir takas teklifi geldi. Değerlendirmek için ilan detayına gidin.",
-                        "A new swap offer has arrived from user @beyza for your Black Jacket listing. Go to the listing detail to evaluate it."
-                    ),
-                    time = AppConfig.t("5sa", "5h"),
-                    isNew = false,
-                    avatarContent = {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFE0F2F1)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "BY",
-                                color = Color(0xFF00796B),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
-                            )
+                    is NotificationState.Success -> {
+                        val notifications = currentState.notifications
+                        if (notifications.isEmpty()) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Notifications,
+                                    contentDescription = null,
+                                    tint = Color.LightGray,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = AppConfig.t("Henüz bildiriminiz yok.", "You don't have any notifications yet."),
+                                    color = Color.Gray,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        } else {
+                            LazyColumn(
+                                verticalArrangement = Arrangement.spacedBy(12.dp),
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                items(notifications) { item ->
+                                    val isNew = !item.read
+                                    val initials = if (item.title.length >= 2) item.title.substring(0, 2).uppercase() else "VS"
+                                    NotificationRow(
+                                        title = item.title,
+                                        message = item.description,
+                                        time = item.createdAt.split("T").firstOrNull() ?: "",
+                                        isNew = isNew,
+                                        avatarContent = {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(40.dp)
+                                                    .clip(CircleShape)
+                                                    .background(
+                                                        if (item.type == "message") VestiColors.Primary.copy(alpha = 0.15f)
+                                                        else Color(0xFFFFF9C4)
+                                                    ),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                if (item.type == "message") {
+                                                    Text(
+                                                        text = initials,
+                                                        color = VestiColors.Primary,
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 14.sp
+                                                    )
+                                                } else {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Star,
+                                                        contentDescription = null,
+                                                        tint = Color(0xFFFBC02D),
+                                                        modifier = Modifier.size(20.dp)
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        onClick = {
+                                            onDismiss()
+                                            if (item.type == "message") {
+                                                onNavigateToMarket()
+                                            } else {
+                                                onNavigateToOutfit()
+                                            }
+                                        }
+                                    )
+                                }
+                            }
                         }
-                    },
-                    onClick = {
-                        onDismiss()
-                        onNavigateToMarket()
                     }
-                )
+                }
             }
         }
     }

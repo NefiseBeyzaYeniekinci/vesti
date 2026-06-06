@@ -112,4 +112,13 @@ object RetrofitClient {
             .build()
             .create(PaymentApi::class.java)
     }
+
+    fun getNotificationApi(tokenManager: TokenManager): NotificationApi {
+        return Retrofit.Builder()
+            .baseUrl(PRODUCTION_BASE_URL)
+            .client(getBaseOkHttpClient(tokenManager))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(NotificationApi::class.java)
+    }
 }
