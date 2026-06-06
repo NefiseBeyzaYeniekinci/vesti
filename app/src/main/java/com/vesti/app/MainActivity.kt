@@ -141,6 +141,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("main") {
                         MainAppScreen(
+                            tokenManager = tokenManager,
                             wardrobeViewModel = wardrobeViewModel,
                             outfitViewModel = outfitViewModel,
                             marketplaceViewModel = marketplaceViewModel,
@@ -161,6 +162,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainAppScreen(
+    tokenManager: TokenManager,
     wardrobeViewModel: WardrobeViewModel,
     outfitViewModel: OutfitViewModel,
     marketplaceViewModel: MarketplaceViewModel,
@@ -198,7 +200,7 @@ fun MainAppScreen(
                 ) 
             }
             composable("profile") { 
-                com.vesti.app.ui.profile.ProfileScreen(onLogout = onLogout) 
+                com.vesti.app.ui.profile.ProfileScreen(tokenManager = tokenManager, onLogout = onLogout) 
             }
             composable("messages") { 
                 com.vesti.app.ui.messages.MessagesScreen(

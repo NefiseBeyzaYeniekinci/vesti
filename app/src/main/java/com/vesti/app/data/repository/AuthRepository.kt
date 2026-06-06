@@ -15,6 +15,10 @@ class AuthRepository(private val authApi: AuthApi, private val tokenManager: Tok
                 val token = response.body()?.token
                 if (!token.isNullOrEmpty()) {
                     tokenManager.saveToken(token)
+                    val user = response.body()?.user
+                    if (user != null) {
+                        tokenManager.saveUser(user.name, user.email)
+                    }
                     Result.success("Giriş başarılı")
                 } else {
                     Result.failure(Exception("Sunucudan token alınamadı"))
@@ -50,6 +54,10 @@ class AuthRepository(private val authApi: AuthApi, private val tokenManager: Tok
                 val token = response.body()?.token
                 if (!token.isNullOrEmpty()) {
                     tokenManager.saveToken(token)
+                    val user = response.body()?.user
+                    if (user != null) {
+                        tokenManager.saveUser(user.name, user.email)
+                    }
                 }
                 Result.success("Kayıt başarılı")
             } else {
@@ -80,6 +88,10 @@ class AuthRepository(private val authApi: AuthApi, private val tokenManager: Tok
                 val token = response.body()?.token
                 if (!token.isNullOrEmpty()) {
                     tokenManager.saveToken(token)
+                    val user = response.body()?.user
+                    if (user != null) {
+                        tokenManager.saveUser(user.name, user.email)
+                    }
                     Result.success("Google ile başarıyla giriş yapıldı")
                 } else {
                     Result.failure(Exception("Google girişi sırasında token alınamadı"))

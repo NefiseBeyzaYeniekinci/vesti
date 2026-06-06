@@ -24,7 +24,7 @@ import com.vesti.app.ui.theme.VestiColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(onLogout: () -> Unit) {
+fun ProfileScreen(tokenManager: com.vesti.app.data.local.TokenManager, onLogout: () -> Unit) {
     val tabs = listOf(
         AppConfig.t("Genel Profil", "General Profile"),
         AppConfig.t("Siparişlerim", "My Orders"),
@@ -88,7 +88,7 @@ fun ProfileScreen(onLogout: () -> Unit) {
                 .padding(paddingValues)
         ) {
             when (selectedTabIndex) {
-                0 -> GeneralProfileContent(onLogout = onLogout)
+                0 -> GeneralProfileContent(tokenManager = tokenManager, onLogout = onLogout)
                 5 -> PrivacyAndAppearanceContent()
                 else -> PlaceholderTabContent(tabs[selectedTabIndex])
             }
@@ -98,8 +98,11 @@ fun ProfileScreen(onLogout: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GeneralProfileContent(onLogout: () -> Unit) {
-    var name by remember { mutableStateOf("Nefise Beyza") }
+fun GeneralProfileContent(tokenManager: com.vesti.app.data.local.TokenManager, onLogout: () -> Unit) {
+    val userName by tokenManager.userNameFlow.collectAsState(initial = "")
+    val userEmail by tokenManager.userEmailFlow.collectAsState(initial = "")
+
+    var name by remember(userName) { mutableStateOf(userName.ifEmpty { "Nefise Beyza" }) }
     var bio by remember { mutableStateOf("") }
     var city by remember { mutableStateOf("") }
     var showLogoutDialog by remember { mutableStateOf(false) }
@@ -169,17 +172,18 @@ fun GeneralProfileContent(onLogout: () -> Unit) {
                         .background(VestiColors.LightPurple),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("NB", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = VestiColors.Primary)
+                    val initials = if (name.length >= 2) name.substring(0, 2).uppercase() else if (name.isNotEmpty()) name.take(1).uppercase() else "VS"
+                    Text(initials, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = VestiColors.Primary)
                 }
                 Spacer(modifier = Modifier.width(20.dp))
                 Column {
                     Text(
-                        text = "Nefise Beyza",
+                        text = name,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Text("nefisebeyzaa05@gmail.com", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+                    Text(userEmail, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                     Spacer(modifier = Modifier.height(8.dp))
                     Surface(
                         color = Color(0xFFFFF7ED),
