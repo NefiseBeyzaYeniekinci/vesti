@@ -41,14 +41,28 @@ import android.widget.Toast
 @Composable
 fun ProductDetailScreen(
     productId: String,
+    marketplaceViewModel: MarketplaceViewModel,
     wardrobeViewModel: com.vesti.app.ui.wardrobe.WardrobeViewModel,
     onNavigateBack: () -> Unit,
     onNavigateToCheckout: (String, Float) -> Unit,
     onNavigateToChat: (String) -> Unit
 ) {
-    val product = mockProducts.find { it.id == productId } ?: mockProducts.first()
-    val mockPrice = product.price.replace(".", "").replace(" ₺", "").toFloatOrNull() ?: 0f
-    val sellerId = "user_${product.sellerInitials.lowercase()}"
+    val marketplaceState by marketplaceViewModel.state.collectAsStateWithLifecycle()
+    val product = (marketplaceState as? MarketplaceState.Success)?.items?.find { it.id == productId }
+
+    if (product == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = VestiColors.Primary)
+        }
+        return
+    }
+
+    val priceVal = product.price.toFloat()
+    val sellerId = product.sellerId
+    val isSwap = true // enable swap offering for all items to showcase UI
+    val sellerName = "Satıcı: ${product.sellerId.take(5)}"
+    val sellerInitials = if (product.sellerId.length >= 2) product.sellerId.substring(0, 2).uppercase() else "VS"
+    val rating = "4.9"
 
     var showSwapSheet by remember { mutableStateOf(false) }
     var selectedWardrobeItem by remember { mutableStateOf<com.vesti.app.data.network.WardrobeItemDto?>(null) }
@@ -80,7 +94,7 @@ fun ProductDetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Button(
-                        onClick = { onNavigateToCheckout(productId, mockPrice) },
+                        onClick = { onNavigateToCheckout(productId, priceVal) },
                         colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(1f).height(50.dp)
@@ -105,14 +119,14 @@ fun ProductDetailScreen(
                     val swapNotEligibleMsg = AppConfig.t("Bu ürün takasa uygun değil!", "This item is not eligible for swap!")
                     Button(
                         onClick = {
-                            if (product.isSwap) {
+                            if (isSwap) {
                                 showSwapSheet = true
                             } else {
                                 Toast.makeText(context, swapNotEligibleMsg, Toast.LENGTH_SHORT).show()
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (product.isSwap) VestiColors.Primary else Color(0xFFE5E7EB)
+                            containerColor = if (isSwap) VestiColors.Primary else Color(0xFFE5E7EB)
                         ),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(1f).height(50.dp),
@@ -121,13 +135,13 @@ fun ProductDetailScreen(
                         Icon(
                             imageVector = Icons.Default.SwapHoriz,
                             contentDescription = AppConfig.t("Takas", "Swap"),
-                            tint = if (product.isSwap) Color.White else Color.Gray,
+                            tint = if (isSwap) Color.White else Color.Gray,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = AppConfig.t("Takas", "Swap"),
-                            color = if (product.isSwap) Color.White else Color.Gray,
+                            color = if (isSwap) Color.White else Color.Gray,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -150,16 +164,17 @@ fun ProductDetailScreen(
                     .padding(16.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
+                val fullUrl = if (product.imageUrl.startsWith("http")) product.imageUrl else "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}${product.imageUrl}"
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(product.imageUrl)
+                        .data(fullUrl)
                         .crossfade(true)
                         .build(),
                     contentDescription = product.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
-                if (product.isSwap) {
+                if (isSwap) {
                     Surface(
                         color = VestiColors.Primary,
                         shape = RoundedCornerShape(8.dp),
@@ -186,19 +201,9 @@ fun ProductDetailScreen(
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                val titleDisp = AppConfig.t(product.title, when(product.title) {
-                    "Vintage Deri Ceket" -> "Vintage Leather Jacket"
-                    "Zara Beyaz Keten Gömlek" -> "Zara White Linen Shirt"
-                    "Siyah Mini Elbise" -> "Black Mini Dress"
-                    "Güneş Gözlüğü" -> "Sunglasses"
-                    "Kışlık Şişme Mont" -> "Winter Puffer Jacket"
-                    "Polo Yaka Tişört" -> "Polo Neck T-Shirt"
-                    "Nike Air Force 1" -> "Nike Air Force 1"
-                    "Levi's 501 Jean" -> "Levi's 501 Jeans"
-                    else -> product.title
-                })
-                Text(titleDisp, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.TextMain)
-                Text(product.price, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.Primary)
+                Text(product.title, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.TextMain)
+                val priceDisp = "${product.price.toInt()} ₺"
+                Text(priceDisp, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.Primary)
 
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -216,46 +221,8 @@ fun ProductDetailScreen(
                             Text(AppConfig.t("Satıcı Açıklaması", "Seller Description"), color = Color(0xFFD97706), fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         }
                         Spacer(modifier = Modifier.height(6.dp))
-                        val descriptionText = when (product.id) {
-                            "1" -> AppConfig.t(
-                                "80'lerden kalma, harika durumda hakiki deri ceket. Hiçbir yırtığı veya söküğü yoktur.",
-                                "Genuine leather jacket from the 80s, in excellent condition. No tears or rips."
-                            )
-                            "2" -> AppConfig.t(
-                                "Sadece birkaç kez giyildi, orijinal kutusuyla birlikte gönderilecektir.",
-                                "Worn only a few times, will be shipped with its original box."
-                            )
-                            "3" -> AppConfig.t(
-                                "Yaz ayları için mükemmel, sıfır etiketli keten gömlek.",
-                                "Perfect for summer months, brand new linen shirt with tags."
-                            )
-                            "4" -> AppConfig.t(
-                                "Klasik model, renginde solma yoktur, çok temiz.",
-                                "Classic model, no fading in color, very clean."
-                            )
-                            "5" -> AppConfig.t(
-                                "Çok az giyilmiş lacivert polo yaka tişört.",
-                                "Navy blue polo collar t-shirt, worn very little."
-                            )
-                            "6" -> AppConfig.t(
-                                "Özel günler için ideal şık mini elbise.",
-                                "Elegant mini dress, ideal for special occasions."
-                            )
-                            "7" -> AppConfig.t(
-                                "Kutusunda sıfır, garanti belgesi mevcuttur.",
-                                "Brand new in box, warranty card is available."
-                            )
-                            "8" -> AppConfig.t(
-                                "Çok sıcak tutan, temiz kışlık şişme mont.",
-                                "Very warm, clean winter puffer jacket."
-                            )
-                            else -> AppConfig.t(
-                                "Temiz durumda, herhangi bir hasarı bulunmayan ürün.",
-                                "Clean condition, no damage of any kind."
-                            )
-                        }
                         Text(
-                            text = descriptionText,
+                            text = product.description,
                             color = VestiColors.TextMain,
                             fontSize = 14.sp,
                             lineHeight = 20.sp
@@ -273,9 +240,9 @@ fun ProductDetailScreen(
                         modifier = Modifier.weight(1f)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text(AppConfig.t("Marka", "Brand"), color = Color.Gray, fontSize = 12.sp)
+                            Text(AppConfig.t("Kategori", "Category"), color = Color.Gray, fontSize = 12.sp)
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text(product.brand, color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text(product.category, color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }
                     }
                     Surface(
@@ -314,14 +281,14 @@ fun ProductDetailScreen(
                                 .background(Color(0xFFE5E7EB)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(product.sellerInitials, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
+                            Text(sellerInitials, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
-                            Text(product.sellerName, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = VestiColors.TextMain)
+                            Text(sellerName, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = VestiColors.TextMain)
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Star, contentDescription = "Puan", tint = Color(0xFFFFB300), modifier = Modifier.size(12.dp))
-                                Text("${product.rating}  ·  İstanbul, TR", color = Color.Gray, fontSize = 12.sp)
+                                Text("$rating  ·  İstanbul, TR", color = Color.Gray, fontSize = 12.sp)
                             }
                         }
                     }
@@ -465,7 +432,7 @@ fun ProductDetailScreen(
                                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                                     ) {
                                         Box(modifier = Modifier.fillMaxSize()) {
-                                            val fullUrl = if (wItem.imageUrl.startsWith("http")) wItem.imageUrl else "http://192.168.1.103:8080${wItem.imageUrl}"
+                                            val fullUrl = if (wItem.imageUrl.startsWith("http")) wItem.imageUrl else "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}${wItem.imageUrl}"
                                             AsyncImage(
                                                 model = ImageRequest.Builder(LocalContext.current)
                                                     .data(fullUrl)
@@ -563,8 +530,8 @@ fun ProductDetailScreen(
             text = {
                 Text(
                     text = AppConfig.t(
-                        "${product.sellerName} teklifini inceleyip kısa süre içerisinde sana mesaj kutusu üzerinden dönüş yapacak.",
-                        "${product.sellerName} will review your offer and get back to you via messages shortly."
+                        "$sellerName teklifini inceleyip kısa süre içerisinde sana mesaj kutusu üzerinden dönüş yapacak.",
+                        "$sellerName will review your offer and get back to you via messages shortly."
                     ),
                     color = Color.Gray,
                     fontSize = 14.sp

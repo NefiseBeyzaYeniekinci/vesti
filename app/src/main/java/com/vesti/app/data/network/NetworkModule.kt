@@ -4,9 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkModule {
-    // For emulator testing, use 10.0.2.2 instead of localhost
-    // Real devices use your computer's active local Wi-Fi IP (192.168.1.103)
-    private const val BASE_URL = "http://192.168.1.103:8080/"
+    private const val BASE_URL = "https://vesti-web.vercel.app/"
 
     val retrofit: Retrofit by lazy {
         Retrofit.Builder()

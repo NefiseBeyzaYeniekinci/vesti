@@ -50,127 +50,6 @@ import androidx.compose.ui.unit.sp
 import com.vesti.app.AppConfig
 import com.vesti.app.ui.theme.VestiColors
 
-data class MockProduct(
-    val id: String,
-    val title: String,
-    val brand: String,
-    val size: String,
-    val price: String,
-    val condition: String,
-    val isSwap: Boolean,
-    val sellerInitials: String,
-    val sellerName: String,
-    val rating: String,
-    val imageUrl: String
-)
-
-val mockProducts = listOf(
-    MockProduct(
-        id = "1",
-        title = "Vintage Deri Ceket",
-        brand = "Vintage",
-        size = "Beden: M",
-        price = "1.250 ₺",
-        condition = "Kullanılmış",
-        isSwap = true,
-        sellerInitials = "AY",
-        sellerName = "Ahmet Yılmaz",
-        rating = "4.8",
-        imageUrl = "https://images.unsplash.com/photo-1551028719-00167b16eac5"
-    ),
-    MockProduct(
-        id = "2",
-        title = "Nike Air Force 1",
-        brand = "Nike",
-        size = "Beden: 42",
-        price = "3.500 ₺",
-        condition = "Yeni Gibi",
-        isSwap = false,
-        sellerInitials = "AK",
-        sellerName = "Ayşe Kaya",
-        rating = "5.0",
-        imageUrl = "https://images.unsplash.com/photo-1543163521-1bf539c55dd2"
-    ),
-    MockProduct(
-        id = "3",
-        title = "Zara Beyaz Keten Gömlek",
-        brand = "Zara",
-        size = "Beden: L",
-        price = "850 ₺",
-        condition = "Sıfır",
-        isSwap = true,
-        sellerInitials = "MD",
-        sellerName = "Mehmet Demir",
-        rating = "4.5",
-        imageUrl = "https://images.unsplash.com/photo-1591047139829-d91aecb6caea"
-    ),
-    MockProduct(
-        id = "4",
-        title = "Levi's 501 Jean",
-        brand = "Levi's",
-        size = "Beden: 32",
-        price = "1.100 ₺",
-        condition = "Az Kullanılmış",
-        isSwap = true,
-        sellerInitials = "BK",
-        sellerName = "Burak Koç",
-        rating = "4.9",
-        imageUrl = "https://images.unsplash.com/photo-1542272604-787c3835535d"
-    ),
-    MockProduct(
-        id = "5",
-        title = "Polo Yaka Tişört",
-        brand = "Lacoste",
-        size = "Beden: L",
-        price = "650 ₺",
-        condition = "Yeni Gibi",
-        isSwap = false,
-        sellerInitials = "ED",
-        sellerName = "Elif Doğan",
-        rating = "4.7",
-        imageUrl = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"
-    ),
-    MockProduct(
-        id = "6",
-        title = "Siyah Mini Elbise",
-        brand = "Mango",
-        size = "Beden: S",
-        price = "900 ₺",
-        condition = "Kullanılmış",
-        isSwap = true,
-        sellerInitials = "ZA",
-        sellerName = "Zeynep Aslan",
-        rating = "4.6",
-        imageUrl = "https://images.unsplash.com/photo-1539008835657-9e8e9680c956"
-    ),
-    MockProduct(
-        id = "7",
-        title = "Güneş Gözlüğü",
-        brand = "Ray-Ban",
-        size = "Standart",
-        price = "2.100 ₺",
-        condition = "Sıfır",
-        isSwap = false,
-        sellerInitials = "CT",
-        sellerName = "Can Tekin",
-        rating = "5.0",
-        imageUrl = "https://images.unsplash.com/photo-1511499767150-a48a237f0083"
-    ),
-    MockProduct(
-        id = "8",
-        title = "Kışlık Şişme Mont",
-        brand = "The North Face",
-        size = "Beden: XL",
-        price = "4.500 ₺",
-        condition = "Yeni Gibi",
-        isSwap = false,
-        sellerInitials = "SO",
-        sellerName = "Selin Öz",
-        rating = "4.9",
-        imageUrl = "https://images.unsplash.com/photo-1559551409-dadc959f76b8"
-    )
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MarketplaceScreen(
@@ -204,16 +83,21 @@ fun MarketplaceScreen(
     var filterPriceMin by remember { mutableStateOf("") }
     var filterPriceMax by remember { mutableStateOf("") }
 
+    val marketplaceState by viewModel.state.collectAsStateWithLifecycle()
+    val realProducts = when (val s = marketplaceState) {
+        is MarketplaceState.Success -> s.items
+        else -> emptyList()
+    }
+
     val filteredProducts = remember(
-        searchQuery, activeChip, filterSize, filterBrand, filterCondition, filterTradeable, filterPriceMin, filterPriceMax
+        realProducts, searchQuery, activeChip, filterSize, filterBrand, filterCondition, filterTradeable, filterPriceMin, filterPriceMax
     ) {
-        mockProducts.filter { product ->
+        realProducts.filter { product ->
             val matchesSearch = product.title.contains(searchQuery, ignoreCase = true) ||
-                                product.brand.contains(searchQuery, ignoreCase = true)
+                                product.category.contains(searchQuery, ignoreCase = true)
             
             // Standard quick filter chips (matches activeChip)
             val matchesQuickChip = when (activeChip) {
-                "Takas Edilebilir" -> product.isSwap
                 "Yeni Gibi" -> product.condition == "Yeni Gibi"
                 "Sıfır" -> product.condition == "Sıfır"
                 else -> true
@@ -221,11 +105,11 @@ fun MarketplaceScreen(
 
             // Advanced Filters
             val matchesSize = filterSize == "Hepsi" || product.size.contains(filterSize, ignoreCase = true)
-            val matchesBrand = filterBrand == "Hepsi" || product.brand.equals(filterBrand, ignoreCase = true)
+            val matchesBrand = filterBrand == "Hepsi" || product.category.equals(filterBrand, ignoreCase = true)
             val matchesCondition = filterCondition == "Hepsi" || product.condition.equals(filterCondition, ignoreCase = true)
-            val matchesTradeable = filterTradeable == null || product.isSwap == filterTradeable
+            val matchesTradeable = true
             
-            val priceVal = product.price.replace(".", "").replace(" ₺", "").toFloatOrNull() ?: 0f
+            val priceVal = product.price.toFloat()
             val matchesPriceMin = filterPriceMin.isEmpty() || (filterPriceMin.toFloatOrNull() ?: 0f) <= priceVal
             val matchesPriceMax = filterPriceMax.isEmpty() || (filterPriceMax.toFloatOrNull() ?: Float.MAX_VALUE) >= priceVal
 
@@ -242,6 +126,7 @@ fun MarketplaceScreen(
             selectedImageUri = null
         }
     }
+
 
     val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
 
@@ -364,7 +249,6 @@ fun MarketplaceScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Grid of products
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 100.dp),
@@ -373,8 +257,7 @@ fun MarketplaceScreen(
             ) {
                 items(filteredProducts) { product ->
                     ProductCard(product) {
-                        val p = product.price.replace(".", "").replace(" ₺", "").toFloatOrNull() ?: 0f
-                        onNavigateToCheckout(product.id, p)
+                        onNavigateToCheckout(product.id, product.price.toFloat())
                     }
                 }
             }
@@ -728,7 +611,7 @@ fun MarketplaceScreen(
                                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                                     ) {
                                         Box(modifier = Modifier.fillMaxSize()) {
-                                            val fullUrl = if (wItem.imageUrl.startsWith("http")) wItem.imageUrl else "http://192.168.1.103:8080${wItem.imageUrl}"
+                                            val fullUrl = if (wItem.imageUrl.startsWith("http")) wItem.imageUrl else "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}${wItem.imageUrl}"
                                             AsyncImage(
                                                 model = ImageRequest.Builder(LocalContext.current)
                                                     .data(fullUrl)
@@ -829,7 +712,7 @@ fun MarketplaceScreen(
                             .clip(RoundedCornerShape(16.dp))
                             .background(Color(0xFFF3F4F6))
                     ) {
-                        val finalUrl = if (previewData is String && !previewData.startsWith("http")) "http://192.168.1.103:8080$previewData" else previewData
+                        val finalUrl = if (previewData is String && !previewData.startsWith("http")) "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}$previewData" else previewData
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(finalUrl)
@@ -977,7 +860,7 @@ fun FilterChipItem(label: String, selected: Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductCard(product: MockProduct, onClick: () -> Unit) {
+fun ProductCard(product: com.vesti.app.data.network.MarketplaceItemDto, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -993,24 +876,16 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                     .fillMaxWidth()
                     .height(150.dp)
             ) {
+                val fullUrl = if (product.imageUrl.startsWith("http")) product.imageUrl else "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}${product.imageUrl}"
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(product.imageUrl)
+                        .data(fullUrl)
                         .crossfade(true)
                         .build(),
                     contentDescription = product.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
-                if (product.isSwap) {
-                    Surface(
-                        color = VestiColors.Primary,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.padding(8.dp).align(Alignment.TopStart)
-                    ) {
-                        Text(AppConfig.t("⇄ TAKAS", "⇄ SWAP"), color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
-                    }
-                }
                 Surface(
                     color = Color.White.copy(alpha = 0.9f),
                     shape = RoundedCornerShape(8.dp),
@@ -1040,7 +915,7 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(product.brand, color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                        Text(product.category, color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
                         val sizeDisp = AppConfig.t(product.size, when {
                             product.size == "Standart" -> "Standard"
                             product.size.startsWith("Beden:") -> product.size.replace("Beden:", "Size:")
@@ -1049,19 +924,8 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                         Text(sizeDisp, color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
                     }
                     Spacer(modifier = Modifier.height(4.dp))
-                    val titleDisp = AppConfig.t(product.title, when(product.title) {
-                        "Vintage Deri Ceket" -> "Vintage Leather Jacket"
-                        "Zara Beyaz Keten Gömlek" -> "Zara White Linen Shirt"
-                        "Siyah Mini Elbise" -> "Black Mini Dress"
-                        "Güneş Gözlüğü" -> "Sunglasses"
-                        "Kışlık Şişme Mont" -> "Winter Puffer Jacket"
-                        "Polo Yaka Tişört" -> "Polo Neck T-Shirt"
-                        "Nike Air Force 1" -> "Nike Air Force 1"
-                        "Levi's 501 Jean" -> "Levi's 501 Jeans"
-                        else -> product.title
-                    })
                     Text(
-                        text = titleDisp,
+                        text = product.title,
                         color = VestiColors.TextMain,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
@@ -1071,8 +935,9 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                 }
                 
                 Column {
+                    val priceDisp = "${product.price.toInt()} ₺"
                     Text(
-                        text = product.price,
+                        text = priceDisp,
                         color = VestiColors.Primary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.ExtraBold
@@ -1098,11 +963,12 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                                     .background(Color(0xFFE5E7EB)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(product.sellerInitials, fontSize = 9.sp, color = Color.DarkGray, fontWeight = FontWeight.Bold)
+                                val initials = if (product.sellerId.length >= 2) product.sellerId.substring(0, 2).uppercase() else "VS"
+                                Text(initials, fontSize = 9.sp, color = Color.DarkGray, fontWeight = FontWeight.Bold)
                             }
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = product.sellerName,
+                                text = "Satıcı: ${product.sellerId.take(5)}",
                                 fontSize = 11.sp,
                                 color = VestiColors.TextMain,
                                 maxLines = 1,
@@ -1113,7 +979,7 @@ fun ProductCard(product: MockProduct, onClick: () -> Unit) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.Star, contentDescription = "Star", tint = Color(0xFFFFB300), modifier = Modifier.size(11.dp))
                             Spacer(modifier = Modifier.width(2.dp))
-                            Text(product.rating, fontSize = 11.sp, color = VestiColors.TextMain, fontWeight = FontWeight.Bold)
+                            Text("4.9", fontSize = 11.sp, color = VestiColors.TextMain, fontWeight = FontWeight.Bold)
                         }
                     }
                 }

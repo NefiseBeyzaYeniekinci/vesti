@@ -12,14 +12,15 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    // Kendi makinenizdeki backend'e ulaşmak için emulator üzerinden 10.0.2.2 kullanılır.
-    // Ancak fiziksel cihazlar için bilgisayarınızın yerel Wi-Fi IP'si (örn. 192.168.1.103) kullanılır.
-    private const val HOST_IP = "10.0.2.2"
-    private val AUTH_BASE_URL = "http://$HOST_IP:8080/"
-    private val WARDROBE_BASE_URL = "http://$HOST_IP:8081/"
-    private val AI_BASE_URL = "http://$HOST_IP:8082/"
-    private val MARKETPLACE_BASE_URL = "http://$HOST_IP:8083/"
-    private val PAYMENT_BASE_URL = "http://$HOST_IP:8084/"
+    // Vercel Production Web URL
+    const val IMAGE_BASE_URL = "https://vesti-web.vercel.app"
+    private const val PRODUCTION_BASE_URL = "https://vesti-web.vercel.app/"
+
+    private const val AUTH_BASE_URL = "${PRODUCTION_BASE_URL}api/"
+    private const val WARDROBE_BASE_URL = PRODUCTION_BASE_URL
+    private const val AI_BASE_URL = PRODUCTION_BASE_URL
+    private const val MARKETPLACE_BASE_URL = PRODUCTION_BASE_URL
+    private const val PAYMENT_BASE_URL = PRODUCTION_BASE_URL
     // OpenWeather API Base URL
     private const val WEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/"
     

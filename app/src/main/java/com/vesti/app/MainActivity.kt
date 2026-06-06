@@ -210,6 +210,7 @@ fun MainAppScreen(
                 val id = backStackEntry.arguments?.getString("id") ?: ""
                 com.vesti.app.ui.marketplace.ProductDetailScreen(
                     productId = id,
+                    marketplaceViewModel = marketplaceViewModel,
                     wardrobeViewModel = wardrobeViewModel,
                     onNavigateBack = { navController.popBackStack() },
                     onNavigateToCheckout = { pId, price -> navController.navigate("checkout/$pId/$price") },

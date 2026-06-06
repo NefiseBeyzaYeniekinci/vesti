@@ -518,7 +518,7 @@ fun SuggestedItemCard(item: WardrobeItemDto) {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            val fullImageUrl = if (item.imageUrl.startsWith("http")) item.imageUrl else "http://${com.vesti.app.data.network.RetrofitClient.HOST_IP}:3000${item.imageUrl}"
+            val fullImageUrl = if (item.imageUrl.startsWith("http")) item.imageUrl else "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}${item.imageUrl}"
             
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)

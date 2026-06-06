@@ -33,7 +33,6 @@ class WardrobeViewModel(private val api: WardrobeApi) : ViewModel() {
     init {
         loadItems()
     }
-
     fun loadItems() {
         viewModelScope.launch {
             _state.value = WardrobeState.Loading
@@ -42,22 +41,12 @@ class WardrobeViewModel(private val api: WardrobeApi) : ViewModel() {
                 if (response.isSuccessful && response.body() != null) {
                     _state.value = WardrobeState.Success(response.body()!!)
                 } else {
-                    _state.value = WardrobeState.Success(getMockWardrobeItems())
+                    _state.value = WardrobeState.Error(response.errorBody()?.string() ?: "Hata oluştu")
                 }
             } catch (e: Exception) {
-                _state.value = WardrobeState.Success(getMockWardrobeItems())
+                _state.value = WardrobeState.Error(e.message ?: "Ağ hatası")
             }
         }
-    }
-
-    private fun getMockWardrobeItems(): List<WardrobeItemDto> {
-        return listOf(
-            WardrobeItemDto("1", "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab", "Tişört", "Beyaz", "Zara", "M", "2024-05-15"),
-            WardrobeItemDto("2", "https://images.unsplash.com/photo-1542272604-787c3835535d", "Kot Pantolon", "Mavi", "Mavi", "32", "2024-05-14"),
-            WardrobeItemDto("3", "https://images.unsplash.com/photo-1551028719-00167b16eac5", "Deri Ceket", "Siyah", "Mango", "L", "2024-05-13"),
-            WardrobeItemDto("4", "https://images.unsplash.com/photo-1591047139829-d91aecb6caea", "Gömlek", "Kırmızı", "LCW", "M", "2024-05-12"),
-            WardrobeItemDto("5", "https://images.unsplash.com/photo-1543163521-1bf539c55dd2", "Sneaker", "Beyaz", "Nike", "42", "2024-05-10")
-        )
     }
 
     fun uploadImage(context: Context, fileUri: Uri, category: String = "Uncategorized", color: String? = null, brand: String? = null, size: String? = null) {
@@ -83,14 +72,10 @@ class WardrobeViewModel(private val api: WardrobeApi) : ViewModel() {
 
                     if (response.isSuccessful) {
                         loadItems() // Reload state after successful upload
-                    } else {
-                        // Eğer hata verirse yine de listeyi yenile ki mock'lar tekrar yüklensin (test için)
-                        loadItems()
                     }
                 }
             } catch (e: Exception) {
-                // Test için yükleme hatasında bile listeyi yenile
-                loadItems()
+                // Hata durumunu loglayabiliriz
             } finally {
                 _uploading.value = false
             }
@@ -103,11 +88,9 @@ class WardrobeViewModel(private val api: WardrobeApi) : ViewModel() {
                 val response = api.deleteItem(itemId)
                 if (response.isSuccessful) {
                     loadItems()
-                } else {
-                    loadItems()
                 }
             } catch (e: Exception) {
-                loadItems()
+                // Hata durumunu loglayabiliriz
             }
         }
     }
