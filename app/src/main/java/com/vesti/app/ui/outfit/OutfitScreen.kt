@@ -53,6 +53,7 @@ data class ChatMessage(
 )
 
 @OptIn(ExperimentalPermissionsApi::class)
+@SuppressLint("MissingPermission")
 @Composable
 fun OutfitScreen(viewModel: OutfitViewModel) {
     // Mock Clothing Items to Recommend Conversational Style
@@ -90,8 +91,7 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
         if (locationPermission.status.isGranted) {
             locationPermissionGranted = true
             try {
-                @SuppressLint("MissingPermission")
-                val location = kotlinx.coroutines.tasks.await(fusedLocationClient.lastLocation)
+                val location = fusedLocationClient.lastLocation.await()
                 if (location != null) {
                     try {
                         val weatherResp = viewModel.getWeatherForChat(location.latitude, location.longitude)
