@@ -138,11 +138,12 @@ fun OutfitScreen(viewModel: OutfitViewModel) {
                 
                 // Hava durumu bilgisini string olarak formatla
                 val weatherInfo = if (temp != null) {
+                    val isEn = AppConfig.language == "en"
                     when {
-                        temp < 10 -> AppConfig.t("soğuk ($temp°C)", "cold ($temp°C)")
-                        temp < 18 -> AppConfig.t("serin ($temp°C)", "cool ($temp°C)")
-                        temp < 25 -> AppConfig.t("ılık ($temp°C)", "mild ($temp°C)")
-                        else -> AppConfig.t("sıcak ($temp°C)", "warm ($temp°C)")
+                        temp < 10 -> if (isEn) "cold ($temp°C)" else "soğuk ($temp°C)"
+                        temp < 18 -> if (isEn) "cool ($temp°C)" else "serin ($temp°C)"
+                        temp < 25 -> if (isEn) "mild ($temp°C)" else "ılık ($temp°C)"
+                        else -> if (isEn) "warm ($temp°C)" else "sıcak ($temp°C)"
                     }
                 } else null
 
