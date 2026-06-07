@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.vesti.app.data.network.WeatherApi
+import com.vesti.app.data.network.WardrobeApi
+import com.vesti.app.data.network.WardrobeItemDto
 
 sealed class OutfitState {
     object Idle : OutfitState()
@@ -21,11 +23,26 @@ sealed class OutfitState {
 
 class OutfitViewModel(
     private val aiApi: AiApi,
-    private val weatherApi: WeatherApi
+    private val weatherApi: WeatherApi,
+    private val wardrobeApi: WardrobeApi
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<OutfitState>(OutfitState.Idle)
     val state: StateFlow<OutfitState> = _state.asStateFlow()
+
+    private val _wardrobeItems = MutableStateFlow<List<WardrobeItemDto>>(emptyList())
+    val wardrobeItems: StateFlow<List<WardrobeItemDto>> = _wardrobeItems.asStateFlow()
+
+    fun loadWardrobeItems() {
+        viewModelScope.launch {
+            try {
+                val response = wardrobeApi.getWardrobeItems()
+                if (response.isSuccessful && response.body() != null) {
+                    _wardrobeItems.value = response.body()!!
+                }
+            } catch (_: Exception) {}
+        }
+    }
 
     fun getRecommendation(
         userId: String = "test-user",

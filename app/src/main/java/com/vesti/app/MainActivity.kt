@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.Icons
@@ -69,7 +70,7 @@ class MainActivity : ComponentActivity() {
 
         val aiApi = RetrofitClient.getAiApi(tokenManager)
         val weatherApi = RetrofitClient.getWeatherApi()
-        val outfitViewModel = OutfitViewModel(aiApi, weatherApi)
+        val outfitViewModel = OutfitViewModel(aiApi, weatherApi, wardrobeApi)
 
         val marketplaceApi = RetrofitClient.getMarketplaceApi(tokenManager)
         val marketplaceViewModel = MarketplaceViewModel(marketplaceApi)
@@ -79,6 +80,9 @@ class MainActivity : ComponentActivity() {
 
         val notificationApi = RetrofitClient.getNotificationApi(tokenManager)
         val notificationViewModel = com.vesti.app.ui.home.NotificationViewModel(notificationApi)
+
+        val userApi = RetrofitClient.getUserApi(tokenManager)
+        val profileViewModel = com.vesti.app.ui.profile.ProfileViewModel(userApi)
 
         val prefs = applicationContext.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
         
@@ -102,8 +106,36 @@ class MainActivity : ComponentActivity() {
                 
                 NavHost(
                     navController = topLevelNavController,
-                    startDestination = startDest
+                    startDestination = "splash"
                 ) {
+                    composable("splash") {
+                        val tokenState by tokenManager.tokenFlow.collectAsState(initial = "LOADING")
+                        androidx.compose.runtime.LaunchedEffect(tokenState) {
+                            if (tokenState != "LOADING") {
+                                if (tokenState.isNullOrEmpty()) {
+                                    val target = if (isFirstTime) "onboarding" else "login"
+                                    topLevelNavController.navigate(target) {
+                                        popUpTo("splash") { inclusive = true }
+                                    }
+                                } else {
+                                    topLevelNavController.navigate("main") {
+                                        popUpTo("splash") { inclusive = true }
+                                    }
+                                }
+                            }
+                        }
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            androidx.compose.foundation.Image(
+                                painter = androidx.compose.ui.res.painterResource(id = R.drawable.splash_bg),
+                                contentDescription = "Splash Screen Background",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                            )
+                        }
+                    }
                     composable("onboarding") {
                         com.vesti.app.ui.onboarding.OnboardingScreen(
                             onNavigateToRegister = {
@@ -150,6 +182,7 @@ class MainActivity : ComponentActivity() {
                             marketplaceViewModel = marketplaceViewModel,
                             checkoutViewModel = checkoutViewModel,
                             notificationViewModel = notificationViewModel,
+                            profileViewModel = profileViewModel,
                             onLogout = {
                                 authViewModel.logout()
                                 topLevelNavController.navigate("login") {
@@ -172,6 +205,7 @@ fun MainAppScreen(
     marketplaceViewModel: MarketplaceViewModel,
     checkoutViewModel: CheckoutViewModel,
     notificationViewModel: com.vesti.app.ui.home.NotificationViewModel,
+    profileViewModel: com.vesti.app.ui.profile.ProfileViewModel,
     onLogout: () -> Unit
 ) {
     val navController = rememberNavController()
@@ -188,9 +222,11 @@ fun MainAppScreen(
                 com.vesti.app.ui.home.HomeScreen(
                     wardrobeViewModel = wardrobeViewModel,
                     notificationViewModel = notificationViewModel,
+                    profileViewModel = profileViewModel,
                     onNavigateToOutfit = { navController.navigate("outfit") },
                     onNavigateToWardrobe = { navController.navigate("wardrobe") },
-                    onNavigateToMarket = { navController.navigate("marketplace") }
+                    onNavigateToMarket = { navController.navigate("marketplace") },
+                    onNavigateToProfile = { navController.navigate("profile") }
                 ) 
             }
             composable("wardrobe") { WardrobeScreen(viewModel = wardrobeViewModel) }
@@ -206,7 +242,11 @@ fun MainAppScreen(
                 ) 
             }
             composable("profile") { 
-                com.vesti.app.ui.profile.ProfileScreen(tokenManager = tokenManager, onLogout = onLogout) 
+                com.vesti.app.ui.profile.ProfileScreen(
+                    tokenManager = tokenManager, 
+                    viewModel = profileViewModel, 
+                    onLogout = onLogout
+                ) 
             }
             composable("messages") { 
                 com.vesti.app.ui.messages.MessagesScreen(

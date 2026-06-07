@@ -34,6 +34,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.ui.graphics.Brush
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vesti.app.ui.wardrobe.WardrobeState
@@ -84,13 +86,15 @@ fun MarketplaceScreen(
     var filterPriceMax by remember { mutableStateOf("") }
 
     val marketplaceState by viewModel.state.collectAsStateWithLifecycle()
+    val favoriteIds by viewModel.favoriteIds.collectAsStateWithLifecycle()
+    
     val realProducts = when (val s = marketplaceState) {
         is MarketplaceState.Success -> s.items
         else -> emptyList()
     }
 
     val filteredProducts = remember(
-        realProducts, searchQuery, activeChip, filterSize, filterBrand, filterCondition, filterTradeable, filterPriceMin, filterPriceMax
+        realProducts, favoriteIds, searchQuery, activeChip, filterSize, filterBrand, filterCondition, filterTradeable, filterPriceMin, filterPriceMax
     ) {
         realProducts.filter { product ->
             val matchesSearch = product.title.contains(searchQuery, ignoreCase = true) ||
@@ -100,6 +104,7 @@ fun MarketplaceScreen(
             val matchesQuickChip = when (activeChip) {
                 "Yeni Gibi" -> product.condition == "Yeni Gibi"
                 "Sıfır" -> product.condition == "Sıfır"
+                "Favorilerim" -> favoriteIds.contains(product.id)
                 else -> true
             }
 
@@ -197,7 +202,7 @@ fun MarketplaceScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Filter Chips (Elegant Active-State Pills)
-            val filtersList = listOf("Filtrele", "Takas Edilebilir", "Yeni Gibi", "Sıfır")
+            val filtersList = listOf("Filtrele", "Favorilerim", "Takas Edilebilir", "Yeni Gibi", "Sıfır")
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -206,6 +211,7 @@ fun MarketplaceScreen(
                     val isSelected = activeChip == filterOpt || (filterOpt == "Filtrele" && (filterSize != "Hepsi" || filterBrand != "Hepsi" || filterCondition != "Hepsi" || filterTradeable != null || filterPriceMin.isNotEmpty() || filterPriceMax.isNotEmpty()))
                     val displayOpt = AppConfig.t(filterOpt, when(filterOpt) {
                         "Filtrele" -> "Filter"
+                        "Favorilerim" -> "My Favorites"
                         "Takas Edilebilir" -> "Tradeable"
                         "Yeni Gibi" -> "Like New"
                         "Sıfır" -> "Brand New"
@@ -256,7 +262,11 @@ fun MarketplaceScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(filteredProducts) { product ->
-                    ProductCard(product) {
+                    ProductCard(
+                        product = product,
+                        isFavorite = favoriteIds.contains(product.id),
+                        onFavoriteToggle = { viewModel.toggleFavorite(product.id) }
+                    ) {
                         onNavigateToCheckout(product.id, product.price.toFloat())
                     }
                 }
@@ -611,10 +621,9 @@ fun MarketplaceScreen(
                                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                                     ) {
                                         Box(modifier = Modifier.fillMaxSize()) {
-                                            val fullUrl = if (wItem.imageUrl.startsWith("http")) wItem.imageUrl else "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}${wItem.imageUrl}"
                                             AsyncImage(
                                                 model = ImageRequest.Builder(LocalContext.current)
-                                                    .data(fullUrl)
+                                                    .data(com.vesti.app.AppConfig.resolveImageSource(wItem.imageUrl))
                                                     .crossfade(true)
                                                     .build(),
                                                 contentDescription = null,
@@ -712,10 +721,9 @@ fun MarketplaceScreen(
                             .clip(RoundedCornerShape(16.dp))
                             .background(Color(0xFFF3F4F6))
                     ) {
-                        val finalUrl = if (previewData is String && !previewData.startsWith("http")) "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}$previewData" else previewData
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(finalUrl)
+                                .data(if (previewData is String) com.vesti.app.AppConfig.resolveImageSource(previewData) else previewData)
                                 .crossfade(true)
                                 .build(),
                             contentDescription = "Önizleme",
@@ -860,7 +868,12 @@ fun FilterChipItem(label: String, selected: Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductCard(product: com.vesti.app.data.network.MarketplaceItemDto, onClick: () -> Unit) {
+fun ProductCard(
+    product: com.vesti.app.data.network.MarketplaceItemDto,
+    isFavorite: Boolean,
+    onFavoriteToggle: () -> Unit,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -876,10 +889,9 @@ fun ProductCard(product: com.vesti.app.data.network.MarketplaceItemDto, onClick:
                     .fillMaxWidth()
                     .height(150.dp)
             ) {
-                val fullUrl = if (product.imageUrl.startsWith("http")) product.imageUrl else "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}${product.imageUrl}"
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(fullUrl)
+                        .data(com.vesti.app.AppConfig.resolveImageSource(product.imageUrl))
                         .crossfade(true)
                         .build(),
                     contentDescription = product.title,
@@ -899,6 +911,22 @@ fun ProductCard(product: com.vesti.app.data.network.MarketplaceItemDto, onClick:
                         else -> product.condition
                     })
                     Text(condDisp, color = VestiColors.TextMain, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
+                }
+                
+                IconButton(
+                    onClick = onFavoriteToggle,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(32.dp)
+                        .background(Color.White.copy(alpha = 0.85f), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint = if (isFavorite) Color.Red else Color.Gray,
+                        modifier = Modifier.size(18.dp)
+                    )
                 }
             }
             

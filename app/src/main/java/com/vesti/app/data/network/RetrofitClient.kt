@@ -121,4 +121,13 @@ object RetrofitClient {
             .build()
             .create(NotificationApi::class.java)
     }
+
+    fun getUserApi(tokenManager: TokenManager): UserApi {
+        return Retrofit.Builder()
+            .baseUrl(PRODUCTION_BASE_URL)
+            .client(getBaseOkHttpClient(tokenManager))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(UserApi::class.java)
+    }
 }

@@ -17,6 +17,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vesti.app.AppConfig
 import com.vesti.app.ui.theme.VestiColors
@@ -30,6 +32,7 @@ fun CheckoutScreen(
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     var cardNumber by remember { mutableStateOf("") }
     var expiryDate by remember { mutableStateOf("") }
@@ -145,7 +148,7 @@ fun CheckoutScreen(
                                     Icon(imageVector = Icons.Default.Lock, contentDescription = "Secure", tint = VestiColors.Background)
                                 }
                                 Text(
-                                    text = if (cardNumber.isEmpty()) "**** **** **** ****" else cardNumber.chunked(4).joinToString(" "),
+                                    text = if (cardNumber.isEmpty()) "**** **** **** ****" else cardNumber,
                                     color = VestiColors.Background,
                                     style = MaterialTheme.typography.headlineSmall,
                                     letterSpacing = 2.sp
@@ -176,8 +179,20 @@ fun CheckoutScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
                             value = cardNumber,
-                            onValueChange = { if (it.length <= 16) cardNumber = it },
+                            onValueChange = { input ->
+                                val clean = input.filter { it.isDigit() }.take(16)
+                                cardNumber = buildString {
+                                    for (i in clean.indices) {
+                                        append(clean[i])
+                                        if (i % 4 == 3 && i < 15) {
+                                            append(" ")
+                                        }
+                                    }
+                                }
+                            },
                             label = { Text(AppConfig.t("Kart Numarası", "Card Number")) },
+                            placeholder = { Text("5528 7900 0000 0008") },
+                            supportingText = { Text(AppConfig.t("Test için Iyzico Sandbox kartını (5528 7900 0000 0008) kullanabilirsiniz.", "You can use Iyzico Sandbox card (5528 7900 0000 0008) for testing."), fontSize = 10.sp) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true
@@ -224,6 +239,24 @@ fun CheckoutScreen(
                         // Ödeme Butonu
                         Button(
                             onClick = { 
+                                val cleanCard = cardNumber.filter { it.isDigit() }
+                                if (cardholderName.trim().isEmpty()) {
+                                    Toast.makeText(context, AppConfig.tStr("Lütfen kart sahibinin adını girin.", "Please enter cardholder name."), Toast.LENGTH_SHORT).show()
+                                    return@Button
+                                }
+                                if (cleanCard.length != 16) {
+                                    Toast.makeText(context, AppConfig.tStr("Lütfen 16 haneli geçerli bir kart numarası girin.", "Please enter a valid 16-digit card number."), Toast.LENGTH_SHORT).show()
+                                    return@Button
+                                }
+                                if (!expiryDate.matches(Regex("^[0-9]{2}/[0-9]{2}$"))) {
+                                    Toast.makeText(context, AppConfig.tStr("Lütfen son kullanma tarihini AA/YY formatında girin.", "Please enter expiry date in MM/YY format."), Toast.LENGTH_SHORT).show()
+                                    return@Button
+                                }
+                                if (cvv.length < 3) {
+                                    Toast.makeText(context, AppConfig.tStr("Lütfen 3 haneli CVV kodunu girin.", "Please enter 3-digit CVV code."), Toast.LENGTH_SHORT).show()
+                                    return@Button
+                                }
+
                                 if (isSecurePaymentEnabled) {
                                     // Gelecekte buraya SMS 6 haneli kod doğrulama modalı tetiklenecek
                                     // Şimdilik doğrudan backend/simülasyon katmanına atıyoruz

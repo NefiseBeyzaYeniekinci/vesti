@@ -1270,12 +1270,10 @@ fun WardrobeItemCard(item: WardrobeItemDto, onDeleteClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            val fullImageUrl = if (item.imageUrl.startsWith("http")) item.imageUrl else "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}${item.imageUrl}"
-            
             // Image Content
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(fullImageUrl)
+                    .data(com.vesti.app.AppConfig.resolveImageSource(item.imageUrl))
                     .crossfade(true)
                     .build(),
                 contentDescription = item.category,

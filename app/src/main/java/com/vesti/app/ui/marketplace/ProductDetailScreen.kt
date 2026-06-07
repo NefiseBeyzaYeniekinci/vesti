@@ -164,10 +164,9 @@ fun ProductDetailScreen(
                     .padding(16.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
-                val fullUrl = if (product.imageUrl.startsWith("http")) product.imageUrl else "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}${product.imageUrl}"
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(fullUrl)
+                        .data(com.vesti.app.AppConfig.resolveImageSource(product.imageUrl))
                         .crossfade(true)
                         .build(),
                     contentDescription = product.title,
@@ -432,10 +431,9 @@ fun ProductDetailScreen(
                                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                                     ) {
                                         Box(modifier = Modifier.fillMaxSize()) {
-                                            val fullUrl = if (wItem.imageUrl.startsWith("http")) wItem.imageUrl else "${com.vesti.app.data.network.RetrofitClient.IMAGE_BASE_URL}${wItem.imageUrl}"
                                             AsyncImage(
                                                 model = ImageRequest.Builder(LocalContext.current)
-                                                    .data(fullUrl)
+                                                    .data(com.vesti.app.AppConfig.resolveImageSource(wItem.imageUrl))
                                                     .crossfade(true)
                                                     .build(),
                                                 contentDescription = null,

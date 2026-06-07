@@ -22,6 +22,10 @@ object AppConfig {
         return if (language == "en") en else tr
     }
 
+    fun tStr(tr: String, en: String): String {
+        return if (language == "en") en else tr
+    }
+
     /**
      * Utility to dynamically update the Android application display locale configuration.
      * This forces the system context to refresh so that native bottom bar XML strings
@@ -116,5 +120,29 @@ object AppConfig {
             else -> category.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
         }
         return if (language == "en") en else category.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+    }
+
+    fun resolveImageSource(imageUrl: String?): Any {
+        if (imageUrl.isNullOrEmpty()) {
+            return ""
+        }
+        if (imageUrl.startsWith("http")) {
+            return imageUrl
+        }
+        if (imageUrl.startsWith("data:")) {
+            try {
+                val base64Index = imageUrl.indexOf(";base64,")
+                if (base64Index != -1) {
+                    val base64String = imageUrl.substring(base64Index + 8)
+                    return android.util.Base64.decode(base64String, android.util.Base64.DEFAULT)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return imageUrl
+        }
+        val baseUrl = "https://vesti-web.vercel.app"
+        val cleanUrl = if (imageUrl.startsWith("/")) imageUrl else "/$imageUrl"
+        return "$baseUrl$cleanUrl"
     }
 }

@@ -20,11 +20,15 @@ class MarketplaceViewModel(private val api: MarketplaceApi) : ViewModel() {
     private val _state = MutableStateFlow<MarketplaceState>(MarketplaceState.Loading)
     val state: StateFlow<MarketplaceState> = _state.asStateFlow()
 
+    private val _favoriteIds = MutableStateFlow<Set<String>>(emptySet())
+    val favoriteIds: StateFlow<Set<String>> = _favoriteIds.asStateFlow()
+
     init {
         loadFeed()
     }
 
     fun loadFeed() {
+        loadFavorites()
         viewModelScope.launch {
             _state.value = MarketplaceState.Loading
             try {
@@ -36,6 +40,39 @@ class MarketplaceViewModel(private val api: MarketplaceApi) : ViewModel() {
                 }
             } catch (e: Exception) {
                 _state.value = MarketplaceState.Error("Network error: ${e.message}")
+            }
+        }
+    }
+
+    fun loadFavorites() {
+        viewModelScope.launch {
+            try {
+                val response = api.getFavorites()
+                if (response.isSuccessful && response.body() != null) {
+                    val ids = response.body()!!.data.map { it.listingId }.toSet()
+                    _favoriteIds.value = ids
+                }
+            } catch (e: Exception) {
+                // Ignore
+            }
+        }
+    }
+
+    fun toggleFavorite(listingId: String) {
+        viewModelScope.launch {
+            try {
+                val response = api.toggleFavorite(com.vesti.app.data.network.ToggleFavoriteRequest(listingId))
+                if (response.isSuccessful && response.body() != null) {
+                    val current = _favoriteIds.value.toMutableSet()
+                    if (response.body()!!.action == "added") {
+                        current.add(listingId)
+                    } else {
+                        current.remove(listingId)
+                    }
+                    _favoriteIds.value = current
+                }
+            } catch (e: Exception) {
+                // Ignore
             }
         }
     }

@@ -2,7 +2,8 @@ package com.vesti.app.data.network
 
 data class WeatherResponse(
     val weather: List<WeatherDescription>,
-    val main: WeatherMain
+    val main: WeatherMain,
+    val name: String? = null
 )
 
 data class WeatherDescription(
