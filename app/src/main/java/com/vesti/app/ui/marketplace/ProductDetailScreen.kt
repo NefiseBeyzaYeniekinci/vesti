@@ -69,6 +69,7 @@ fun ProductDetailScreen(
     val tokenManager = remember { com.vesti.app.data.local.TokenManager(context) }
     val currentUserId by tokenManager.userIdFlow.collectAsState(initial = "")
     val isOwner = sellerId == currentUserId && currentUserId.isNotEmpty()
+    android.util.Log.d("VestiDebug", "currentUserId: '$currentUserId', sellerId: '$sellerId', isOwner: $isOwner")
 
     var showSwapSheet by remember { mutableStateOf(false) }
     var selectedWardrobeItem by remember { mutableStateOf<com.vesti.app.data.network.WardrobeItemDto?>(null) }

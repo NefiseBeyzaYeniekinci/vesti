@@ -91,8 +91,13 @@ class TokenManager(private val context: Context) {
             }
             val parts = token.split(".")
             if (parts.size >= 2) {
-                val payload = parts[1]
-                val decodedBytes = Base64.decode(payload, Base64.DEFAULT or Base64.NO_WRAP or Base64.URL_SAFE)
+                var payload = parts[1]
+                payload = payload.replace('-', '+').replace('_', '/')
+                val padLength = 4 - (payload.length % 4)
+                if (padLength < 4) {
+                    payload += "=".repeat(padLength)
+                }
+                val decodedBytes = Base64.decode(payload, Base64.DEFAULT)
                 val decodedString = String(decodedBytes, Charsets.UTF_8)
                 val json = JSONObject(decodedString)
                 return json.optString("email", null)
@@ -115,8 +120,13 @@ class TokenManager(private val context: Context) {
             }
             val parts = token.split(".")
             if (parts.size >= 2) {
-                val payload = parts[1]
-                val decodedBytes = Base64.decode(payload, Base64.DEFAULT or Base64.NO_WRAP or Base64.URL_SAFE)
+                var payload = parts[1]
+                payload = payload.replace('-', '+').replace('_', '/')
+                val padLength = 4 - (payload.length % 4)
+                if (padLength < 4) {
+                    payload += "=".repeat(padLength)
+                }
+                val decodedBytes = Base64.decode(payload, Base64.DEFAULT)
                 val decodedString = String(decodedBytes, Charsets.UTF_8)
                 val json = JSONObject(decodedString)
                 return json.optString("id", null) ?: json.optString("userId", null)
