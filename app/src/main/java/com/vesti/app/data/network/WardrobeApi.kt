@@ -25,6 +25,12 @@ interface WardrobeApi {
         @Part("size") size: RequestBody?
     ): Response<UploadResponse>
 
+    @retrofit2.http.PUT("api/wardrobe/items/{id}")
+    suspend fun updateItem(
+        @Path("id") id: String,
+        @retrofit2.http.Body request: UpdateWardrobeItemRequest
+    ): Response<WardrobeItemDto>
+
     @DELETE("api/wardrobe/items/{id}")
     suspend fun deleteItem(@Path("id") id: String): Response<Unit>
 }

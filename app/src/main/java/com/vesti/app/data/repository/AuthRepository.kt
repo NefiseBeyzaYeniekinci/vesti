@@ -17,7 +17,7 @@ class AuthRepository(private val authApi: AuthApi, private val tokenManager: Tok
                     tokenManager.saveToken(token)
                     val user = response.body()?.user
                     if (user != null) {
-                        tokenManager.saveUser(user.name, user.email)
+                        tokenManager.saveUser(user.id, user.name, user.email)
                     }
                     Result.success("Giriş başarılı")
                 } else {
@@ -56,7 +56,7 @@ class AuthRepository(private val authApi: AuthApi, private val tokenManager: Tok
                     tokenManager.saveToken(token)
                     val user = response.body()?.user
                     if (user != null) {
-                        tokenManager.saveUser(user.name, user.email)
+                        tokenManager.saveUser(user.id, user.name, user.email)
                     }
                 }
                 Result.success("Kayıt başarılı")
@@ -90,7 +90,7 @@ class AuthRepository(private val authApi: AuthApi, private val tokenManager: Tok
                     tokenManager.saveToken(token)
                     val user = response.body()?.user
                     if (user != null) {
-                        tokenManager.saveUser(user.name, user.email)
+                        tokenManager.saveUser(user.id, user.name, user.email)
                     }
                     Result.success("Google ile başarıyla giriş yapıldı")
                 } else {

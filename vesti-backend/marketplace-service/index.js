@@ -98,7 +98,8 @@ app.post('/api/marketplace/items', authenticateToken, async (req, res) => {
                 size: size || "Standart",
                 condition: condition || "Kullanılmış",
                 images: imageUrl ? [imageUrl] : [],
-                status: "active"
+                status: "active",
+                updatedAt: new Date()
             }
         });
 
@@ -106,6 +107,33 @@ app.post('/api/marketplace/items', authenticateToken, async (req, res) => {
     } catch (error) {
         console.error("Create listing error:", error);
         res.status(500).json({ error: 'Internal server error creating listing' });
+    }
+});
+
+// Ürün sil (Sadece kendi ürününü)
+app.delete('/api/marketplace/items/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const listing = await prisma.listing.findUnique({
+            where: { id: id }
+        });
+
+        if (!listing) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
+
+        if (listing.userId !== req.user.id) {
+            return res.status(403).json({ error: 'Forbidden: You do not own this item' });
+        }
+
+        await prisma.listing.delete({
+            where: { id: id }
+        });
+
+        res.status(200).json({ message: 'Listing deleted successfully' });
+    } catch (error) {
+        console.error("Delete listing error:", error);
+        res.status(500).json({ error: 'Internal server error deleting listing' });
     }
 });
 

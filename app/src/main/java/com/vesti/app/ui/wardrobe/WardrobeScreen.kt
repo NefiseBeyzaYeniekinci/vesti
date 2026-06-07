@@ -86,6 +86,42 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
     var showDetailsDialog by remember { mutableStateOf(false) }
     var itemToDelete by remember { mutableStateOf<WardrobeItemDto?>(null) }
     
+    // Editing state variables
+    var itemToEdit by remember { mutableStateOf<WardrobeItemDto?>(null) }
+    var editCategory by remember { mutableStateOf("") }
+    var editColor by remember { mutableStateOf("") }
+    var editSize by remember { mutableStateOf("") }
+    var editBrand by remember { mutableStateOf("") }
+    var isEditCustomCategorySelected by remember { mutableStateOf(false) }
+    var editCustomCategoryText by remember { mutableStateOf("") }
+    var editSubCategory by remember { mutableStateOf("Standart") }
+
+    LaunchedEffect(itemToEdit) {
+        itemToEdit?.let { item ->
+            val cleanCat = item.category
+            val parts = cleanCat.split(" ")
+            if (parts.size > 1) {
+                editSubCategory = parts[0]
+                editCategory = parts.subList(1, parts.size).joinToString(" ")
+            } else {
+                editSubCategory = "Standart"
+                editCategory = cleanCat
+            }
+            val standardCats = listOf("Tişört", "Gömlek", "Pantolon", "Ceket", "Takım", "Aksesuar", "Ayakkabı", "Elbise", "Etek")
+            if (standardCats.contains(editCategory)) {
+                isEditCustomCategorySelected = false
+                editCustomCategoryText = ""
+            } else {
+                isEditCustomCategorySelected = true
+                editCustomCategoryText = editCategory
+                editCategory = "Özel"
+            }
+            editColor = item.color ?: ""
+            editSize = item.size ?: ""
+            editBrand = item.brand ?: ""
+        }
+    }
+    
     // Personalization Input state
     var inputCategory by remember { mutableStateOf("Tişört") }
     var inputColor by remember { mutableStateOf("Siyah") }
@@ -515,7 +551,8 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
                                             items(filteredItems) { item ->
                                                 WardrobeItemCard(
                                                     item = item,
-                                                    onDeleteClick = { itemToDelete = item }
+                                                    onDeleteClick = { itemToDelete = item },
+                                                    onClick = { itemToEdit = item }
                                                 )
                                             }
                                         }
@@ -1125,6 +1162,376 @@ fun WardrobeScreen(viewModel: WardrobeViewModel) {
             }
         )
     }
+
+    // Luxury Boutique Bottom Sheet Editor for Editing (Dialog + Box Wrapper)
+    if (itemToEdit != null) {
+        val currentItem = itemToEdit!!
+        androidx.compose.ui.window.Dialog(
+            onDismissRequest = { itemToEdit = null },
+            properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+                    .clickable { itemToEdit = null }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.88f)
+                        .align(Alignment.BottomCenter)
+                        .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+                        .background(Color.White)
+                        .clickable(enabled = false) {}
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                ) {
+                    // Drag Handle
+                    Box(
+                        modifier = Modifier
+                            .width(44.dp)
+                            .height(5.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFE0E0E0))
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Header Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = AppConfig.t("Kıyafeti Düzenle", "Edit Clothing"),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 22.sp,
+                            color = VestiColors.TextMain
+                        )
+                        IconButton(onClick = { itemToEdit = null }) {
+                            Icon(Icons.Default.Close, contentDescription = AppConfig.t("Kapat", "Close"), tint = Color.Gray)
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Scrollable Content
+                    val scrollState = rememberScrollState()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .verticalScroll(scrollState),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        // Image Preview
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(160.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color(0xFFF7F7F7))
+                        ) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(com.vesti.app.AppConfig.resolveImageSource(currentItem.imageUrl))
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = "Preview",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        // Kategori Seçimi
+                        Column {
+                            Text(AppConfig.t("Kategori", "Category"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                            Spacer(modifier = Modifier.height(12.dp))
+                            val categoryOptions = listOf("Tişört", "Gömlek", "Pantolon", "Ceket", "Takım", "Aksesuar", "Ayakkabı", "Elbise", "Etek")
+                            val allOptions = categoryOptions + "Özel"
+                            
+                            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                allOptions.chunked(3).forEach { rowItems ->
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        rowItems.forEach { cat ->
+                                            val isSelected = if (cat == "Özel") isEditCustomCategorySelected else (!isEditCustomCategorySelected && editCategory == cat)
+                                            val catLabel = if (cat == "Özel") {
+                                                AppConfig.t("+ Diğer", "+ Other")
+                                            } else {
+                                                AppConfig.t(cat, when(cat) {
+                                                    "Tişört" -> "T-Shirt"
+                                                    "Gömlek" -> "Shirt"
+                                                    "Pantolon" -> "Pants"
+                                                    "Ceket" -> "Jacket"
+                                                    "Takım" -> "Suit"
+                                                    "Aksesuar" -> "Accessory"
+                                                    "Ayakkabı" -> "Shoes"
+                                                    "Elbise" -> "Dress"
+                                                    "Etek" -> "Skirt"
+                                                    else -> cat
+                                                })
+                                            }
+                                            Box(
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .clip(RoundedCornerShape(14.dp))
+                                                    .background(if (isSelected) VestiColors.Primary else Color(0xFFF7F7F7))
+                                                    .clickable { 
+                                                        if (cat == "Özel") {
+                                                            isEditCustomCategorySelected = true
+                                                        } else {
+                                                            isEditCustomCategorySelected = false
+                                                            editCategory = cat 
+                                                        }
+                                                    }
+                                                    .padding(vertical = 12.dp),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = catLabel,
+                                                    color = if (isSelected) Color.White else VestiColors.TextMain,
+                                                    fontSize = 13.sp,
+                                                    fontWeight = FontWeight.Medium
+                                                )
+                                            }
+                                        }
+                                        if (rowItems.size < 3) {
+                                            repeat(3 - rowItems.size) {
+                                                Spacer(modifier = Modifier.weight(1f))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if (isEditCustomCategorySelected) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                OutlinedTextField(
+                                    value = editCustomCategoryText,
+                                    onValueChange = { editCustomCategoryText = it },
+                                    label = { Text(AppConfig.t("Özel Kategori Adı", "Custom Category Name")) },
+                                    placeholder = { Text(AppConfig.t("Örn: Şapka, Gözlük, Bere, Çorap", "e.g. Hat, Glasses, Beanie, Socks"), color = Color.LightGray) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedBorderColor = VestiColors.Primary,
+                                        unfocusedBorderColor = Color(0xFFE0E0E0)
+                                    ),
+                                    singleLine = true
+                                )
+                            }
+                            
+                            val availableSubTypes = when (editCategory) {
+                                "Pantolon" -> listOf("Standart", "Kot", "Kumaş", "Keten", "Deri")
+                                "Ceket" -> listOf("Standart", "Deri", "Kot", "Kumaş", "Kaban")
+                                "Gömlek" -> listOf("Standart", "Keten", "Kot", "Klasik")
+                                "Tişört" -> listOf("Standart", "Basic", "Oversize", "Polo")
+                                "Takım" -> listOf("Standart", "Eşofman", "Blazer", "Takım Elbise")
+                                "Aksesuar" -> listOf("Standart", "Gözlük", "Şapka", "Bere", "Saat", "Kemer")
+                                "Ayakkabı" -> listOf("Standart", "Sneaker", "Klasik", "Bot")
+                                else -> emptyList()
+                            }
+                            
+                            if (!isEditCustomCategorySelected && availableSubTypes.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Column {
+                                    Text(AppConfig.t("Tür / Kumaş Seçimi", "Style / Fabric Selection"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        items(availableSubTypes) { sub ->
+                                            val isSelected = editSubCategory == sub
+                                            val displaySub = AppConfig.t(sub, when (sub) {
+                                                "Standart" -> "Standard"
+                                                "Kot" -> "Denim"
+                                                "Kumaş" -> "Fabric"
+                                                "Keten" -> "Linen"
+                                                "Deri" -> "Leather"
+                                                "Kaban" -> "Coat"
+                                                "Klasik" -> "Classic"
+                                                "Basic" -> "Basic"
+                                                "Oversize" -> "Oversize"
+                                                "Polo" -> "Polo"
+                                                "Eşofman" -> "Tracksuit"
+                                                "Blazer" -> "Blazer"
+                                                "Takım Elbise" -> "Suit"
+                                                "Gözlük" -> "Glasses"
+                                                "Şapka" -> "Hat"
+                                                "Bere" -> "Beanie"
+                                                "Saat" -> "Watch"
+                                                "Kemer" -> "Belt"
+                                                "Sneaker" -> "Sneaker"
+                                                "Bot" -> "Boots"
+                                                else -> sub
+                                            })
+                                            Box(
+                                                modifier = Modifier
+                                                    .clip(RoundedCornerShape(14.dp))
+                                                    .background(if (isSelected) VestiColors.Primary else Color(0xFFF7F7F7))
+                                                    .clickable { editSubCategory = sub }
+                                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                                            ) {
+                                                Text(
+                                                    text = displaySub,
+                                                    color = if (isSelected) Color.White else VestiColors.TextMain,
+                                                    fontSize = 13.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Beden Seçimi
+                        Column {
+                            Text(AppConfig.t("Beden Seçimi", "Size Selection"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                            Spacer(modifier = Modifier.height(12.dp))
+                            val sizeOptions = listOf("XS", "S", "M", "L", "XL", "XXL", "Standart")
+                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                items(sizeOptions) { sz ->
+                                    val isSelected = editSize == sz
+                                    val szDisplay = if (sz == "Standart") AppConfig.t("Standart", "Standard") else sz
+                                    Box(
+                                        modifier = Modifier
+                                            .size(width = 72.dp, height = 40.dp)
+                                            .clip(RoundedCornerShape(14.dp))
+                                            .background(if (isSelected) VestiColors.Primary else Color(0xFFF7F7F7))
+                                            .clickable { editSize = sz }
+                                            .wrapContentSize(Alignment.Center)
+                                    ) {
+                                        Text(
+                                            text = szDisplay,
+                                            color = if (isSelected) Color.White else VestiColors.TextMain,
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        // Renk Kataloğu
+                        Column {
+                            Text(AppConfig.t("Renk Kataloğu", "Color Catalog"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                val resolvedColor = resolveColorFromName(editColor)
+                                Box(
+                                    modifier = Modifier
+                                        .size(52.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (resolvedColor != null) Brush.linearGradient(listOf(resolvedColor, resolvedColor))
+                                            else Brush.sweepGradient(listOf(Color.Red, Color.Yellow, Color.Green, Color.Blue, Color.Magenta, Color.Red))
+                                        )
+                                        .border(2.dp, Color.White, CircleShape)
+                                        .border(3.dp, Color(0xFFE0E0E0), CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (resolvedColor == null && editColor.isNotBlank()) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(44.dp)
+                                                .clip(CircleShape)
+                                                .background(Color.White.copy(alpha = 0.85f)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(AppConfig.t("Özel", "Custom"), fontSize = 10.sp, fontWeight = FontWeight.Bold, color = VestiColors.TextMain)
+                                        }
+                                    }
+                                }
+                                
+                                OutlinedTextField(
+                                    value = editColor,
+                                    onValueChange = { editColor = it },
+                                    label = { Text(AppConfig.t("Kıyafet Rengi", "Clothing Color")) },
+                                    placeholder = { Text(AppConfig.t("Örn: Siyah, Beyaz, Mavi", "e.g. Black, White, Blue")) },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedBorderColor = VestiColors.Primary,
+                                        unfocusedBorderColor = Color(0xFFE0E0E0)
+                                    ),
+                                    singleLine = true
+                                )
+                            }
+                        }
+
+                        // Marka Bilgisi
+                        Column {
+                            Text(AppConfig.t("Marka Bilgisi", "Brand Information"), fontWeight = FontWeight.Bold, color = VestiColors.TextMain, fontSize = 14.sp)
+                            Spacer(modifier = Modifier.height(12.dp))
+                            OutlinedTextField(
+                                value = editBrand,
+                                onValueChange = { editBrand = it },
+                                placeholder = { Text(AppConfig.t("örn. Zara, H&M, Boutique", "e.g. Zara, H&M, Boutique"), color = Color.LightGray) },
+                                leadingIcon = { Icon(Icons.Default.Label, contentDescription = null, tint = VestiColors.Primary) },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = VestiColors.Primary,
+                                    unfocusedBorderColor = Color(0xFFE0E0E0)
+                                ),
+                                singleLine = true
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Bottom Actions
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Button(
+                            onClick = {
+                                val category = if (isEditCustomCategorySelected) {
+                                    if (editCustomCategoryText.isBlank()) "Tişört" else editCustomCategoryText
+                                } else {
+                                    val base = if (editCategory.isBlank()) "Tişört" else editCategory
+                                    if (editSubCategory == "Standart") base else "$editSubCategory $base"
+                                }
+                                viewModel.updateItem(
+                                    itemId = currentItem.id,
+                                    category = category,
+                                    color = editColor,
+                                    brand = editBrand,
+                                    size = editSize
+                                )
+                                itemToEdit = null
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(52.dp)
+                        ) {
+                            Text(AppConfig.t("Değişiklikleri Kaydet", "Save Changes"), fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.White)
+                        }
+                        
+                        TextButton(
+                            onClick = { itemToEdit = null },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(AppConfig.t("İptal Et", "Cancel"), color = Color.Gray, fontWeight = FontWeight.Medium)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 // Smart casing-insensitive stock fashion image supplier with pure product focus (no faces/beards)
@@ -1260,11 +1667,16 @@ fun CategoryCollectionCard(
 }
 
 @Composable
-fun WardrobeItemCard(item: WardrobeItemDto, onDeleteClick: () -> Unit) {
+fun WardrobeItemCard(
+    item: WardrobeItemDto,
+    onDeleteClick: () -> Unit,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(0.72f),
+            .aspectRatio(0.72f)
+            .clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)

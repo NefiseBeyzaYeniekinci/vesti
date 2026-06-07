@@ -94,6 +94,25 @@ class WardrobeViewModel(private val api: WardrobeApi) : ViewModel() {
             }
         }
     }
+
+    fun updateItem(itemId: String, category: String, color: String, brand: String, size: String) {
+        viewModelScope.launch {
+            try {
+                val request = com.vesti.app.data.network.UpdateWardrobeItemRequest(
+                    category = category,
+                    color = color,
+                    brand = brand,
+                    size = size
+                )
+                val response = api.updateItem(itemId, request)
+                if (response.isSuccessful) {
+                    loadItems()
+                }
+            } catch (e: Exception) {
+                // Ignore
+            }
+        }
+    }
     
     // Yardımcı fonksiyon URI'den Cache içindeki asıl File nesnesini bulur
     private fun getFileFromUri(context: Context, uri: Uri): File? {

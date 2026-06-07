@@ -92,7 +92,8 @@ app.post('/api/wardrobe/upload', authenticateToken, upload.single('image'), asyn
                 brand: brand || '',
                 size: size || '',
                 imageUrl: imageUrl,
-                tags: []
+                tags: [],
+                updatedAt: new Date()
             }
         });
 
@@ -103,6 +104,42 @@ app.post('/api/wardrobe/upload', authenticateToken, upload.single('image'), asyn
     } catch (error) {
         console.error("Upload error:", error);
         res.status(500).json({ error: 'Internal server error during upload' });
+    }
+});
+
+// PUT /api/wardrobe/items/:id
+app.put('/api/wardrobe/items/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { category, color, brand, size } = req.body;
+        const item = await prisma.wardrobeItem.findUnique({
+            where: { id: id }
+        });
+
+        if (!item) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
+
+        if (item.userId !== req.user.id) {
+            return res.status(403).json({ error: 'Forbidden: You do not own this item' });
+        }
+
+        const updatedItem = await prisma.wardrobeItem.update({
+            where: { id: id },
+            data: {
+                category: category !== undefined ? category : item.category,
+                name: category !== undefined ? category : item.name,
+                color: color !== undefined ? color : item.color,
+                brand: brand !== undefined ? brand : item.brand,
+                size: size !== undefined ? size : item.size,
+                updatedAt: new Date()
+            }
+        });
+
+        res.status(200).json(updatedItem);
+    } catch (error) {
+        console.error("Update item error:", error);
+        res.status(500).json({ error: 'Internal server error during update' });
     }
 });
 

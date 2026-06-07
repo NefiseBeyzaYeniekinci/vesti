@@ -14,3 +14,10 @@ data class UploadResponse(
     val message: String,
     val item: WardrobeItemDto
 )
+
+data class UpdateWardrobeItemRequest(
+    val category: String,
+    val color: String,
+    val brand: String,
+    val size: String
+)

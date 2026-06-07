@@ -99,4 +99,18 @@ class MarketplaceViewModel(private val api: MarketplaceApi) : ViewModel() {
             }
         }
     }
+
+    fun deleteListing(listingId: String, onComplete: () -> Unit = {}) {
+        viewModelScope.launch {
+            try {
+                val response = api.deleteItem(listingId)
+                if (response.isSuccessful) {
+                    loadFeed()
+                    onComplete()
+                }
+            } catch (e: Exception) {
+                // Ignore
+            }
+        }
+    }
 }

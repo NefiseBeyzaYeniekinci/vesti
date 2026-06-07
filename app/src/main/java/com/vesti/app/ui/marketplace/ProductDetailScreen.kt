@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -57,12 +58,17 @@ fun ProductDetailScreen(
         return
     }
 
-    val priceVal = product.price.toFloat()
-    val sellerId = product.sellerId
+    val priceVal = (product.price ?: 0.0).toFloat()
+    val sellerId = product.sellerId ?: ""
     val isSwap = true // enable swap offering for all items to showcase UI
-    val sellerName = "Satıcı: ${product.sellerId.take(5)}"
-    val sellerInitials = if (product.sellerId.length >= 2) product.sellerId.substring(0, 2).uppercase() else "VS"
+    val sellerName = "Satıcı: ${sellerId.take(5)}"
+    val sellerInitials = if (sellerId.length >= 2) sellerId.substring(0, 2).uppercase() else "VS"
     val rating = "4.9"
+
+    val context = LocalContext.current
+    val tokenManager = remember { com.vesti.app.data.local.TokenManager(context) }
+    val currentUserId by tokenManager.userIdFlow.collectAsState(initial = "")
+    val isOwner = sellerId == currentUserId && currentUserId.isNotEmpty()
 
     var showSwapSheet by remember { mutableStateOf(false) }
     var selectedWardrobeItem by remember { mutableStateOf<com.vesti.app.data.network.WardrobeItemDto?>(null) }
@@ -93,58 +99,83 @@ fun ProductDetailScreen(
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Button(
-                        onClick = { onNavigateToCheckout(productId, priceVal) },
-                        colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.weight(1f).height(50.dp)
-                    ) {
-                        Text(AppConfig.t("Sipariş Ver", "Order Now"), fontWeight = FontWeight.Bold)
-                    }
-                    
-                    OutlinedButton(
-                        onClick = { onNavigateToChat(sellerId) },
-                        shape = RoundedCornerShape(12.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE5E7EB)),
-                        modifier = Modifier.weight(1f).height(50.dp),
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Icon(Icons.Default.ChatBubbleOutline, contentDescription = AppConfig.t("Mesaj", "Message"), tint = VestiColors.TextMain, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(AppConfig.t("Mesaj At", "Send Message"), color = VestiColors.TextMain, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    }
-
-                    // Highly interactive active/inactive Swap Button!
-                    val context = LocalContext.current
-                    val swapNotEligibleMsg = AppConfig.t("Bu ürün takasa uygun değil!", "This item is not eligible for swap!")
-                    Button(
-                        onClick = {
-                            if (isSwap) {
-                                showSwapSheet = true
+                    if (isOwner) {
+                        var isDeleting by remember { mutableStateOf(false) }
+                        Button(
+                            onClick = {
+                                isDeleting = true
+                                marketplaceViewModel.deleteListing(productId) {
+                                    isDeleting = false
+                                    Toast.makeText(context, AppConfig.t("İlan başarıyla kaldırıldı.", "Listing removed successfully."), Toast.LENGTH_SHORT).show()
+                                    onNavigateBack()
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFDC2626)),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth().height(50.dp),
+                            enabled = !isDeleting
+                        ) {
+                            if (isDeleting) {
+                                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
                             } else {
-                                Toast.makeText(context, swapNotEligibleMsg, Toast.LENGTH_SHORT).show()
+                                Icon(Icons.Default.Delete, contentDescription = null, tint = Color.White)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(AppConfig.t("Bu İlanı Kaldır", "Remove This Listing"), fontWeight = FontWeight.Bold, color = Color.White)
                             }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isSwap) VestiColors.Primary else Color(0xFFE5E7EB)
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.weight(1f).height(50.dp),
-                        contentPadding = PaddingValues(0.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.SwapHoriz,
-                            contentDescription = AppConfig.t("Takas", "Swap"),
-                            tint = if (isSwap) Color.White else Color.Gray,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = AppConfig.t("Takas", "Swap"),
-                            color = if (isSwap) Color.White else Color.Gray,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        }
+                    } else {
+                        Button(
+                            onClick = { onNavigateToCheckout(productId, priceVal) },
+                            colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.weight(1f).height(50.dp)
+                        ) {
+                            Text(AppConfig.t("Sipariş Ver", "Order Now"), fontWeight = FontWeight.Bold)
+                        }
+                        
+                        OutlinedButton(
+                            onClick = { onNavigateToChat(sellerId) },
+                            shape = RoundedCornerShape(12.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE5E7EB)),
+                            modifier = Modifier.weight(1f).height(50.dp),
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Icon(Icons.Default.ChatBubbleOutline, contentDescription = AppConfig.t("Mesaj", "Message"), tint = VestiColors.TextMain, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(AppConfig.t("Mesaj At", "Send Message"), color = VestiColors.TextMain, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+
+                        // Highly interactive active/inactive Swap Button!
+                        val swapNotEligibleMsg = AppConfig.t("Bu ürün takasa uygun değil!", "This item is not eligible for swap!")
+                        Button(
+                            onClick = {
+                                if (isSwap) {
+                                    showSwapSheet = true
+                                } else {
+                                    Toast.makeText(context, swapNotEligibleMsg, Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isSwap) VestiColors.Primary else Color(0xFFE5E7EB)
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.weight(1f).height(50.dp),
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.SwapHoriz,
+                                contentDescription = AppConfig.t("Takas", "Swap"),
+                                tint = if (isSwap) Color.White else Color.Gray,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = AppConfig.t("Takas", "Swap"),
+                                color = if (isSwap) Color.White else Color.Gray,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }
@@ -169,7 +200,7 @@ fun ProductDetailScreen(
                         .data(com.vesti.app.AppConfig.resolveImageSource(product.imageUrl))
                         .crossfade(true)
                         .build(),
-                    contentDescription = product.title,
+                    contentDescription = product.title ?: "",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -190,18 +221,19 @@ fun ProductDetailScreen(
                         Text(AppConfig.t("DIŞ GİYİM", "OUTERWEAR"), color = VestiColors.Primary, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
                     }
                     Surface(color = Color(0xFFF3F4F6), shape = RoundedCornerShape(4.dp)) {
-                        val sizeDisp = AppConfig.t(product.size, when {
-                            product.size == "Standart" -> "Standard"
-                            product.size.startsWith("Beden:") -> product.size.replace("Beden:", "Size:")
-                            else -> product.size
+                        val sz = product.size ?: "Standart"
+                        val sizeDisp = AppConfig.t(sz, when {
+                            sz == "Standart" -> "Standard"
+                            sz.startsWith("Beden:") -> sz.replace("Beden:", "Size:")
+                            else -> sz
                         })
                         Text(sizeDisp, color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
                     }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(product.title, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.TextMain)
-                val priceDisp = "${product.price.toInt()} ₺"
+                Text(product.title ?: "", fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.TextMain)
+                val priceDisp = "${(product.price ?: 0.0).toInt()} ₺"
                 Text(priceDisp, fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = VestiColors.Primary)
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -221,7 +253,7 @@ fun ProductDetailScreen(
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = product.description,
+                            text = product.description ?: "",
                             color = VestiColors.TextMain,
                             fontSize = 14.sp,
                             lineHeight = 20.sp
@@ -241,7 +273,7 @@ fun ProductDetailScreen(
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(AppConfig.t("Kategori", "Category"), color = Color.Gray, fontSize = 12.sp)
                             Spacer(modifier = Modifier.height(4.dp))
-                            Text(product.category, color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text(product.category ?: "", color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }
                     }
                     Surface(
@@ -252,12 +284,13 @@ fun ProductDetailScreen(
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(AppConfig.t("Durumu", "Condition"), color = Color.Gray, fontSize = 12.sp)
                             Spacer(modifier = Modifier.height(4.dp))
-                            val condDisp = AppConfig.t(product.condition, when (product.condition) {
+                            val cond = product.condition ?: "Yeni Gibi"
+                            val condDisp = AppConfig.t(cond, when (cond) {
                                 "Sıfır" -> "Brand New"
                                 "Yeni Gibi" -> "Like New"
                                 "Az Kullanılmış" -> "Lightly Used"
                                 "Kullanılmış" -> "Used"
-                                else -> product.condition
+                                else -> cond
                             })
                             Text(condDisp, color = VestiColors.TextMain, fontWeight = FontWeight.Bold, fontSize = 15.sp)
                         }

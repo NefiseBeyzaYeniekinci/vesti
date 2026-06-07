@@ -97,24 +97,24 @@ fun MarketplaceScreen(
         realProducts, favoriteIds, searchQuery, activeChip, filterSize, filterBrand, filterCondition, filterTradeable, filterPriceMin, filterPriceMax
     ) {
         realProducts.filter { product ->
-            val matchesSearch = product.title.contains(searchQuery, ignoreCase = true) ||
-                                product.category.contains(searchQuery, ignoreCase = true)
+            val matchesSearch = (product.title ?: "").contains(searchQuery, ignoreCase = true) ||
+                                (product.category ?: "").contains(searchQuery, ignoreCase = true)
             
             // Standard quick filter chips (matches activeChip)
             val matchesQuickChip = when (activeChip) {
                 "Yeni Gibi" -> product.condition == "Yeni Gibi"
                 "Sıfır" -> product.condition == "Sıfır"
-                "Favorilerim" -> favoriteIds.contains(product.id)
+                "Favorilerim" -> favoriteIds.contains(product.id ?: "")
                 else -> true
             }
 
             // Advanced Filters
-            val matchesSize = filterSize == "Hepsi" || product.size.contains(filterSize, ignoreCase = true)
-            val matchesBrand = filterBrand == "Hepsi" || product.category.equals(filterBrand, ignoreCase = true)
-            val matchesCondition = filterCondition == "Hepsi" || product.condition.equals(filterCondition, ignoreCase = true)
+            val matchesSize = filterSize == "Hepsi" || (product.size ?: "").contains(filterSize, ignoreCase = true)
+            val matchesBrand = filterBrand == "Hepsi" || (product.category ?: "").equals(filterBrand, ignoreCase = true)
+            val matchesCondition = filterCondition == "Hepsi" || (product.condition ?: "").equals(filterCondition, ignoreCase = true)
             val matchesTradeable = true
             
-            val priceVal = product.price.toFloat()
+            val priceVal = (product.price ?: 0.0).toFloat()
             val matchesPriceMin = filterPriceMin.isEmpty() || (filterPriceMin.toFloatOrNull() ?: 0f) <= priceVal
             val matchesPriceMax = filterPriceMax.isEmpty() || (filterPriceMax.toFloatOrNull() ?: Float.MAX_VALUE) >= priceVal
 
@@ -264,10 +264,10 @@ fun MarketplaceScreen(
                 items(filteredProducts) { product ->
                     ProductCard(
                         product = product,
-                        isFavorite = favoriteIds.contains(product.id),
-                        onFavoriteToggle = { viewModel.toggleFavorite(product.id) }
+                        isFavorite = favoriteIds.contains(product.id ?: ""),
+                        onFavoriteToggle = { viewModel.toggleFavorite(product.id ?: "") }
                     ) {
-                        onNavigateToCheckout(product.id, product.price.toFloat())
+                        onNavigateToCheckout(product.id ?: "", (product.price ?: 0.0).toFloat())
                     }
                 }
             }
@@ -894,7 +894,7 @@ fun ProductCard(
                         .data(com.vesti.app.AppConfig.resolveImageSource(product.imageUrl))
                         .crossfade(true)
                         .build(),
-                    contentDescription = product.title,
+                    contentDescription = product.title ?: "",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -903,12 +903,13 @@ fun ProductCard(
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.padding(8.dp).align(Alignment.BottomStart)
                 ) {
-                    val condDisp = AppConfig.t(product.condition, when (product.condition) {
+                    val cond = product.condition ?: "Yeni Gibi"
+                    val condDisp = AppConfig.t(cond, when (cond) {
                         "Sıfır" -> "Brand New"
                         "Yeni Gibi" -> "Like New"
                         "Az Kullanılmış" -> "Lightly Used"
                         "Kullanılmış" -> "Used"
-                        else -> product.condition
+                        else -> cond
                     })
                     Text(condDisp, color = VestiColors.TextMain, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
                 }
@@ -943,17 +944,18 @@ fun ProductCard(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(product.category, color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
-                        val sizeDisp = AppConfig.t(product.size, when {
-                            product.size == "Standart" -> "Standard"
-                            product.size.startsWith("Beden:") -> product.size.replace("Beden:", "Size:")
-                            else -> product.size
+                        Text(product.category ?: "", color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                        val sz = product.size ?: "Standart"
+                        val sizeDisp = AppConfig.t(sz, when {
+                            sz == "Standart" -> "Standard"
+                            sz.startsWith("Beden:") -> sz.replace("Beden:", "Size:")
+                            else -> sz
                         })
                         Text(sizeDisp, color = Color.Gray, fontSize = 11.sp, fontWeight = FontWeight.Medium)
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = product.title,
+                        text = product.title ?: "",
                         color = VestiColors.TextMain,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
@@ -963,7 +965,7 @@ fun ProductCard(
                 }
                 
                 Column {
-                    val priceDisp = "${product.price.toInt()} ₺"
+                    val priceDisp = "${(product.price ?: 0.0).toInt()} ₺"
                     Text(
                         text = priceDisp,
                         color = VestiColors.Primary,
@@ -991,12 +993,14 @@ fun ProductCard(
                                     .background(Color(0xFFE5E7EB)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                val initials = if (product.sellerId.length >= 2) product.sellerId.substring(0, 2).uppercase() else "VS"
+                                val sId = product.sellerId ?: ""
+                                val initials = if (sId.length >= 2) sId.substring(0, 2).uppercase() else "VS"
                                 Text(initials, fontSize = 9.sp, color = Color.DarkGray, fontWeight = FontWeight.Bold)
                             }
                             Spacer(modifier = Modifier.width(6.dp))
+                            val sId = product.sellerId ?: ""
                             Text(
-                                text = "Satıcı: ${product.sellerId.take(5)}",
+                                text = "Satıcı: ${sId.take(5)}",
                                 fontSize = 11.sp,
                                 color = VestiColors.TextMain,
                                 maxLines = 1,

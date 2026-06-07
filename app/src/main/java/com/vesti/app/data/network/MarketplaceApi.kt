@@ -43,4 +43,7 @@ interface MarketplaceApi {
 
     @POST("api/favorites")
     suspend fun toggleFavorite(@Body request: ToggleFavoriteRequest): Response<ToggleFavoriteResponse>
+
+    @retrofit2.http.DELETE("api/marketplace/items/{id}")
+    suspend fun deleteItem(@Path("id") id: String): Response<Unit>
 }
