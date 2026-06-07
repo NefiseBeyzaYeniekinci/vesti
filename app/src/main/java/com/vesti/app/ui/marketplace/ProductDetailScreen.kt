@@ -106,7 +106,7 @@ fun ProductDetailScreen(
                                 isDeleting = true
                                 marketplaceViewModel.deleteListing(productId) {
                                     isDeleting = false
-                                    Toast.makeText(context, AppConfig.t("İlan başarıyla kaldırıldı.", "Listing removed successfully."), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, AppConfig.tStr("İlan başarıyla kaldırıldı.", "Listing removed successfully."), Toast.LENGTH_SHORT).show()
                                     onNavigateBack()
                                 }
                             },
