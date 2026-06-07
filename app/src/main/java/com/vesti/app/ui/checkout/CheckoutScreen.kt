@@ -29,10 +29,17 @@ fun CheckoutScreen(
     itemId: String,
     price: Double,
     viewModel: CheckoutViewModel,
+    marketplaceViewModel: com.vesti.app.ui.marketplace.MarketplaceViewModel,
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    val tokenManager = remember { com.vesti.app.data.local.TokenManager(context) }
+    val currentUserId by tokenManager.userIdFlow.collectAsState(initial = "")
+    val marketplaceState by marketplaceViewModel.state.collectAsStateWithLifecycle()
+    val product = (marketplaceState as? com.vesti.app.ui.marketplace.MarketplaceState.Success)?.items?.find { it.id == itemId }
+    val isOwner = product?.sellerId == currentUserId && currentUserId.isNotEmpty()
 
     var cardNumber by remember { mutableStateOf("") }
     var expiryDate by remember { mutableStateOf("") }
@@ -236,44 +243,74 @@ fun CheckoutScreen(
 
                         Spacer(modifier = Modifier.weight(1f))
                         
-                        // Ödeme Butonu
-                        Button(
-                            onClick = { 
-                                val cleanCard = cardNumber.filter { it.isDigit() }
-                                if (cardholderName.trim().isEmpty()) {
-                                    Toast.makeText(context, AppConfig.tStr("Lütfen kart sahibinin adını girin.", "Please enter cardholder name."), Toast.LENGTH_SHORT).show()
-                                    return@Button
+                        if (isOwner) {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFFFEF2F2)),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFCA5A5))
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = AppConfig.t("Kendi Ürününüzü Satın Alamazsınız", "You Cannot Purchase Your Own Product"),
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFFDC2626),
+                                        fontSize = 15.sp,
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = AppConfig.t("Pazar yerinde kendi paylaştığınız ürünler için ödeme veya takas işlemi yapamazsınız.", "You cannot complete payment or swap transactions for products you listed on the marketplace."),
+                                        color = Color(0xFF991B1B),
+                                        fontSize = 12.sp,
+                                        textAlign = TextAlign.Center
+                                    )
                                 }
-                                if (cleanCard.length != 16) {
-                                    Toast.makeText(context, AppConfig.tStr("Lütfen 16 haneli geçerli bir kart numarası girin.", "Please enter a valid 16-digit card number."), Toast.LENGTH_SHORT).show()
-                                    return@Button
-                                }
-                                if (!expiryDate.matches(Regex("^[0-9]{2}/[0-9]{2}$"))) {
-                                    Toast.makeText(context, AppConfig.tStr("Lütfen son kullanma tarihini AA/YY formatında girin.", "Please enter expiry date in MM/YY format."), Toast.LENGTH_SHORT).show()
-                                    return@Button
-                                }
-                                if (cvv.length < 3) {
-                                    Toast.makeText(context, AppConfig.tStr("Lütfen 3 haneli CVV kodunu girin.", "Please enter 3-digit CVV code."), Toast.LENGTH_SHORT).show()
-                                    return@Button
-                                }
+                            }
+                        } else {
+                            // Ödeme Butonu
+                            Button(
+                                onClick = { 
+                                    val cleanCard = cardNumber.filter { it.isDigit() }
+                                    if (cardholderName.trim().isEmpty()) {
+                                        Toast.makeText(context, AppConfig.tStr("Lütfen kart sahibinin adını girin.", "Please enter cardholder name."), Toast.LENGTH_SHORT).show()
+                                        return@Button
+                                    }
+                                    if (cleanCard.length != 16) {
+                                        Toast.makeText(context, AppConfig.tStr("Lütfen 16 haneli geçerli bir kart numarası girin.", "Please enter a valid 16-digit card number."), Toast.LENGTH_SHORT).show()
+                                        return@Button
+                                    }
+                                    if (!expiryDate.matches(Regex("^[0-9]{2}/[0-9]{2}$"))) {
+                                        Toast.makeText(context, AppConfig.tStr("Lütfen son kullanma tarihini AA/YY formatında girin.", "Please enter expiry date in MM/YY format."), Toast.LENGTH_SHORT).show()
+                                        return@Button
+                                    }
+                                    if (cvv.length < 3) {
+                                        Toast.makeText(context, AppConfig.tStr("Lütfen 3 haneli CVV kodunu girin.", "Please enter 3-digit CVV code."), Toast.LENGTH_SHORT).show()
+                                        return@Button
+                                    }
 
-                                if (isSecurePaymentEnabled) {
-                                    // Gelecekte buraya SMS 6 haneli kod doğrulama modalı tetiklenecek
-                                    // Şimdilik doğrudan backend/simülasyon katmanına atıyoruz
-                                }
-                                viewModel.processPayment(
-                                    itemId = itemId,
-                                    amount = price,
-                                    cardNumber = cardNumber,
-                                    expiryDate = expiryDate,
-                                    cvv = cvv,
-                                    cardholderName = cardholderName
-                                )
-                            },
-                            modifier = Modifier.fillMaxWidth().height(56.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary)
-                        ) {
-                            Text(AppConfig.t("Sipariş Ver", "Place Order") + " ($price TRY)", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                    if (isSecurePaymentEnabled) {
+                                        // Gelecekte buraya SMS 6 haneli kod doğrulama modalı tetiklenecek
+                                        // Şimdilik doğrudan backend/simülasyon katmanına atıyoruz
+                                    }
+                                    viewModel.processPayment(
+                                        itemId = itemId,
+                                        amount = price,
+                                        cardNumber = cardNumber,
+                                        expiryDate = expiryDate,
+                                        cvv = cvv,
+                                        cardholderName = cardholderName
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth().height(56.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = VestiColors.Primary)
+                            ) {
+                                Text(AppConfig.t("Sipariş Ver", "Place Order") + " ($price TRY)", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            }
                         }
                     }
                 }

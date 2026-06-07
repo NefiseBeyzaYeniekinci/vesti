@@ -342,7 +342,7 @@ fun ProductDetailScreen(
         }
     }
 
-    if (showSwapSheet) {
+    if (showSwapSheet && !isOwner) {
         ModalBottomSheet(
             onDismissRequest = { 
                 showSwapSheet = false 

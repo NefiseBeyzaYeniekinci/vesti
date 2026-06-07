@@ -285,6 +285,7 @@ fun MainAppScreen(
                     itemId = itemId,
                     price = price,
                     viewModel = checkoutViewModel,
+                    marketplaceViewModel = marketplaceViewModel,
                     onNavigateBack = { navController.popBackStack() }
                 )
             }
